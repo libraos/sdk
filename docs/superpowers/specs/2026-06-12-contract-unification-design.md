@@ -4,7 +4,7 @@
 (contract source of truth)
 
 **Scope (cross-repo):**
-- `nova-os` — kernel; OIDC token endpoint (refresh grant), the REST surfaces clients call.
+- `nova-os` — kernel; OIDC token endpoint (refresh grant **already shipped**; hardened in #653), the REST surfaces clients call.
 - `nova-os-sdk` — **source of truth**: OpenAPI spec + generated bindings + OIDC/AG-UI shared specs.
 - `nova-ios` — iPhone client; retire its *assumed* `/api/v1`, adopt generated bindings + OIDC.
 - `nova-os-employee-assistant` / `nova-os-school` — web verticals; consume the generated TS kit.
@@ -58,7 +58,7 @@ nova-os-sdk/openapi/nova-os-partner.v1.yaml   ── REST source of truth
 | nova-ios assumes | Real Nova OS surface | Gap / action |
 |---|---|---|
 | `POST auth/login {email,password}` | OIDC `/oauth/authorize`+`/oauth/token` (PKCE; `nova-os-ios` + `novaos://oauth/callback` already registered) | **Replace** with Auth-Code+PKCE via `ASWebAuthenticationSession`. Isolated behind `AuthService`/`TokenProviding` → swappable. |
-| `POST auth/refresh {refresh_token}` | `/oauth/token` grant=`refresh_token` | **Kernel gap:** add the refresh grant to the OIDC token endpoint. Reference: `nova-os-school#feat/i5-oidc-refresh`. Keep the `refresh()` seam, re-point it. |
+| `POST auth/refresh {refresh_token}` | `/oauth/token` grant=`refresh_token` | **Already shipped** (`nova-os` commit `3a5857a3`, rotating refresh gated on `offline_access`). Residual filled in `nova-os#653`: reuse-detection family revocation + discovery `grant_types_supported`. Keep the `refresh()` seam, re-point it. |
 | `GET deployment` (capability catalogue) | — none — | **Net-new (small):** add a `deployment`/capabilities read, or configure client-side. |
 | `POST sessions {matter,subject,mode,consent}` | `/v1/managed/sessions` (#185, generic) | **Partial:** real sessions exist but aren't recording/consent-shaped. Extend the session schema or wrap vertical-side (§4). |
 | `POST sessions/{id}/recording` (media upload) | `/v1/managed/documents/upload` | **Divergent:** real is document-upload, not session-scoped media. Reconcile to a session-scoped upload. |
@@ -93,10 +93,12 @@ This is the single decision that stops nova-ios's invented contract from leaking
   AG-UI types) and the **Swift** model layer (REST DTOs from the spec).
 
 **`nova-os` (kernel)**
-- Add `refresh_token` grant to `/oauth/token` (the one true kernel gap). Reference school's
-  `feat/i5-oidc-refresh`.
+- ~~Add `refresh_token` grant~~ — **already shipped** (`3a5857a3`, rotating refresh on
+  `offline_access`). Residual hardening filled in `nova-os#653`: reuse-detection family
+  revocation + discovery `grant_types_supported`. No further grant work.
 - Confirm `/v1/managed/sessions`, `/v1/managed/documents/upload`, `/v1/managed/agents/jobs`,
-  `/v1/messages` match the spec; add a small capabilities/`deployment` read if adopted.
+  `/v1/messages` match the spec; add a small capabilities/`deployment` read if adopted
+  (contract added in `nova-os-sdk#34`; kernel endpoint still TODO).
 
 **`nova-ios`**
 - Replace `login(email,password)` with OIDC PKCE (`ASWebAuthenticationSession` → `/oauth/*`);
@@ -112,9 +114,10 @@ This is the single decision that stops nova-ios's invented contract from leaking
 
 ## 6. Build order (dependency-sorted)
 
-1. **OIDC refresh grant** (`nova-os`) — unblocks real web + mobile sessions. *(school `i5-oidc-refresh`)*
-2. **SDK truth**: OpenAPI gap-fill + `oidc-client-flow.md` + AG-UI event schema.
-3. **TS kit generation** → `employee-ui` adopts it (Phase 1 web; `school-ui` follows).
+1. ✅ **OIDC refresh hardening** (`nova-os#653`) — grant already shipped; this added
+   reuse-detection + discovery advertisement. Unblocks durable web + mobile sessions.
+2. ✅ **SDK truth** (`nova-os-sdk#34`): OpenAPI gap-fill + `oidc-client-flow.md` + AG-UI event schema.
+3. ✅ **TS kit generation** (`nova-os-sdk#34`) → `employee-ui`/`school-ui` adopt it next (Phase 1 web).
 4. **Swift realign**: OIDC PKCE + generated DTOs → retires nova-ios's *assumed* `/api/v1`.
 5. **Recording→briefing vertical contract** (§4) → nova-ios V1 composes real primitives.
 6. **Assistant tab** (web parity) — last, once kit + AG-UI are stable.

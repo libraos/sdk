@@ -979,7 +979,7 @@ type Document struct {
 	// Title File name or extracted title
 	Title string `json:"title"`
 
-	// Type Document type — pdf
+	// Type Document type — pdf, docx, md, etc.
 	Type *string `json:"type,omitempty"`
 }
 

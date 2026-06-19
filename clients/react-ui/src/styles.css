@@ -57,3 +57,16 @@
 .nv-btn--ghost:hover:not(:disabled) { color: var(--nv-ink); border-color: var(--nv-line-strong); }
 .nv-btn--subtle { color: var(--nv-muted); background: transparent; }
 .nv-btn--subtle:hover:not(:disabled) { color: var(--nv-ink); background: var(--nv-surface-2); }
+
+/* ── IconButton ─────────────────────────────────────────────────────── */
+.nv-icon-btn {
+  display: grid; place-items: center; border-radius: var(--nv-r-sm);
+  border: 1px solid transparent; background: transparent; color: var(--nv-muted); cursor: pointer;
+  transition: color var(--nv-t-fast) var(--nv-ease-snap), background var(--nv-t-fast) var(--nv-ease-snap),
+    border-color var(--nv-t-fast) var(--nv-ease-snap), transform var(--nv-t-fast) var(--nv-ease-snap);
+}
+.nv-icon-btn:hover:not(:disabled) { color: var(--nv-ink); background: var(--nv-surface-2); border-color: var(--nv-line); }
+.nv-icon-btn:active:not(:disabled) { transform: scale(0.92); }
+.nv-icon-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.nv-icon-btn--sm { width: 30px; height: 30px; }
+.nv-icon-btn--md { width: 36px; height: 36px; }

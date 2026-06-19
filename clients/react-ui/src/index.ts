@@ -7,3 +7,5 @@ export { Card } from "./components/Card";
 export type { CardProps } from "./components/Card";
 export { Toggle } from "./components/Toggle";
 export type { ToggleProps, ToggleOption } from "./components/Toggle";
+export { Composer } from "./components/Composer";
+export type { ComposerProps } from "./components/Composer";

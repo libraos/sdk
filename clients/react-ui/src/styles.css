@@ -80,3 +80,15 @@
 .nv-toggle__opt { position: relative; z-index: 1; display: inline-flex; align-items: center; justify-content: center; gap: 7px; flex: 1; padding: 8px 15px; border: 0; background: transparent; cursor: pointer; font-family: var(--nv-font-ui); font-size: 12.5px; font-weight: 600; color: var(--nv-muted); border-radius: 999px; white-space: nowrap; transition: color 0.28s var(--nv-ease); }
 .nv-toggle__opt.is-active { color: var(--nv-surface); }
 .nv-toggle__slider { position: absolute; top: 3px; bottom: 3px; left: 3px; border-radius: 999px; background: linear-gradient(150deg, var(--nv-accent), var(--nv-accent-ink)); box-shadow: var(--nv-sh-pop); transition: transform 0.4s var(--nv-ease), background 0.45s var(--nv-ease); }
+
+/* ── Composer (floating pill input) ─────────────────────────────────── */
+.nv-composer {
+  display: flex; align-items: flex-end; gap: 11px; padding: 10px 10px 10px 22px; border-radius: 28px;
+  background: var(--nv-surface); border: 1px solid var(--nv-line-strong);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 1px 2px rgba(33, 30, 24, 0.04), 0 22px 48px -24px rgba(33, 30, 24, 0.32);
+  transition: border-color var(--nv-t-fast) var(--nv-ease-snap), box-shadow 0.3s var(--nv-ease), transform 0.3s var(--nv-ease);
+}
+.nv-composer:focus-within { border-color: color-mix(in srgb, var(--nv-accent) 46%, var(--nv-line)); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 22px 52px -22px var(--nv-accent-glow), 0 0 0 4px var(--nv-accent-tint); transform: translateY(-1px); }
+.nv-composer__input { flex: 1; border: 0; outline: 0; resize: none; background: transparent; font-family: var(--nv-font-ui); font-size: 15.5px; line-height: 1.55; color: var(--nv-ink); max-height: 180px; padding: 11px 0; }
+.nv-composer__input::placeholder { color: var(--nv-muted); }
+.nv-composer__actions { display: inline-flex; align-items: center; gap: 8px; }

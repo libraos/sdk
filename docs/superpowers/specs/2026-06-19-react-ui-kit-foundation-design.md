@@ -87,9 +87,11 @@ Each component is one focused file under `src/components/`, applies prefixed
 
 ## Build / styling pipeline
 
-- Component CSS lives in `src/styles/` (one file per primitive) + `theme.css`,
-  imported by `src/styles/index.css`; tsup bundles them to `dist/styles.css`
-  (single import for consumers).
+- All component CSS lives in a single `src/styles.css` (theme tokens first, then
+  one block per primitive appended); the build copies it verbatim to
+  `dist/styles.css` via `scripts/copy-styles.mjs` (single import for consumers).
+  *(Implemented as one file rather than the per-file split originally sketched —
+  it satisfies the binding constraint and avoids a CSS-bundling build step.)*
 - Class namespace `.nv-*`; token namespace `--nv-*` — both prefixed to avoid
   collisions in a host app.
 
@@ -109,7 +111,7 @@ Each component is one focused file under `src/components/`, applies prefixed
 - `clients/react-ui/package.json`, `tsup.config.ts`, `tsconfig.json`, `vitest.config.ts`, `README.md`
 - `clients/react-ui/src/index.ts`
 - `clients/react-ui/src/components/{Button,IconButton,Card,Composer,Toggle}.tsx`
-- `clients/react-ui/src/styles/{theme,button,iconbutton,card,composer,toggle,index}.css`
+- `clients/react-ui/src/styles.css` (theme tokens + all component blocks) + `clients/react-ui/scripts/copy-styles.mjs`
 - `clients/react-ui/src/components/*.test.tsx`
 - `examples/react-ui-demo/` (Vite app: index.html, src/main.tsx, package.json, vite.config.ts)
 

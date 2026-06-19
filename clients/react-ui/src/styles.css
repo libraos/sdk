@@ -70,3 +70,7 @@
 .nv-icon-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 .nv-icon-btn--sm { width: 30px; height: 30px; }
 .nv-icon-btn--md { width: 36px; height: 36px; }
+
+/* ── Card ───────────────────────────────────────────────────────────── */
+.nv-card { background: var(--nv-surface); border: 1px solid var(--nv-line); border-radius: var(--nv-r-lg); padding: 20px; box-shadow: var(--nv-sh-1); }
+.nv-card__title { margin: 0 0 14px; font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--nv-muted); display: flex; align-items: center; gap: 7px; }

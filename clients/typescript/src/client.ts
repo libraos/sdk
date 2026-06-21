@@ -48,6 +48,19 @@ export interface ProjectFile {
   status?: string;
 }
 
+/**
+ * A document in the company-wide `default` knowledge collection.
+ * Returned by {@link NovaClient.listCorporateDocuments}.
+ * `id` is the chunk source path — pass it to {@link NovaClient.deleteCorporateDocument}.
+ */
+export interface CorporateDocument {
+  id: string;
+  collection_id: string;
+  filename: string;
+  content_type: string;
+  chunk_count: number;
+}
+
 /** A project containing conversations. */
 export interface Project {
   id: string;
@@ -408,6 +421,55 @@ export class NovaClient {
   /** Delete a file from a project. */
   async deleteProjectFile(projectId: string, fileId: string): Promise<void> {
     const res = await this.rawFetch(`/v1/projects/${encodeURIComponent(projectId)}/files/${encodeURIComponent(fileId)}`, { method: "DELETE" });
+    if (!res.ok) throw await this.toApiError(res);
+  }
+
+  // ── Corporate Knowledge (default collection) ───────────────────────────
+
+  /**
+   * List documents in the company-wide `default` knowledge collection.
+   * Requires admin role (server-enforced). Each document's `id` is the
+   * chunk source path — use it with {@link deleteCorporateDocument}.
+   */
+  async listCorporateDocuments(opts?: { signal?: AbortSignal }): Promise<CorporateDocument[]> {
+    const res = await this.rawFetch("/api/knowledge/collections/default/documents", {
+      method: "GET",
+      signal: opts?.signal,
+    });
+    if (!res.ok) throw await this.toApiError(res);
+    return (await res.json()) as CorporateDocument[];
+  }
+
+  /**
+   * Upload a file into the company-wide `default` knowledge collection.
+   * Multipart POST to `/api/documents/upload/` with form field `file`.
+   * Admin scope auto-routes to the `default` collection (server-enforced).
+   * Returns `{ uploaded: string; size: number }` on success.
+   */
+  async uploadCorporateDocument(
+    file: Blob,
+    opts?: { fileName?: string; signal?: AbortSignal },
+  ): Promise<{ uploaded: string; size: number }> {
+    const form = new FormData();
+    form.append("file", file, opts?.fileName ?? "upload");
+    const res = await this.rawFetch("/api/documents/upload/", {
+      method: "POST",
+      body: form,
+      signal: opts?.signal,
+    });
+    if (!res.ok) throw await this.toApiError(res);
+    return (await res.json()) as { uploaded: string; size: number };
+  }
+
+  /**
+   * Delete a document from the `default` knowledge collection by its source id.
+   * `id` is the value from {@link CorporateDocument.id} (the chunk source path).
+   * Admin-only (server-enforced).
+   */
+  async deleteCorporateDocument(id: string): Promise<void> {
+    const res = await this.rawFetch(`/api/knowledge/${encodeURIComponent(id)}`, {
+      method: "DELETE",
+    });
     if (!res.ok) throw await this.toApiError(res);
   }
 

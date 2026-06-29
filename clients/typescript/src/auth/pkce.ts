@@ -24,7 +24,7 @@ export interface CryptoProvider {
 async function _nobleDigest(alg: AlgorithmIdentifier, data: BufferSource): Promise<ArrayBuffer> {
   const name = typeof alg === "string" ? alg : alg.name;
   if (name !== "SHA-256") throw new Error(`PKCE fallback only supports SHA-256, got: ${name}`);
-  const { sha256 } = await import("@noble/hashes/sha2.js");
+  const { sha256 } = await import("@noble/hashes/sha256");
   const bytes = data instanceof Uint8Array ? data : new Uint8Array(data as ArrayBuffer);
   return sha256(bytes).buffer as ArrayBuffer;
 }

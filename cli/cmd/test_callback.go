@@ -13,7 +13,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/MeganovaAI/nova-os-sdk/cli/internal/sign"
+	"github.com/libraos/sdk/cli/internal/sign"
 )
 
 var (

@@ -28,7 +28,7 @@ import (
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 
-	gen "github.com/MeganovaAI/nova-os-sdk/cli/internal/client"
+	gen "github.com/libraos/sdk/cli/internal/client"
 )
 
 var (

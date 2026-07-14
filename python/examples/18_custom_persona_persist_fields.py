@@ -48,7 +48,7 @@ import os
 import uuid
 from pathlib import Path
 
-from nova_os import Client
+from libraos import Client
 
 
 # Custom persona — appointment booking. Three slots accumulate across
@@ -152,7 +152,7 @@ async def main() -> None:
 
         # 4. Streaming turn (final slot). Same session_id continues
         #    accumulation. Wire-shape: events arrive as
-        #    {"event": "<name>", "data": {...}} per nova_os._sse.parse_lines.
+        #    {"event": "<name>", "data": {...}} per libraos._sse.parse_lines.
         #    Terminal "done" event carries persisted_state.
         print("\n=== streaming turn (final slot) ===")
         async with c.messages.stream(

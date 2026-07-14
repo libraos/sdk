@@ -30,10 +30,10 @@ import os
 from fastapi import FastAPI
 
 # WebhookRouter handles HMAC-SHA256 verification + idempotency dedup.
-# It is available via: from nova_os.callbacks import WebhookRouter
+# It is available via: from libraos.callbacks import WebhookRouter
 # (ships in the next SDK release; import shown here for documentation).
 try:
-    from nova_os.callbacks import WebhookRouter  # type: ignore[import]
+    from libraos.callbacks import WebhookRouter  # type: ignore[import]
 except ImportError:
     # Graceful fallback: stub router for syntax-check / documentation purposes.
     class WebhookRouter:  # type: ignore[no-redef]

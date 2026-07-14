@@ -55,8 +55,8 @@ from claude_agent_sdk import (
 
 
 async def main() -> None:
-    nova_os_url = os.environ.get("NOVA_OS_URL", "https://nova.your-company.example")
-    nova_os_api_key = os.environ["NOVA_OS_API_KEY"]
+    libraos_url = os.environ.get("NOVA_OS_URL", "https://nova.your-company.example")
+    libraos_api_key = os.environ["NOVA_OS_API_KEY"]
 
     # ClaudeAgentOptions.env overrides the spawned CLI's env without
     # mutating the parent process — preferred over os.environ[...] = ...
@@ -65,8 +65,8 @@ async def main() -> None:
         system_prompt="You are a helpful assistant. Answer concisely.",
         max_turns=1,
         env={
-            "ANTHROPIC_BASE_URL": nova_os_url,
-            "ANTHROPIC_API_KEY": nova_os_api_key,
+            "ANTHROPIC_BASE_URL": libraos_url,
+            "ANTHROPIC_API_KEY": libraos_api_key,
         },
     )
 

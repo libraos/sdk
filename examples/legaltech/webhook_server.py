@@ -26,7 +26,7 @@ import os
 from fastapi import FastAPI
 
 try:
-    from nova_os.callbacks import WebhookRouter
+    from libraos.callbacks import WebhookRouter
 except ImportError:
     # Fallback so this file is at least syntax-checkable in environments
     # where the real WebhookRouter isn't installed yet.

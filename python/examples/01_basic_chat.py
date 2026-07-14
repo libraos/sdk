@@ -19,7 +19,7 @@ from __future__ import annotations
 
 import os
 
-from nova_os import AnthropicCompatClient
+from libraos import AnthropicCompatClient
 
 
 def main() -> None:

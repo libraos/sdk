@@ -20,11 +20,11 @@ import pytest
 
 anthropic = pytest.importorskip("anthropic")
 
-from nova_os import AnthropicCompatClient
+from libraos import AnthropicCompatClient
 
 
 @pytest.fixture
-def nova_os_mock_response() -> dict:
+def libraos_mock_response() -> dict:
     """The shape Nova OS's /v1/messages compat endpoint returns.
 
     Mirrors Anthropic Messages API 1:1 with Nova OS extensions
@@ -45,7 +45,7 @@ def nova_os_mock_response() -> dict:
     }
 
 
-def test_anthropic_sdk_messages_create_against_nova_os(nova_os_mock_response: dict) -> None:
+def test_anthropic_sdk_messages_create_against_libraos(libraos_mock_response: dict) -> None:
     """An Anthropic SDK consumer sends the same request shape Anthropic
     expects, and Nova OS must respond with a shape the SDK can parse.
     This test verifies the round-trip by intercepting the SDK's outbound
@@ -67,7 +67,7 @@ def test_anthropic_sdk_messages_create_against_nova_os(nova_os_mock_response: di
         captured["auth_header"] = req.headers.get("authorization", "")
         captured["x_api_key"] = req.headers.get("x-api-key", "")
         captured["body"] = json.loads(req.content)
-        return httpx.Response(200, json=nova_os_mock_response)
+        return httpx.Response(200, json=libraos_mock_response)
 
     transport = httpx.MockTransport(handler)
     http_client = httpx.Client(transport=transport)
@@ -128,7 +128,7 @@ def test_anthropic_sdk_messages_create_against_nova_os(nova_os_mock_response: di
     assert msg.usage.output_tokens == 4
 
 
-def test_anthropic_compat_client_does_not_pre_suffix_base_url(nova_os_mock_response: dict) -> None:
+def test_anthropic_compat_client_does_not_pre_suffix_base_url(libraos_mock_response: dict) -> None:
     """The AnthropicCompatClient factory MUST pass base_url through unchanged
     to the Anthropic SDK. Pre-appending /v1/managed (the v0.1.0-alpha
     behaviour) breaks path resolution because the Anthropic SDK then targets
@@ -138,7 +138,7 @@ def test_anthropic_compat_client_does_not_pre_suffix_base_url(nova_os_mock_respo
 
     def handler(req: httpx.Request) -> httpx.Response:
         captured["path"] = req.url.path
-        return httpx.Response(200, json=nova_os_mock_response)
+        return httpx.Response(200, json=libraos_mock_response)
 
     transport = httpx.MockTransport(handler)
     http_client = httpx.Client(transport=transport)
@@ -161,13 +161,13 @@ def test_anthropic_compat_client_does_not_pre_suffix_base_url(nova_os_mock_respo
     )
 
 
-def test_anthropic_compat_client_strips_trailing_slash(nova_os_mock_response: dict) -> None:
+def test_anthropic_compat_client_strips_trailing_slash(libraos_mock_response: dict) -> None:
     """Trailing slash on base_url should not double up the path."""
     captured: dict = {}
 
     def handler(req: httpx.Request) -> httpx.Response:
         captured["path"] = req.url.path
-        return httpx.Response(200, json=nova_os_mock_response)
+        return httpx.Response(200, json=libraos_mock_response)
 
     transport = httpx.MockTransport(handler)
     http_client = httpx.Client(transport=transport)

@@ -29,7 +29,7 @@ import os
 import tempfile
 from pathlib import Path
 
-from nova_os import Client
+from libraos import Client
 
 
 async def main() -> None:

@@ -29,7 +29,7 @@ import asyncio
 import os
 
 
-from nova_os import Client
+from libraos import Client
 
 
 SAMPLE_CONTENT = b"""# Acme Onboarding Checklist

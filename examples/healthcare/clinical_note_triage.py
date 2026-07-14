@@ -28,7 +28,7 @@ import json
 import os
 from pathlib import Path
 
-from nova_os import Client
+from libraos import Client
 
 
 TRIAGE_SCHEMA: dict = {

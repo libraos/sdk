@@ -30,7 +30,7 @@ from __future__ import annotations
 import asyncio
 import os
 
-from nova_os import Client
+from libraos import Client
 
 
 async def main() -> None:

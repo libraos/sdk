@@ -75,8 +75,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from nova_os import Archetype, Client
-from nova_os.simulator import SimulationResult, TurnEvent
+from libraos import Archetype, Client
+from libraos.simulator import SimulationResult, TurnEvent
 
 
 def main() -> int:

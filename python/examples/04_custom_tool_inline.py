@@ -31,7 +31,7 @@ import asyncio
 import os
 from typing import Any
 
-from nova_os import Client
+from libraos import Client
 
 
 # ---------------------------------------------------------------------------

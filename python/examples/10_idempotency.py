@@ -32,7 +32,7 @@ import asyncio
 import os
 import uuid
 
-from nova_os import Client
+from libraos import Client
 
 
 async def main() -> None:

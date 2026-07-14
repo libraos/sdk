@@ -27,7 +27,7 @@ import asyncio
 import os
 import time
 
-from nova_os import Client
+from libraos import Client
 
 # Terminal states — any of these means the job will not progress further.
 TERMINAL_STATES = {"completed", "failed", "cancelled"}

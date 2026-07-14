@@ -764,7 +764,7 @@ type Agent struct {
 	Model *string `json:"model,omitempty"`
 	Name  string  `json:"name"`
 
-	// OutputType Structured-output contract for agent replies. When set, LibraOS
+	// OutputType Structured-output contract for agent replies. When set, Nova OS
 	// validates every assistant reply against `schema` before return.
 	// Server-side since v0.1.4.
 	OutputType *OutputTypeContract `json:"output_type,omitempty"`
@@ -804,7 +804,7 @@ type AgentCreate struct {
 	Model             *string                 `json:"model,omitempty"`
 	Name              string                  `json:"name"`
 
-	// OutputType Structured-output contract for agent replies. When set, LibraOS
+	// OutputType Structured-output contract for agent replies. When set, Nova OS
 	// validates every assistant reply against `schema` before return.
 	// Server-side since v0.1.4.
 	OutputType *OutputTypeContract    `json:"output_type,omitempty"`
@@ -844,7 +844,7 @@ type AgentUpdate struct {
 	Model             *string                 `json:"model,omitempty"`
 	Name              *string                 `json:"name,omitempty"`
 
-	// OutputType Structured-output contract for agent replies. When set, LibraOS
+	// OutputType Structured-output contract for agent replies. When set, Nova OS
 	// validates every assistant reply against `schema` before return.
 	// Server-side since v0.1.4.
 	OutputType *OutputTypeContract    `json:"output_type,omitempty"`
@@ -901,7 +901,7 @@ type CustomToolResultRequest struct {
 }
 
 // Deployment Minimal, derive-friendly capabilities read so a client (web/iOS) can
-// discover what this LibraOS instance supports without probing each
+// discover what this Nova OS instance supports without probing each
 // endpoint. Per the contract-unification design (D1, lean: derive),
 // this is intentionally small — the persona manifest
 // (`GET /agents/v1/personas`) remains the source of truth for *which*
@@ -943,7 +943,7 @@ type Deployment struct {
 		Skill *string `json:"skill,omitempty"`
 	} `json:"models,omitempty"`
 
-	// Version LibraOS server version (e.g. "v0.1.9"). "dev"/"unknown" on unstamped builds.
+	// Version Nova OS server version (e.g. "v0.1.9"). "dev"/"unknown" on unstamped builds.
 	Version string `json:"version"`
 }
 
@@ -1237,7 +1237,7 @@ type MessageRequest struct {
 
 // MessageRequest_Metadata defines model for MessageRequest.Metadata.
 type MessageRequest_Metadata struct {
-	// AgentId Target a specific LibraOS agent/persona for this turn; omit
+	// AgentId Target a specific Nova OS agent/persona for this turn; omit
 	// for the default agent. Typed here so generated clients can set
 	// it without falling back to untyped additionalProperties.
 	AgentId *string `json:"agent_id,omitempty"`
@@ -1257,17 +1257,17 @@ type MessageRequest_Metadata struct {
 type MessageResponse struct {
 	Content []ContentBlock `json:"content"`
 
-	// FallbackTriggered LibraOS extension — true if a fallback model handled the request.
+	// FallbackTriggered Nova OS extension — true if a fallback model handled the request.
 	FallbackTriggered *bool  `json:"fallback_triggered,omitempty"`
 	Id                string `json:"id"`
 
 	// Model Resolved model that handled the request.
 	Model string `json:"model"`
 
-	// ModelUsed LibraOS extension — same as `model`, surfaced for clarity.
+	// ModelUsed Nova OS extension — same as `model`, surfaced for clarity.
 	ModelUsed *string `json:"model_used,omitempty"`
 
-	// OutputViolations LibraOS extension — populated only when the agent declared an
+	// OutputViolations Nova OS extension — populated only when the agent declared an
 	// `output_type` contract AND the reply failed validation AND the
 	// agent's `violation_mode` is `log` or `repair` (with `error`,
 	// the response is a 422 instead). Empty array means no violations.
@@ -1310,7 +1310,7 @@ type ModelSlot struct {
 	Primary string `json:"primary"`
 }
 
-// OutputTypeContract Structured-output contract for agent replies. When set, LibraOS
+// OutputTypeContract Structured-output contract for agent replies. When set, Nova OS
 // validates every assistant reply against `schema` before return.
 // Server-side since v0.1.4.
 type OutputTypeContract struct {
@@ -1500,7 +1500,7 @@ type StreamEventError struct {
 // StreamEventErrorType defines model for StreamEventError.Type.
 type StreamEventErrorType string
 
-// StreamEventRouteHint LibraOS extension (v0.1.5+) — emitted exactly once per terminal
+// StreamEventRouteHint Nova OS extension (v0.1.5+) — emitted exactly once per terminal
 // message right before `done`. Carries Brain's dispatch decision so
 // partner UIs can react before the full reply is rendered.
 type StreamEventRouteHint struct {

@@ -20,7 +20,7 @@ class BundleManifest:
     Attributes:
         schema_version (BundleManifestSchemaVersion):
         employee_id (str):
-        libraos_min_version (str):
+        nova_os_min_version (str):
         created_at (datetime.datetime):
         agents (list[str] | Unset):
         knowledge_files (int | Unset):
@@ -28,7 +28,7 @@ class BundleManifest:
 
     schema_version: BundleManifestSchemaVersion
     employee_id: str
-    libraos_min_version: str
+    nova_os_min_version: str
     created_at: datetime.datetime
     agents: list[str] | Unset = UNSET
     knowledge_files: int | Unset = UNSET
@@ -39,7 +39,7 @@ class BundleManifest:
 
         employee_id = self.employee_id
 
-        libraos_min_version = self.libraos_min_version
+        nova_os_min_version = self.nova_os_min_version
 
         created_at = self.created_at.isoformat()
 
@@ -55,7 +55,7 @@ class BundleManifest:
             {
                 "schema_version": schema_version,
                 "employee_id": employee_id,
-                "libraos_min_version": libraos_min_version,
+                "nova_os_min_version": nova_os_min_version,
                 "created_at": created_at,
             }
         )
@@ -73,7 +73,7 @@ class BundleManifest:
 
         employee_id = d.pop("employee_id")
 
-        libraos_min_version = d.pop("libraos_min_version")
+        nova_os_min_version = d.pop("nova_os_min_version")
 
         created_at = isoparse(d.pop("created_at"))
 
@@ -84,7 +84,7 @@ class BundleManifest:
         bundle_manifest = cls(
             schema_version=schema_version,
             employee_id=employee_id,
-            libraos_min_version=libraos_min_version,
+            nova_os_min_version=nova_os_min_version,
             created_at=created_at,
             agents=agents,
             knowledge_files=knowledge_files,

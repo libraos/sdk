@@ -1,12 +1,12 @@
 """Anthropic SDK compatibility shim.
 
-Nova OS's ``POST /v1/messages`` endpoint mirrors Anthropic's Messages API
+LibraOS's ``POST /v1/messages`` endpoint mirrors Anthropic's Messages API
 1:1 for the compat surface — same request shape, same response shape, same
 SSE event names. Code written against ``anthropic.Anthropic(base_url=...)``
-works against Nova OS unchanged.
+works against LibraOS unchanged.
 
-Per-call routing to a specific Nova OS persona is done via the standard
-Anthropic ``metadata`` field — Nova OS reads ``metadata.agent_id`` from the
+Per-call routing to a specific LibraOS persona is done via the standard
+Anthropic ``metadata`` field — LibraOS reads ``metadata.agent_id`` from the
 request body and dispatches accordingly. Brain orchestration fires
 automatically when the resolved persona has ``brain: true`` in its
 frontmatter.
@@ -41,9 +41,9 @@ def AnthropicCompatClient(
     api_key: str,
     **kwargs: Any,
 ):
-    """Return a configured ``anthropic.Anthropic`` instance pointed at Nova OS.
+    """Return a configured ``anthropic.Anthropic`` instance pointed at LibraOS.
 
-    ``base_url`` is the bare Nova OS server URL (e.g. ``https://nova.partner.com``).
+    ``base_url`` is the bare LibraOS server URL (e.g. ``https://nova.partner.com``).
     The Anthropic SDK appends ``/v1/messages`` itself when calling
     ``c.messages.create(...)`` — do NOT pre-append ``/v1/managed`` or any
     other path segment.

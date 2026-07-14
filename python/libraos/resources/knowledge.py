@@ -8,7 +8,7 @@ from libraos.resources._base import Resource
 
 
 class Knowledge(Resource):
-    """Hybrid search + ingest for Nova OS knowledge collections.
+    """Hybrid search + ingest for LibraOS knowledge collections.
 
     Collections are scoped via the partner's API-key auth; partners
     cannot read other tenants' collections regardless of name. ``search``

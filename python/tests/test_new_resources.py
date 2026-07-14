@@ -307,7 +307,7 @@ async def test_sessions_get():
     assert s["id"] == "sess_lookup"
 
 
-# ── Personas (#187 server / nova-os-sdk#14 SDK) ────────────────────
+# ── Personas (#187 server / libraos-sdk#14 SDK) ────────────────────
 
 
 @pytest.mark.asyncio

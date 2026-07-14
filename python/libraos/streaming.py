@@ -2,7 +2,7 @@
 
 Mode A custom-tool inline: partners hold an open SSE connection, intercept
 `custom_tool_use` events, compute results, and submit them via
-`stream.submit_tool_result(tool_use_id, output)` — Nova OS resumes the
+`stream.submit_tool_result(tool_use_id, output)` — LibraOS resumes the
 agent loop on the original streaming connection.
 
 Implementation note: httpx's MockTransport is fully buffered — it doesn't

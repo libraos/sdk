@@ -21,10 +21,10 @@ _DEFAULT_TIMEOUT_SEC = 30.0
 
 
 class Client:
-    """Public Nova OS SDK client.
+    """Public LibraOS SDK client.
 
     Args:
-        base_url: Nova OS server URL (e.g. https://nova.partner.com).
+        base_url: LibraOS server URL (e.g. https://nova.partner.com).
         api_key: HS256 JWT bearer (partner-self-hosted) or msk_live_... (cloud).
         timeout: Per-request timeout in seconds. Default 30.
         transport: Optional httpx.AsyncBaseTransport — useful for tests.
@@ -88,7 +88,7 @@ class Client:
         self.users = Users(self)
         self.settings = Settings(self)
         self.sessions = Sessions(self)
-        # alpha.5 — boot-time persona discovery (#187 / nova-os-sdk#14).
+        # alpha.5 — boot-time persona discovery (#187 / libraos-sdk#14).
         self.personas = Personas(self)
 
         # .sync proxy — wired in Task 9

@@ -59,7 +59,7 @@ Run
 ---
 ::
 
-    pip install nova-os-sdk
+    pip install libraos-sdk
     export EVAL_NOVA_BASE_URL=http://localhost:8901
     export EVAL_NOVA_API_KEY=<your eval JWT or agent key>
     export EVAL_TARGET_AGENT_ID=default

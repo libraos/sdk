@@ -1,6 +1,6 @@
 """Deterministic system-prompt builder for the synthetic-customer simulator.
 
-The simulator pattern drives a target Nova OS agent through a multi-turn
+The simulator pattern drives a target LibraOS agent through a multi-turn
 conversation by having a *second* LLM call play a synthetic customer
 ("the simulator") whose persona, hidden state, and disclosure behavior are
 defined by an :class:`~libraos.simulator.Archetype`.

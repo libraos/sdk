@@ -1,6 +1,6 @@
 """FastAPI integration for WebhookRouter.
 
-Lazy import — fastapi is NOT a runtime dep of nova-os-sdk. Only loads
+Lazy import — fastapi is NOT a runtime dep of libraos-sdk. Only loads
 when partner code calls `router.fastapi_router()`.
 
 Note: `from __future__ import annotations` is intentionally omitted here.

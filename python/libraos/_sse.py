@@ -2,7 +2,7 @@
 
 The HTML5 EventSource spec defines events as `event: <name>\\ndata: <body>\\n\\n`.
 Multiple `data:` lines per event are concatenated with newlines. Comment
-lines (`:` prefix) are skipped — Nova OS uses them for `:nova-heartbeat`
+lines (`:` prefix) are skipped — LibraOS uses them for `:nova-heartbeat`
 keep-alive frames.
 
 Returns a stream of dicts: `{"event": <name>, "data": <parsed-json>}`.

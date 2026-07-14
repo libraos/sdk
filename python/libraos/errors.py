@@ -1,4 +1,4 @@
-"""Typed exception hierarchy for Nova OS SDK.
+"""Typed exception hierarchy for LibraOS SDK.
 
 Mirrors the OpenAPI Error.type enum:
 
@@ -23,7 +23,7 @@ from typing import Any
 
 
 class NovaOSError(Exception):
-    """Base class for every Nova OS SDK error."""
+    """Base class for every LibraOS SDK error."""
 
     def __init__(
         self,
@@ -118,7 +118,7 @@ class ModelNotFoundError(NovaOSError):
 
 
 class InternalError(NovaOSError):
-    """500 — server bug. Report at https://github.com/MeganovaAI/nova-os-sdk/issues."""
+    """500 — server bug. Report at https://github.com/libraos/sdk/issues."""
 
 
 class PersonaNotFound(NotFoundError):

@@ -1,7 +1,7 @@
 """Archetype model for the synthetic-customer simulator.
 
 An *archetype* describes a synthetic customer persona that the simulator
-loop will play against a target Nova OS agent during evaluation. It is the
+loop will play against a target LibraOS agent during evaluation. It is the
 partner-supplied input to ``client.simulate()``.
 
 This module ships:
@@ -180,7 +180,7 @@ class Archetype(BaseModel):
         except ImportError as exc:  # pragma: no cover - dep is declared
             raise ImportError(
                 "PyYAML is required for Archetype.from_yaml_path; "
-                "install with `pip install nova-os-sdk[simulator]` or "
+                "install with `pip install libraos-sdk[simulator]` or "
                 "`pip install pyyaml`"
             ) from exc
 

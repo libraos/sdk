@@ -1,7 +1,7 @@
 """Hooks — subscribe to lifecycle events.
 
 Demonstrates partner registration of webhook subscriptions for the 9
-canonical Nova OS lifecycle events.
+canonical LibraOS lifecycle events.
 
 **Important: as of v0.1.5 the registry is in-memory and the runtime
 hook bus does not yet read from it.** Subscriptions are stored and
@@ -25,7 +25,7 @@ The 9 events:
 
 Prerequisites::
 
-    pip install nova-os-sdk
+    pip install libraos-sdk
     export NOVA_OS_URL=https://nova.your-company.example
     export NOVA_OS_API_KEY=msk_live_...
 

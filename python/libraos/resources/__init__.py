@@ -1,1 +1,1 @@
-"""Resource dispatchers for the public Nova OS SDK Client."""
+"""Resource dispatchers for the public LibraOS SDK Client."""

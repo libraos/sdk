@@ -1,4 +1,4 @@
-"""WebhookRouter — receives Nova OS Mode B custom_tool dispatches."""
+"""WebhookRouter — receives LibraOS Mode B custom_tool dispatches."""
 
 from __future__ import annotations
 

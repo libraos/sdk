@@ -1,4 +1,4 @@
-"""Personas resource — /agents/v1/personas (#187 server / nova-os-sdk#14).
+"""Personas resource — /agents/v1/personas (#187 server / libraos-sdk#14).
 
 Boot-time persona discovery — partners cache the manifest by
 ``manifest_version`` and use ``If-None-Match`` to skip the body when

@@ -75,7 +75,7 @@ class Messages(Resource):
 
         `message_id` is optional but required up-front if the caller wants to
         `submit_tool_result()` before the `done` event arrives. Pass any
-        deterministic id you control (e.g. uuid4) and Nova OS will use it
+        deterministic id you control (e.g. uuid4) and LibraOS will use it
         for the response identifier.
         """
         from libraos.streaming import MessageStream

@@ -1,6 +1,6 @@
-"""Nova OS SDK — partner integration for Nova OS.
+"""LibraOS SDK — partner integration for LibraOS.
 
-See https://github.com/MeganovaAI/nova-os-sdk for documentation.
+See https://github.com/libraos/sdk for documentation.
 """
 
 from libraos._version import __version__, OPENAPI_VERSION

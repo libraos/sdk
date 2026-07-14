@@ -9,7 +9,7 @@ Two flavors, both backed by the same async loop runner in
 - :func:`async_simulate` — async coroutine. Suited for callers that
   already have an event loop running (FastAPI handlers, etc.).
 
-The Nova OS ``Client`` exposes both — see ``Client.simulate(...)``
+The LibraOS ``Client`` exposes both — see ``Client.simulate(...)``
 (sync) and ``Client.async_simulate(...)`` (async).
 """
 

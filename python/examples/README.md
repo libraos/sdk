@@ -82,6 +82,40 @@ async for message in query(prompt="...", options=options):
 | `15_users_settings_admin.py` | `c.users` + `c.settings` — partner-admin onboarding flow |
 | `16_sessions_explicit.py` | `c.sessions` — explicit session lifecycle (per-ticket / per-batch isolation, session-default model override) |
 | `17_personas_discovery.py` | `c.personas` — boot-time persona-manifest discovery with ETag/If-None-Match cache validation |
+| `19_durable_run.py` | Native background jobs — submit once, replay progress after disconnect, inspect the persisted outcome |
+
+## Native background jobs
+
+`19_durable_run.py` is a standalone Python 3.10+ example with no extra packages.
+Unlike the managed-jobs example, it uses the native server contract at
+`/agents/v1/{agent}/jobs`, where successful completion is `done`. Set
+`LIBRA_OS_URL` and `LIBRA_OS_TOKEN` to your deployment and bearer token:
+
+```bash
+python examples/19_durable_run.py --agent my-agent --prompt "Summarize the approved documents."
+```
+
+Save the returned job ID. To reconnect to existing work without submitting again:
+
+```bash
+python examples/19_durable_run.py --agent my-agent --job-id "$JOB_ID" --after 42
+```
+
+The example retries observation only, never submission. A timed-out POST can
+already have created work; do not automatically submit another job. The CLI's
+cursor is not durable application storage, and an invocation finishing does
+not establish that a separately queued approval action executed.
+
+Restart-safe event numbering and atomic terminal receipts require the
+durable-runs server update, which is not yet released. General agent recovery
+is not enabled by this example. See the [background tasks guide](https://libraos.com/docs/durable-runs/)
+for permissions, retention, and recovery limits.
+
+Run the offline example tests from the SDK repository root:
+
+```bash
+python3 -B -m unittest discover -s python/tests -p 'test_durable_run_example.py' -v
+```
 
 For full end-to-end vertical integrations (legaltech contract review,
 healthcare clinical-note triage, finance 10-K diff) see [`../../examples/`](../../examples/).

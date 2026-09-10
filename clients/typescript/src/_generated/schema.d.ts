@@ -3817,7 +3817,7 @@ export interface components {
              * @description Per-turn grounded-vs-refusal outcome. Omitted on non-retrieval turns.
              * @enum {string}
              */
-            grounding?: "grounded" | "ungrounded_refusal" | "ungrounded_no_chunks" | "degraded";
+            grounding?: "grounded" | "ungrounded_refusal" | "ungrounded_no_chunks" | "degraded" | "unsupported_claim" | "degraded_retrieval" | "unopened_sources";
             /** @description Source ids of knowledge chunks surfaced by this turn. */
             retrieved_chunks?: string[];
             /** @description Unique tool names dispatched this turn (include_metadata only). */
@@ -3914,7 +3914,7 @@ export interface components {
              * @description Nova OS extension — per-turn grounded-vs-refusal outcome. Omitted on non-retrieval turns.
              * @enum {string}
              */
-            nova_grounding?: "grounded" | "ungrounded_refusal" | "ungrounded_no_chunks" | "degraded";
+            nova_grounding?: "grounded" | "ungrounded_refusal" | "ungrounded_no_chunks" | "degraded" | "unsupported_claim" | "degraded_retrieval" | "unopened_sources";
             /** @description Merged persisted field state, present only for agents that declare a persist-fields schema. */
             persisted_state?: {
                 [key: string]: unknown;

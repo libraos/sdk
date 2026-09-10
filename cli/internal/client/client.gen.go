@@ -175,9 +175,12 @@ func (e ChatCompletionChoiceFinishReason) Valid() bool {
 // Defines values for ChatCompletionResponseNovaGrounding.
 const (
 	ChatCompletionResponseNovaGroundingDegraded           ChatCompletionResponseNovaGrounding = "degraded"
+	ChatCompletionResponseNovaGroundingDegradedRetrieval  ChatCompletionResponseNovaGrounding = "degraded_retrieval"
 	ChatCompletionResponseNovaGroundingGrounded           ChatCompletionResponseNovaGrounding = "grounded"
 	ChatCompletionResponseNovaGroundingUngroundedNoChunks ChatCompletionResponseNovaGrounding = "ungrounded_no_chunks"
 	ChatCompletionResponseNovaGroundingUngroundedRefusal  ChatCompletionResponseNovaGrounding = "ungrounded_refusal"
+	ChatCompletionResponseNovaGroundingUnopenedSources    ChatCompletionResponseNovaGrounding = "unopened_sources"
+	ChatCompletionResponseNovaGroundingUnsupportedClaim   ChatCompletionResponseNovaGrounding = "unsupported_claim"
 )
 
 // Valid indicates whether the value is a known member of the ChatCompletionResponseNovaGrounding enum.
@@ -185,11 +188,17 @@ func (e ChatCompletionResponseNovaGrounding) Valid() bool {
 	switch e {
 	case ChatCompletionResponseNovaGroundingDegraded:
 		return true
+	case ChatCompletionResponseNovaGroundingDegradedRetrieval:
+		return true
 	case ChatCompletionResponseNovaGroundingGrounded:
 		return true
 	case ChatCompletionResponseNovaGroundingUngroundedNoChunks:
 		return true
 	case ChatCompletionResponseNovaGroundingUngroundedRefusal:
+		return true
+	case ChatCompletionResponseNovaGroundingUnopenedSources:
+		return true
+	case ChatCompletionResponseNovaGroundingUnsupportedClaim:
 		return true
 	default:
 		return false
@@ -973,9 +982,12 @@ func (e NativeChatMetadataBrain) Valid() bool {
 // Defines values for NativeChatResultGrounding.
 const (
 	NativeChatResultGroundingDegraded           NativeChatResultGrounding = "degraded"
+	NativeChatResultGroundingDegradedRetrieval  NativeChatResultGrounding = "degraded_retrieval"
 	NativeChatResultGroundingGrounded           NativeChatResultGrounding = "grounded"
 	NativeChatResultGroundingUngroundedNoChunks NativeChatResultGrounding = "ungrounded_no_chunks"
 	NativeChatResultGroundingUngroundedRefusal  NativeChatResultGrounding = "ungrounded_refusal"
+	NativeChatResultGroundingUnopenedSources    NativeChatResultGrounding = "unopened_sources"
+	NativeChatResultGroundingUnsupportedClaim   NativeChatResultGrounding = "unsupported_claim"
 )
 
 // Valid indicates whether the value is a known member of the NativeChatResultGrounding enum.
@@ -983,11 +995,17 @@ func (e NativeChatResultGrounding) Valid() bool {
 	switch e {
 	case NativeChatResultGroundingDegraded:
 		return true
+	case NativeChatResultGroundingDegradedRetrieval:
+		return true
 	case NativeChatResultGroundingGrounded:
 		return true
 	case NativeChatResultGroundingUngroundedNoChunks:
 		return true
 	case NativeChatResultGroundingUngroundedRefusal:
+		return true
+	case NativeChatResultGroundingUnopenedSources:
+		return true
+	case NativeChatResultGroundingUnsupportedClaim:
 		return true
 	default:
 		return false

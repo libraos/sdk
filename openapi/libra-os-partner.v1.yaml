@@ -1578,7 +1578,7 @@ components:
           type: string
           description: >
             Per-turn grounded-vs-refusal outcome. Omitted on non-retrieval turns.
-          enum: [grounded, ungrounded_refusal, ungrounded_no_chunks, degraded]
+          enum: [grounded, ungrounded_refusal, ungrounded_no_chunks, degraded, unsupported_claim, degraded_retrieval, unopened_sources]
         retrieved_chunks:
           type: array
           description: Source ids of knowledge chunks surfaced by this turn.
@@ -1720,7 +1720,7 @@ components:
           description: >
             Nova OS extension — per-turn grounded-vs-refusal outcome. Omitted on
             non-retrieval turns.
-          enum: [grounded, ungrounded_refusal, ungrounded_no_chunks, degraded]
+          enum: [grounded, ungrounded_refusal, ungrounded_no_chunks, degraded, unsupported_claim, degraded_retrieval, unopened_sources]
         persisted_state:
           type: object
           description: >

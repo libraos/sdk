@@ -3407,6 +3407,85 @@ components:
         name: { type: string }
         created_at: { type: string, format: date-time }
         expires_at: { type: string, format: date-time }
+    RegistryAgent:
+      type: object
+      description: >-
+        One agent as the registry has it loaded. Mirrors the admin surface's
+        AgentSummary; optional fields are omitted rather than null.
+      required: [agent_id, name, agent_type, status, source, editable]
+      properties:
+        agent_id: { type: string }
+        name: { type: string }
+        description: { type: string }
+        agent_type:
+          type: string
+          description: persona | skill
+        brain:
+          type: boolean
+          description: Retrieval/brain capability.
+        status: { type: string, example: healthy }
+        capabilities:
+          type: array
+          items: { type: string }
+        tags:
+          type: array
+          items: { type: string }
+        pack_id: { type: string }
+        model_override:
+          type: string
+          description: >-
+            The model explicitly pinned in the agent's definition. ABSENT on
+            bundled presets, which pin nothing — read `model` for what an agent
+            will actually run on.
+        model:
+          type: string
+          description: >-
+            The EFFECTIVE model: what this agent runs on, whether pinned or
+            inherited. Absent when it cannot be determined, which is reported
+            rather than guessed — a settings-in-database deployment can override
+            the server default, and a confidently wrong answer to "what will
+            this run on" is worse than none.
+        model_source:
+          type: string
+          enum: [agent, server_default]
+          description: >-
+            Where `model` came from. Absent alongside an absent `model`.
+        bound_collections_count: { type: integer }
+        source:
+          type: string
+          enum: [preset, custom]
+          description: >-
+            `preset` ships with the release image; `custom` was created at
+            runtime. A runtime file overriding a preset id reports `custom`,
+            because the runtime file is what executes.
+        source_path: { type: string }
+        editable:
+          type: boolean
+          description: False for an orphan — not in a managed pack directory.
+        disabled:
+          type: boolean
+          description: >-
+            Hidden from the model list while staying reachable by explicit id.
+        loaded_skills:
+          type: array
+          description: Tool packs the agent has loaded.
+          items: { type: string }
+        tool_count: { type: integer }
+        trust:
+          type: object
+          description: Trust record; zero-valued when not scored.
+      example:
+        agent_id: qc-legal-researcher
+        name: QC Legal Researcher
+        agent_type: persona
+        status: healthy
+        source: custom
+        editable: true
+        model_override: anthropic/claude-sonnet-5
+        model: anthropic/claude-sonnet-5
+        model_source: agent
+        bound_collections_count: 2
+
     AgentKey:
       type: object
       description: One-time mint response for a per-agent key carrying the full secret.
@@ -7928,6 +8007,68 @@ paths:
                   is_active: { type: boolean, example: false }
         '403': { $ref: '#/components/responses/Forbidden' }
         '404': { $ref: '#/components/responses/NotFound' }
+  /api/agents:
+    get:
+      operationId: listRegistryAgents
+      summary: List registry agents (admin)
+      description: >-
+        Every agent the registry has loaded, with the definition metadata an
+        admin surface needs. Admin only.
+
+
+        Distinct from `GET /v1/agents`, which is the managed-agents endpoint and
+        returns a different, smaller shape. That one was documented and this one
+        was not, so consumers reached for it first and got a misleading answer
+        (libraos#1351).
+
+
+        A stock image ships more presets than a tenant has agents of its own, so
+        a caller rendering this list unfiltered shows bundled presets as if they
+        belonged to the tenant. Use `source=custom` to avoid that.
+      tags: [Agents]
+      parameters:
+        - name: source
+          in: query
+          required: false
+          description: >-
+            Restrict to agents shipped with the release image (`preset`) or
+            created at runtime (`custom`). Omitted returns both. Any other value
+            is rejected with 400 rather than silently returning everything.
+          schema:
+            type: string
+            enum: [custom, preset]
+      responses:
+        '200':
+          description: >-
+            The matching agents. `warnings` is present only when the request
+            carried query parameters this endpoint does not recognise — they are
+            ignored, and saying so is the difference between a filter that
+            worked and one that was dropped.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [agents]
+                properties:
+                  agents:
+                    type: array
+                    items: { $ref: '#/components/schemas/RegistryAgent' }
+                  warnings:
+                    type: array
+                    description: Query parameters that were ignored.
+                    items: { type: string }
+        '400':
+          description: >-
+            `source` carried a value other than `custom` or `preset`.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: { type: string, example: invalid_source }
+                  message: { type: string }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
   /api/agents/{id}/keys:
     post:
       operationId: createAgentKey

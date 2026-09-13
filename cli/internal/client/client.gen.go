@@ -1150,6 +1150,42 @@ func (e PersonaTriage) Valid() bool {
 	}
 }
 
+// Defines values for RegistryAgentModelSource.
+const (
+	RegistryAgentModelSourceAgent         RegistryAgentModelSource = "agent"
+	RegistryAgentModelSourceServerDefault RegistryAgentModelSource = "server_default"
+)
+
+// Valid indicates whether the value is a known member of the RegistryAgentModelSource enum.
+func (e RegistryAgentModelSource) Valid() bool {
+	switch e {
+	case RegistryAgentModelSourceAgent:
+		return true
+	case RegistryAgentModelSourceServerDefault:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for RegistryAgentSource.
+const (
+	RegistryAgentSourceCustom RegistryAgentSource = "custom"
+	RegistryAgentSourcePreset RegistryAgentSource = "preset"
+)
+
+// Valid indicates whether the value is a known member of the RegistryAgentSource enum.
+func (e RegistryAgentSource) Valid() bool {
+	switch e {
+	case RegistryAgentSourceCustom:
+		return true
+	case RegistryAgentSourcePreset:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for Role.
 const (
 	RoleAssistant Role = "assistant"
@@ -1708,6 +1744,24 @@ func (e WebSearchResultStatus) Valid() bool {
 	case WebSearchResultStatusFetchFailed:
 		return true
 	case WebSearchResultStatusOpened:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ListRegistryAgentsParamsSource.
+const (
+	ListRegistryAgentsParamsSourceCustom ListRegistryAgentsParamsSource = "custom"
+	ListRegistryAgentsParamsSourcePreset ListRegistryAgentsParamsSource = "preset"
+)
+
+// Valid indicates whether the value is a known member of the ListRegistryAgentsParamsSource enum.
+func (e ListRegistryAgentsParamsSource) Valid() bool {
+	switch e {
+	case ListRegistryAgentsParamsSourceCustom:
+		return true
+	case ListRegistryAgentsParamsSourcePreset:
 		return true
 	default:
 		return false
@@ -4176,6 +4230,56 @@ type PromotionCandidates struct {
 	FactKeys *[]string `json:"fact_keys,omitempty"`
 }
 
+// RegistryAgent One agent as the registry has it loaded. Mirrors the admin surface's AgentSummary; optional fields are omitted rather than null.
+type RegistryAgent struct {
+	AgentId string `json:"agent_id"`
+
+	// AgentType persona | skill
+	AgentType             string `json:"agent_type"`
+	BoundCollectionsCount *int   `json:"bound_collections_count,omitempty"`
+
+	// Brain Retrieval/brain capability.
+	Brain        *bool     `json:"brain,omitempty"`
+	Capabilities *[]string `json:"capabilities,omitempty"`
+	Description  *string   `json:"description,omitempty"`
+
+	// Disabled Hidden from the model list while staying reachable by explicit id.
+	Disabled *bool `json:"disabled,omitempty"`
+
+	// Editable False for an orphan — not in a managed pack directory.
+	Editable bool `json:"editable"`
+
+	// LoadedSkills Tool packs the agent has loaded.
+	LoadedSkills *[]string `json:"loaded_skills,omitempty"`
+
+	// Model The EFFECTIVE model: what this agent runs on, whether pinned or inherited. Absent when it cannot be determined, which is reported rather than guessed — a settings-in-database deployment can override the server default, and a confidently wrong answer to "what will this run on" is worse than none.
+	Model *string `json:"model,omitempty"`
+
+	// ModelOverride The model explicitly pinned in the agent's definition. ABSENT on bundled presets, which pin nothing — read `model` for what an agent will actually run on.
+	ModelOverride *string `json:"model_override,omitempty"`
+
+	// ModelSource Where `model` came from. Absent alongside an absent `model`.
+	ModelSource *RegistryAgentModelSource `json:"model_source,omitempty"`
+	Name        string                    `json:"name"`
+	PackId      *string                   `json:"pack_id,omitempty"`
+
+	// Source `preset` ships with the release image; `custom` was created at runtime. A runtime file overriding a preset id reports `custom`, because the runtime file is what executes.
+	Source     RegistryAgentSource `json:"source"`
+	SourcePath *string             `json:"source_path,omitempty"`
+	Status     string              `json:"status"`
+	Tags       *[]string           `json:"tags,omitempty"`
+	ToolCount  *int                `json:"tool_count,omitempty"`
+
+	// Trust Trust record; zero-valued when not scored.
+	Trust *map[string]interface{} `json:"trust,omitempty"`
+}
+
+// RegistryAgentModelSource Where `model` came from. Absent alongside an absent `model`.
+type RegistryAgentModelSource string
+
+// RegistryAgentSource `preset` ships with the release image; `custom` was created at runtime. A runtime file overriding a preset id reports `custom`, because the runtime file is what executes.
+type RegistryAgentSource string
+
 // ReviewerEvidence defines model for ReviewerEvidence.
 type ReviewerEvidence struct {
 	Batched    int     `json:"batched"`
@@ -4837,6 +4941,15 @@ type StreamNativeJobParams struct {
 	// LastEventID Resume token. Replays persisted events with a sequence greater than this value, then continues live. Enables reconnect without losing events.
 	LastEventID *int `json:"Last-Event-ID,omitempty"`
 }
+
+// ListRegistryAgentsParams defines parameters for ListRegistryAgents.
+type ListRegistryAgentsParams struct {
+	// Source Restrict to agents shipped with the release image (`preset`) or created at runtime (`custom`). Omitted returns both. Any other value is rejected with 400 rather than silently returning everything.
+	Source *ListRegistryAgentsParamsSource `form:"source,omitempty" json:"source,omitempty"`
+}
+
+// ListRegistryAgentsParamsSource defines parameters for ListRegistryAgents.
+type ListRegistryAgentsParamsSource string
 
 // CreateAgentKeyJSONBody defines parameters for CreateAgentKey.
 type CreateAgentKeyJSONBody struct {
@@ -6784,6 +6897,9 @@ type ClientInterface interface {
 	// StreamNativeJob request
 	StreamNativeJob(ctx context.Context, apiKey string, jobId string, params *StreamNativeJobParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// ListRegistryAgents request
+	ListRegistryAgents(ctx context.Context, params *ListRegistryAgentsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// CreateAgentKeyWithBody request with any body
 	CreateAgentKeyWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -7546,6 +7662,18 @@ func (c *Client) GetNativeJob(ctx context.Context, apiKey string, jobId string, 
 
 func (c *Client) StreamNativeJob(ctx context.Context, apiKey string, jobId string, params *StreamNativeJobParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewStreamNativeJobRequest(c.Server, apiKey, jobId, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListRegistryAgents(ctx context.Context, params *ListRegistryAgentsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListRegistryAgentsRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -10776,6 +10904,55 @@ func NewStreamNativeJobRequest(server string, apiKey string, jobId string, param
 			req.Header.Set("Last-Event-ID", headerParam0)
 		}
 
+	}
+
+	return req, nil
+}
+
+// NewListRegistryAgentsRequest generates requests for ListRegistryAgents
+func NewListRegistryAgentsRequest(server string, params *ListRegistryAgentsParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/agents")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.Source != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "source", *params.Source, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
 	}
 
 	return req, nil
@@ -18368,6 +18545,9 @@ type ClientWithResponsesInterface interface {
 	// StreamNativeJobWithResponse request
 	StreamNativeJobWithResponse(ctx context.Context, apiKey string, jobId string, params *StreamNativeJobParams, reqEditors ...RequestEditorFn) (*StreamNativeJobResponse, error)
 
+	// ListRegistryAgentsWithResponse request
+	ListRegistryAgentsWithResponse(ctx context.Context, params *ListRegistryAgentsParams, reqEditors ...RequestEditorFn) (*ListRegistryAgentsResponse, error)
+
 	// CreateAgentKeyWithBodyWithResponse request with any body
 	CreateAgentKeyWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateAgentKeyResponse, error)
 
@@ -19210,6 +19390,38 @@ func (r StreamNativeJobResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r StreamNativeJobResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListRegistryAgentsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		Agents []RegistryAgent `json:"agents"`
+
+		// Warnings Query parameters that were ignored.
+		Warnings *[]string `json:"warnings,omitempty"`
+	}
+	JSON400 *struct {
+		Error   *string `json:"error,omitempty"`
+		Message *string `json:"message,omitempty"`
+	}
+	JSON403 *Forbidden
+}
+
+// Status returns HTTPResponse.Status
+func (r ListRegistryAgentsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListRegistryAgentsResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -23673,6 +23885,15 @@ func (c *ClientWithResponses) StreamNativeJobWithResponse(ctx context.Context, a
 	return ParseStreamNativeJobResponse(rsp)
 }
 
+// ListRegistryAgentsWithResponse request returning *ListRegistryAgentsResponse
+func (c *ClientWithResponses) ListRegistryAgentsWithResponse(ctx context.Context, params *ListRegistryAgentsParams, reqEditors ...RequestEditorFn) (*ListRegistryAgentsResponse, error) {
+	rsp, err := c.ListRegistryAgents(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListRegistryAgentsResponse(rsp)
+}
+
 // CreateAgentKeyWithBodyWithResponse request with arbitrary body returning *CreateAgentKeyResponse
 func (c *ClientWithResponses) CreateAgentKeyWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateAgentKeyResponse, error) {
 	rsp, err := c.CreateAgentKeyWithBody(ctx, id, contentType, body, reqEditors...)
@@ -26103,6 +26324,54 @@ func ParseStreamNativeJobResponse(rsp *http.Response) (*StreamNativeJobResponse,
 			return nil, err
 		}
 		response.JSON503 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListRegistryAgentsResponse parses an HTTP response from a ListRegistryAgentsWithResponse call
+func ParseListRegistryAgentsResponse(rsp *http.Response) (*ListRegistryAgentsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListRegistryAgentsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Agents []RegistryAgent `json:"agents"`
+
+			// Warnings Query parameters that were ignored.
+			Warnings *[]string `json:"warnings,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest struct {
+			Error   *string `json:"error,omitempty"`
+			Message *string `json:"message,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
 
 	}
 

@@ -251,6 +251,9 @@ from .list_eval_runs_response_200 import ListEvalRunsResponse200
 from .list_eval_suites_response_200 import ListEvalSuitesResponse200
 from .list_files_recursive import ListFilesRecursive
 from .list_knowledge_signals_status import ListKnowledgeSignalsStatus
+from .list_registry_agents_response_200 import ListRegistryAgentsResponse200
+from .list_registry_agents_response_400 import ListRegistryAgentsResponse400
+from .list_registry_agents_source import ListRegistryAgentsSource
 from .list_settings_response_200 import ListSettingsResponse200
 from .log_entry import LogEntry
 from .log_entry_fields import LogEntryFields
@@ -320,6 +323,10 @@ from .put_house_profile_response_409 import PutHouseProfileResponse409
 from .put_house_profile_response_413 import PutHouseProfileResponse413
 from .put_setting_body import PutSettingBody
 from .query_knowledge_collection_body import QueryKnowledgeCollectionBody
+from .registry_agent import RegistryAgent
+from .registry_agent_model_source import RegistryAgentModelSource
+from .registry_agent_source import RegistryAgentSource
+from .registry_agent_trust import RegistryAgentTrust
 from .reject_action_response_409 import RejectActionResponse409
 from .remove_group_member_response_200 import RemoveGroupMemberResponse200
 from .rename_conversation_body import RenameConversationBody
@@ -672,6 +679,9 @@ __all__ = (
     "ListEvalSuitesResponse200",
     "ListFilesRecursive",
     "ListKnowledgeSignalsStatus",
+    "ListRegistryAgentsResponse200",
+    "ListRegistryAgentsResponse400",
+    "ListRegistryAgentsSource",
     "ListSettingsResponse200",
     "LogEntry",
     "LogEntryFields",
@@ -741,6 +751,10 @@ __all__ = (
     "PutHouseProfileResponse413",
     "PutSettingBody",
     "QueryKnowledgeCollectionBody",
+    "RegistryAgent",
+    "RegistryAgentModelSource",
+    "RegistryAgentSource",
+    "RegistryAgentTrust",
     "RejectActionResponse409",
     "RemoveGroupMemberResponse200",
     "RenameConversationBody",

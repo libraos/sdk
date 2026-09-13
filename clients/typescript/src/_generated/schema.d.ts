@@ -2329,6 +2329,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/agents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List registry agents (admin)
+         * @description Every agent the registry has loaded, with the definition metadata an admin surface needs. Admin only.
+         *
+         *     Distinct from `GET /v1/agents`, which is the managed-agents endpoint and returns a different, smaller shape. That one was documented and this one was not, so consumers reached for it first and got a misleading answer (libraos#1351).
+         *
+         *     A stock image ships more presets than a tenant has agents of its own, so a caller rendering this list unfiltered shows bundled presets as if they belonged to the tenant. Use `source=custom` to avoid that.
+         */
+        get: operations["listRegistryAgents"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/agents/{id}/keys": {
         parameters: {
             query?: never;
@@ -5218,6 +5242,60 @@ export interface components {
             created_at?: string;
             /** Format: date-time */
             expires_at?: string;
+        };
+        /**
+         * @description One agent as the registry has it loaded. Mirrors the admin surface's AgentSummary; optional fields are omitted rather than null.
+         * @example {
+         *       "agent_id": "qc-legal-researcher",
+         *       "name": "QC Legal Researcher",
+         *       "agent_type": "persona",
+         *       "status": "healthy",
+         *       "source": "custom",
+         *       "editable": true,
+         *       "model_override": "anthropic/claude-sonnet-5",
+         *       "model": "anthropic/claude-sonnet-5",
+         *       "model_source": "agent",
+         *       "bound_collections_count": 2
+         *     }
+         */
+        RegistryAgent: {
+            agent_id: string;
+            name: string;
+            description?: string;
+            /** @description persona | skill */
+            agent_type: string;
+            /** @description Retrieval/brain capability. */
+            brain?: boolean;
+            /** @example healthy */
+            status: string;
+            capabilities?: string[];
+            tags?: string[];
+            pack_id?: string;
+            /** @description The model explicitly pinned in the agent's definition. ABSENT on bundled presets, which pin nothing — read `model` for what an agent will actually run on. */
+            model_override?: string;
+            /** @description The EFFECTIVE model: what this agent runs on, whether pinned or inherited. Absent when it cannot be determined, which is reported rather than guessed — a settings-in-database deployment can override the server default, and a confidently wrong answer to "what will this run on" is worse than none. */
+            model?: string;
+            /**
+             * @description Where `model` came from. Absent alongside an absent `model`.
+             * @enum {string}
+             */
+            model_source?: "agent" | "server_default";
+            bound_collections_count?: number;
+            /**
+             * @description `preset` ships with the release image; `custom` was created at runtime. A runtime file overriding a preset id reports `custom`, because the runtime file is what executes.
+             * @enum {string}
+             */
+            source: "preset" | "custom";
+            source_path?: string;
+            /** @description False for an orphan — not in a managed pack directory. */
+            editable: boolean;
+            /** @description Hidden from the model list while staying reachable by explicit id. */
+            disabled?: boolean;
+            /** @description Tool packs the agent has loaded. */
+            loaded_skills?: string[];
+            tool_count?: number;
+            /** @description Trust record; zero-valued when not scored. */
+            trust?: Record<string, never>;
         };
         /** @description One-time mint response for a per-agent key carrying the full secret. */
         AgentKey: {
@@ -10607,6 +10685,47 @@ export interface operations {
             };
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+        };
+    };
+    listRegistryAgents: {
+        parameters: {
+            query?: {
+                /** @description Restrict to agents shipped with the release image (`preset`) or created at runtime (`custom`). Omitted returns both. Any other value is rejected with 400 rather than silently returning everything. */
+                source?: "custom" | "preset";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The matching agents. `warnings` is present only when the request carried query parameters this endpoint does not recognise — they are ignored, and saying so is the difference between a filter that worked and one that was dropped. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        agents: components["schemas"]["RegistryAgent"][];
+                        /** @description Query parameters that were ignored. */
+                        warnings?: string[];
+                    };
+                };
+            };
+            /** @description `source` carried a value other than `custom` or `preset`. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example invalid_source */
+                        error?: string;
+                        message?: string;
+                    };
+                };
+            };
+            403: components["responses"]["Forbidden"];
         };
     };
     createAgentKey: {

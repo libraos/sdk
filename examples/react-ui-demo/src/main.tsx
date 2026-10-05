@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from "react";
+import { useState, type CSSProperties, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import {
   Button, IconButton, Card, Composer, Toggle,
@@ -7,11 +7,12 @@ import {
 } from "@libraos/react-ui";
 import "@libraos/react-ui/styles.css";
 
-function Primitives() {
+function Primitives({ switcher }: { switcher: ReactNode }) {
   const [scope, setScope] = useState("corporate");
   const [text, setText] = useState("");
   return (
     <div className="nv" data-nv-scope={scope} style={{ minHeight: "100vh", background: "var(--nv-paper)", padding: 40, display: "flex", flexDirection: "column", gap: 20, maxWidth: 720, margin: "0 auto" }}>
+      {switcher}
       <Toggle
         options={[{ value: "corporate", label: "Corporate" }, { value: "personal", label: "Personal" }]}
         value={scope}
@@ -48,7 +49,7 @@ const DEALS = [
   { id: "d5", name: "Soylent — renewal", value: "$11,000" },
 ];
 
-function DealsSurface() {
+function DealsSurface({ switcher }: { switcher: ReactNode }) {
   const { openCanvas, closeCanvas } = useContextPane();
   return (
     <WorkspaceShell
@@ -59,6 +60,7 @@ function DealsSurface() {
           <a href="#reports">Reports</a>
         </NavRail>
       }
+      topbar={switcher}
       context={{ kind: "dock", render: () => (
         <DockFrame title="Copilot">
           <div style={{ padding: 12, display: "flex", flexDirection: "column", gap: 10 }}>
@@ -94,11 +96,11 @@ function DealsSurface() {
   );
 }
 
-function Workspace() {
+function Workspace({ switcher }: { switcher: ReactNode }) {
   return (
     <LayoutProvider namespace="demo">
       <ContextPaneProvider>
-        <DealsSurface />
+        <DealsSurface switcher={switcher} />
       </ContextPaneProvider>
     </LayoutProvider>
   );
@@ -106,18 +108,18 @@ function Workspace() {
 
 function Demo() {
   const [view, setView] = useState("primitives");
-  return (
-    <>
-      <div style={{ position: "fixed", top: 10, right: 10, zIndex: 100 }}>
-        <Toggle
-          options={[{ value: "primitives", label: "Primitives" }, { value: "workspace", label: "Workspace" }]}
-          value={view}
-          onChange={setView}
-        />
-      </div>
-      {view === "primitives" ? <Primitives /> : <Workspace />}
-    </>
+  // Single source of view state; the switcher itself is rendered inside each
+  // view's own .nv tree (never as a fixed sibling — see WorkspaceShell's
+  // `topbar` slot for the Workspace view) so --nv-* tokens apply to it and it
+  // never overlaps the dock/canvas header controls in the top-right corner.
+  const switcher = (
+    <Toggle
+      options={[{ value: "primitives", label: "Primitives" }, { value: "workspace", label: "Workspace" }]}
+      value={view}
+      onChange={setView}
+    />
   );
+  return view === "primitives" ? <Primitives switcher={switcher} /> : <Workspace switcher={switcher} />;
 }
 
 createRoot(document.getElementById("root")!).render(<Demo />);

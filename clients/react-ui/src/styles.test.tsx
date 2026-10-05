@@ -1,13 +1,6 @@
 import { describe, it, expect } from "vitest";
-
-declare global {
-  var CSS_STYLES: string;
-  var CSS_ALIASES: string;
-}
-
-// Use global CSS content pre-loaded by vitest setup
-const css = globalThis.CSS_STYLES;
-const aliases = globalThis.CSS_ALIASES;
+import css from "./styles.css?raw";
+import aliases from "./aliases.css?raw";
 
 describe("layout tokens and classes", () => {
   it("defines the layout and status tokens on .nv", () => {

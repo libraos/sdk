@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { render, screen, fireEvent, act } from "@testing-library/react";
 import { LayoutProvider } from "./LayoutProvider";
 import { DockFrame } from "./DockFrame";
@@ -77,5 +77,24 @@ describe("DockFrame", () => {
     setSheet(false);
     expect(screen.queryByRole("dialog")).toBeNull();
     expect(screen.getByLabelText("ask")).toBeTruthy();
+  });
+  it("ends a drag when the divider disappears mid-drag (collapsed via ⌘J), so a late mousemove is a no-op", () => {
+    dock();
+    const sep = screen.getByRole("separator", { name: "Resize Copilot" });
+    fireEvent.mouseDown(sep, { clientX: 1000 });
+    fireEvent.keyDown(window, { key: "j", metaKey: true }); // collapses the dock, unmounting the separator
+    fireEvent.click(screen.getByRole("button", { name: "Expand Copilot" }));
+    fireEvent.mouseMove(document, { clientX: 900 }); // dead drag: must not resize
+    expect(screen.getByRole("separator", { name: "Resize Copilot" }).getAttribute("aria-valuenow")).toBe("360");
+  });
+  it("ends a drag on unmount without throwing or warning", () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const a = dock();
+    const sep = screen.getByRole("separator", { name: "Resize Copilot" });
+    fireEvent.mouseDown(sep, { clientX: 1000 });
+    a.unmount();
+    expect(() => fireEvent.mouseMove(document, { clientX: 900 })).not.toThrow();
+    expect(errorSpy).not.toHaveBeenCalled();
+    errorSpy.mockRestore();
   });
 });

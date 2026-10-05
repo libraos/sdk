@@ -41,12 +41,23 @@ export function DockFrame({ title, actions, variant = "docked", labels = {}, chi
     return () => window.removeEventListener("keydown", onKey, true);
   }, [sheetOpen]);
 
+  // tracks the in-flight drag's teardown so a divider that disappears mid-drag
+  // (sheet breakpoint crossed, dock collapsed via ⌘J, or DockFrame unmounts)
+  // doesn't leave document-level listeners still calling setDockWidth
+  const endDrag = useRef<(() => void) | null>(null);
   const startDrag = (e: React.MouseEvent) => {
+    endDrag.current?.();
     const startX = e.clientX, startW = l.dockWidth;
     const move = (ev: MouseEvent) => l.setDockWidth(startW + (startX - ev.clientX));
-    const up = () => { document.removeEventListener("mousemove", move); document.removeEventListener("mouseup", up); };
+    const up = () => endDrag.current?.();
+    endDrag.current = () => {
+      document.removeEventListener("mousemove", move);
+      document.removeEventListener("mouseup", up);
+      endDrag.current = null;
+    };
     document.addEventListener("mousemove", move); document.addEventListener("mouseup", up);
   };
+  useEffect(() => () => endDrag.current?.(), [sheetMode, l.dockCollapsed]);
   const header = variant === "embedded" ? null : (
     <div className="nv-dock__header">
       <div style={{ flex: 1, minWidth: 0 }}>{title}</div>

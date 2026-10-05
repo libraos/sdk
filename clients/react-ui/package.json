@@ -9,7 +9,8 @@
   "files": ["dist"],
   "exports": {
     ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js", "require": "./dist/index.cjs" },
-    "./styles.css": "./dist/styles.css"
+    "./styles.css": "./dist/styles.css",
+    "./aliases.css": "./dist/aliases.css"
   },
   "scripts": {
     "build": "tsup && node scripts/copy-styles.mjs",

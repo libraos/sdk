@@ -3,7 +3,7 @@ import { render, screen, fireEvent, act } from "@testing-library/react";
 import { LayoutProvider } from "./LayoutProvider";
 import { WorkspaceShell } from "./WorkspaceShell";
 import { NavRail } from "./NavRail";
-import { resolveContextPane, type ContextPane } from "./contextPane";
+import { resolveContextPane, warnIfNoReason, type ContextPane } from "./contextPane";
 
 type Listener = () => void;
 let narrow = { drawer: false, sheet: false };
@@ -49,6 +49,14 @@ describe("WorkspaceShell", () => {
     expect(warn).toHaveBeenCalledWith(expect.stringMatching(/reason/));
     warn.mockRestore();
   });
+  it("does not warn in a production build even with an empty reason", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    vi.stubEnv("NODE_ENV", "production");
+    warnIfNoReason({ kind: "none", reason: " " });
+    expect(warn).not.toHaveBeenCalled();
+    vi.unstubAllEnvs();
+    warn.mockRestore();
+  });
   it("collapses the nav from the rail and restores it from the work area", () => {
     shell();
     fireEvent.click(screen.getByRole("button", { name: "Collapse navigation" }));
@@ -65,8 +73,11 @@ describe("WorkspaceShell", () => {
     const burger = screen.getByRole("button", { name: "Open navigation" });
     fireEvent.click(burger);
     expect(nav.getAttribute("aria-hidden")).toBeNull();
+    const main = screen.getByRole("main", { hidden: true });
+    expect(main.hasAttribute("inert")).toBe(true);
     fireEvent.keyDown(window, { key: "Escape" });
     expect(nav.getAttribute("aria-hidden")).toBe("true");
+    expect(main.hasAttribute("inert")).toBe(false);
     expect(document.activeElement).toBe(burger);
     fireEvent.click(burger);
     fireEvent.click(document.querySelector(".nv-shell__backdrop")!);

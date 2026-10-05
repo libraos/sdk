@@ -10,10 +10,13 @@ export const CanvasStateContext = createContext<OpenCanvas | null>(null);
 export function resolveContextPane(surface: ContextPane, canvas: OpenCanvas | null): ContextPane {
   return canvas ? { kind: "canvas", render: canvas.render, onClose: canvas.onClose } : surface;
 }
+// no @types/node in this package: bundlers replace the literal expression `process.env.NODE_ENV`
+// at build time, so this ambient declaration is enough to type-check it without a Node dependency.
+declare const process: { env: Record<string, string | undefined> };
 function isProduction(): boolean {
-  // no @types/node in this package: read NODE_ENV through globalThis (bundlers replace it at build time anyway)
-  const env = (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env;
-  return env?.NODE_ENV === "production";
+  // In an unreplaced browser build `process` is undefined and the reference throws —
+  // that's treated as "not production" (dev-safe default) rather than crashing.
+  try { return process.env.NODE_ENV === "production"; } catch { return false; }
 }
 /** A surface without a context pane must say why — the reviewable deviation. */
 export function warnIfNoReason(pane: ContextPane): void {

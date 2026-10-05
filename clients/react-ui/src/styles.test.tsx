@@ -21,6 +21,10 @@ describe("layout tokens and classes", () => {
     expect(css).toMatch(/\.nv-shell\.is-dock-collapsed\s*\{[^}]*--nv-context-w:\s*var\(--nv-rail-w\)/);
     expect(css).toMatch(/\.nv-dock--sheet\s*\{[^}]*width:[^;]*var\(--nv-dock-w/);
   });
+  it("lays the shell's own controls out in a bar, not absolutely over the topbar", () => {
+    expect(css).toContain(".nv-shell__bar");
+    expect(css).not.toMatch(/\.nv-shell__(hamburger|nav-restore)[^{]*\{[^}]*position:\s*absolute/);
+  });
   it("aliases Desk's bare tokens onto --nv-*", () => {
     for (const t of ["--paper", "--surface", "--surface-2", "--ink", "--ink-soft", "--muted", "--line", "--line-strong", "--accent", "--accent-ink", "--accent-tint", "--sh-1", "--sh-2", "--sh-pop", "--r-sm", "--r", "--r-lg"]) {
       expect(aliases).toMatch(new RegExp(`${t}:\\s*var\\(--nv-`));

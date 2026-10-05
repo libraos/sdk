@@ -31,4 +31,16 @@ describe("CanvasFrame", () => {
     fireEvent.keyDown(window, { key: "Escape" });
     expect(onClose).toHaveBeenCalledTimes(1);
   });
+  it("closes on an Escape from inside the canvas or from the page body, not from the work pane or a composition", () => {
+    const onClose = vi.fn();
+    render(<><input aria-label="search" /><CanvasFrame title="T" onClose={onClose}><textarea aria-label="draft" /></CanvasFrame></>);
+    fireEvent.keyDown(screen.getByLabelText("search"), { key: "Escape" }); // a work-pane field (or a product modal)
+    expect(onClose).not.toHaveBeenCalled();
+    fireEvent.keyDown(screen.getByLabelText("draft"), { key: "Escape", isComposing: true }); // an IME cancel
+    expect(onClose).not.toHaveBeenCalled();
+    fireEvent.keyDown(screen.getByLabelText("draft"), { key: "Escape" });
+    expect(onClose).toHaveBeenCalledTimes(1);
+    fireEvent.keyDown(document.body, { key: "Escape" });
+    expect(onClose).toHaveBeenCalledTimes(2);
+  });
 });

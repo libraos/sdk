@@ -117,8 +117,9 @@
 .nv-shell.is-nav-collapsed .nv-shell__nav { visibility: hidden; }
 .nv-shell__work { min-width: 0; overflow: auto; position: relative; }
 .nv-shell__context { min-width: 0; overflow: hidden; border-left: 1px solid var(--nv-line); background: var(--nv-surface); }
-.nv-shell__hamburger, .nv-shell__nav-restore { display: none; }
-.nv-shell.is-nav-collapsed .nv-shell__nav-restore { display: inline-flex; position: absolute; top: 10px; left: 10px; z-index: 2; }
+/* the hamburger / nav-restore button and the product's topbar share one row at the top of <main> */
+.nv-shell__bar { display: flex; align-items: center; gap: 8px; min-width: 0; padding: 10px 12px; }
+.nv-shell__bar > .nv-shell__hamburger, .nv-shell__bar > .nv-shell__nav-restore { flex: none; }
 .nv-shell__backdrop { position: fixed; inset: 0; background: rgba(33, 30, 24, 0.28); z-index: 40; }
 .nv-navrail { display: flex; flex-direction: column; height: 100%; padding: 14px 12px; gap: 12px; }
 .nv-navrail__items { display: flex; flex-direction: column; gap: 2px; }
@@ -153,7 +154,6 @@
 }
 @media (max-width: 720px) {
   .nv-shell, .nv-shell--canvas, .nv-shell--none { grid-template-columns: minmax(0, 1fr); }
-  .nv-shell__hamburger { display: inline-flex; position: absolute; top: 10px; left: 10px; z-index: 2; }
   .nv-shell.is-drawer .nv-shell__nav { position: fixed; top: 0; bottom: 0; left: 0; width: min(86vw, 300px); z-index: 50; transform: translateX(-100%); transition: transform 0.2s var(--nv-ease); visibility: visible; }
   .nv-shell.is-drawer-open .nv-shell__nav { transform: translateX(0); }
 }

@@ -20,7 +20,9 @@ function isProduction(): boolean {
 }
 /** A surface without a context pane must say why — the reviewable deviation. */
 export function warnIfNoReason(pane: ContextPane): void {
-  if (pane.kind === "none" && !pane.reason.trim() && !isProduction()) {
+  // production first, and `reason` may be missing altogether for an untyped caller: never throw here
+  if (pane.kind !== "none" || isProduction()) return;
+  if (typeof pane.reason !== "string" || !pane.reason.trim()) {
     console.warn("[@libraos/react-ui] WorkspaceShell: a { kind: \"none\" } context pane needs a non-empty reason.");
   }
 }

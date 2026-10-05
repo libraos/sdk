@@ -1,10 +1,14 @@
-import { useContext, useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { useLayout } from "./LayoutProvider";
 import { DRAWER_QUERY, useMediaQuery } from "./useMediaQuery";
 import { CanvasStateContext, resolveContextPane, warnIfNoReason, type ContextPane } from "./contextPane";
 import { IconButton } from "../components/IconButton";
 
 export interface ShellLabels { nav?: string; work?: string; context?: string; openNav?: string; closeNav?: string; restoreNav?: string }
+
+/** What the shell tells its NavRail: in drawer mode the rail's brand button closes the drawer. Internal. */
+export interface ShellState { drawer: boolean; closeDrawer(): void; labels: ShellLabels }
+export const ShellContext = createContext<ShellState | null>(null);
 
 export function WorkspaceShell({ nav, context, topbar, labels = {}, children }: { nav: ReactNode; context: ContextPane; topbar?: ReactNode; labels?: ShellLabels; children: ReactNode }) {
   const layout = useLayout();
@@ -39,6 +43,7 @@ export function WorkspaceShell({ nav, context, topbar, labels = {}, children }: 
     }
   }, [drawerOpen]);
   function closeDrawer() { restoreFocusRef.current = true; setDrawerOpen(false); }
+  const shellState = useMemo<ShellState>(() => ({ drawer, closeDrawer, labels }), [drawer, labels]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const navHidden = drawer && !drawerOpen;
   const cls = ["nv", "nv-shell", `nv-shell--${pane.kind}`,
@@ -48,7 +53,15 @@ export function WorkspaceShell({ nav, context, topbar, labels = {}, children }: 
   // --nv-dock-w, not --nv-context-w: the column width is derived from it in styles.css so the
   // collapsed-dock rule can still shrink the column (an inline --nv-context-w would beat it)
   const style = { "--nv-dock-w": `${layout.dockWidth}px` } as CSSProperties;
+  const burger = drawer
+    ? <IconButton ref={burgerRef} className="nv-shell__hamburger" aria-label={labels.openNav ?? "Open navigation"} aria-expanded={drawerOpen} onClick={() => setDrawerOpen(true)}>☰</IconButton>
+    : null;
+  const restore = !drawer && layout.navCollapsed
+    ? <IconButton className="nv-shell__nav-restore" aria-label={labels.restoreNav ?? "Show navigation"} onClick={() => layout.setNavCollapsed(false)}>›</IconButton>
+    : null;
+  const hasTopbar = topbar != null && topbar !== false && topbar !== "";
   return (
+    <ShellContext.Provider value={shellState}>
     <div className={cls} style={style}>
       <nav ref={navRef} className="nv-shell__nav" aria-label={labels.nav ?? "Navigation"}
         aria-hidden={navHidden ? "true" : undefined} inert={navHidden || undefined}
@@ -57,12 +70,12 @@ export function WorkspaceShell({ nav, context, topbar, labels = {}, children }: 
       </nav>
       {drawerOpen && <div className="nv-shell__backdrop" onClick={closeDrawer} />}
       <main className="nv-shell__work" aria-label={labels.work ?? "Work"} inert={drawerOpen || undefined}>
-        {drawer && <IconButton ref={burgerRef} className="nv-shell__hamburger" aria-label={labels.openNav ?? "Open navigation"} aria-expanded={drawerOpen} onClick={() => setDrawerOpen(true)}>☰</IconButton>}
-        {!drawer && layout.navCollapsed && <IconButton className="nv-shell__nav-restore" aria-label={labels.restoreNav ?? "Show navigation"} onClick={() => layout.setNavCollapsed(false)}>›</IconButton>}
-        {topbar}
+        {/* the shell's own controls sit in a row with the topbar, never positioned over it */}
+        {(burger || restore || hasTopbar) && <div className="nv-shell__bar">{burger}{restore}{topbar}</div>}
         {children}
       </main>
       {pane.kind !== "none" && <aside className="nv-shell__context" aria-label={labels.context ?? (pane.kind === "canvas" ? "Canvas" : "Copilot")} inert={drawerOpen || undefined}>{pane.render()}</aside>}
     </div>
+    </ShellContext.Provider>
   );
 }

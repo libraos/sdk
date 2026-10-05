@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
+import { useState, type ReactNode } from "react";
 import { render, screen, fireEvent, act } from "@testing-library/react";
 import { LayoutProvider } from "./LayoutProvider";
 import { DockFrame } from "./DockFrame";
@@ -12,20 +13,28 @@ beforeEach(() => {
 });
 const setSheet = (v: boolean) => act(() => { sheet = v; listeners.forEach((l) => l()); });
 const mem = (init: Record<string, string> = {}) => { const d = { ...init }; return { d, getItem: (k: string) => d[k] ?? null, setItem: (k: string, v: string) => { d[k] = v; } }; };
-const dock = (variant?: "docked" | "chat-first" | "embedded", st = mem()) => render(
+const dock = (variant?: "docked" | "chat-first" | "embedded", st = mem(), children: ReactNode = <textarea aria-label="ask" />) => render(
   <LayoutProvider namespace="t" storage={st}>
-    <DockFrame title="Copilot" variant={variant} labels={{ name: "Copilot" }}><textarea aria-label="ask" /></DockFrame>
+    <DockFrame title="Copilot" variant={variant} labels={{ name: "Copilot" }}>{children}</DockFrame>
   </LayoutProvider>);
+// accessible-tree queries: a hidden dock body is still mounted, but must not be reachable
+const ask = () => screen.queryByRole("textbox", { name: "ask" });
+function Counter() { const [n, setN] = useState(0); return <button onClick={() => setN(n + 1)}>{`count ${n}`}</button>; }
+const counter = () => screen.getByText(/^count \d$/, { selector: "button" });
 
 describe("DockFrame", () => {
   it("is open on a first visit and collapses to a labelled rail that expands again", () => {
     const st = mem(); dock("docked", st);
-    expect(screen.getByLabelText("ask")).toBeTruthy();
+    expect(ask()).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Collapse Copilot" }));
-    expect(screen.queryByLabelText("ask")).toBeNull();
+    expect(ask()).toBeNull();
+    // still mounted, but hidden and inert behind the rail
+    expect(screen.getByLabelText("ask").closest("[hidden]")).toBeTruthy();
+    expect(screen.getByLabelText("ask").closest("[inert]")).toBeTruthy();
     expect(st.d["t.dock.collapsed"]).toBe("1");
     fireEvent.click(screen.getByRole("button", { name: "Expand Copilot" }));
-    expect(screen.getByLabelText("ask")).toBeTruthy();
+    expect(ask()).toBeTruthy();
+    expect(screen.getByLabelText("ask").closest("[hidden],[inert]")).toBeNull();
   });
   it("honours a stored collapsed state", () => {
     dock("docked", mem({ "t.dock.collapsed": "1" }));
@@ -60,7 +69,8 @@ describe("DockFrame", () => {
   });
   it("becomes a sheet at ≤1100px: a launcher opens a modal dialog, Escape closes it, focus returns", () => {
     sheet = true; dock();
-    expect(screen.queryByLabelText("ask")).toBeNull();
+    expect(ask()).toBeNull();
+    expect(screen.getByLabelText("ask").closest("[inert]")).toBeTruthy();
     const launcher = screen.getByRole("button", { name: "Open Copilot" });
     fireEvent.click(launcher);
     const dlg = screen.getByRole("dialog", { name: "Copilot" });
@@ -76,7 +86,46 @@ describe("DockFrame", () => {
     fireEvent.click(screen.getByRole("button", { name: "Open Copilot" }));
     setSheet(false);
     expect(screen.queryByRole("dialog")).toBeNull();
-    expect(screen.getByLabelText("ask")).toBeTruthy();
+    expect(ask()).toBeTruthy();
+  });
+  it("keeps its children mounted across collapse and expand", () => {
+    dock("docked", mem(), <Counter />);
+    fireEvent.click(counter());
+    fireEvent.click(screen.getByRole("button", { name: "Collapse Copilot" }));
+    fireEvent.click(screen.getByRole("button", { name: "Expand Copilot" }));
+    expect(counter().textContent).toBe("count 1");
+  });
+  it("keeps its children mounted across sheet open, close and reopen", () => {
+    sheet = true; dock("docked", mem(), <Counter />);
+    fireEvent.click(screen.getByRole("button", { name: "Open Copilot" }));
+    fireEvent.click(counter());
+    fireEvent.keyDown(window, { key: "Escape" });
+    fireEvent.click(screen.getByRole("button", { name: "Open Copilot" }));
+    expect(counter().textContent).toBe("count 1");
+  });
+  it("keeps its children mounted when the 1100px breakpoint is crossed either way", () => {
+    sheet = true; dock("docked", mem(), <Counter />);
+    fireEvent.click(screen.getByRole("button", { name: "Open Copilot" }));
+    fireEvent.click(counter());
+    setSheet(false);
+    expect(counter().textContent).toBe("count 1");
+    fireEvent.click(counter());
+    setSheet(true);
+    fireEvent.click(screen.getByRole("button", { name: "Open Copilot" }));
+    expect(counter().textContent).toBe("count 2");
+  });
+  it("traps Tab in the sheet over enabled controls only: a disabled last button doesn't let focus escape", () => {
+    sheet = true;
+    dock("docked", mem(), <><a>no href</a><textarea aria-label="ask" /><button disabled>later</button></>);
+    fireEvent.click(screen.getByRole("button", { name: "Open Copilot" }));
+    const close = screen.getByRole("button", { name: "Close Copilot" });
+    const ta = screen.getByLabelText("ask");
+    expect(document.activeElement).toBe(close); // first focusable
+    ta.focus();
+    fireEvent.keyDown(window, { key: "Tab" });
+    expect(document.activeElement).toBe(close);
+    fireEvent.keyDown(window, { key: "Tab", shiftKey: true });
+    expect(document.activeElement).toBe(ta);
   });
   it("ends a drag when the divider disappears mid-drag (collapsed via ⌘J), so a late mousemove is a no-op", () => {
     dock();

@@ -131,6 +131,9 @@
 .nv-dock__header { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-bottom: 1px solid var(--nv-line); }
 .nv-dock__body { flex: 1; min-height: 0; overflow: auto; }
 .nv-dock--collapsed { height: 100%; }
+/* the frame stays mounted while collapsed or while the sheet is closed; .nv-dock's display:flex
+   would otherwise beat the UA [hidden] rule */
+.nv-dock[hidden] { display: none; }
 .nv-dock__rail { width: var(--nv-rail-w); height: 100%; border: 0; background: var(--nv-surface); cursor: pointer; color: var(--nv-muted); }
 .nv-dock__rail-label { display: inline-block; writing-mode: vertical-rl; transform: rotate(180deg); font-size: 12px; letter-spacing: 0.04em; }
 .nv-dock--chat-first, .nv-dock--embedded { height: 100%; }

@@ -29,6 +29,7 @@
   --nv-nav-w: 260px;
   --nv-rail-w: 36px;
   --nv-context-w: 360px;
+  --nv-dock-w: 360px; /* the dock's stored width; WorkspaceShell sets it inline */
   --nv-context-min: 280px;
   --nv-context-max: 520px;
   --nv-danger: #a3392f;
@@ -104,7 +105,10 @@
 .nv-composer__actions { display: inline-flex; align-items: center; gap: 8px; }
 
 /* ── Workspace shell (slice 2) ─────────────────────────────────────────── */
-.nv-shell { display: grid; grid-template-columns: var(--nv-nav-w) minmax(0, 1fr) var(--nv-context-w); height: 100vh; background: var(--nv-paper); }
+/* Two variables on purpose: the shell's inline style sets --nv-dock-w (the stored width), and the
+   column width --nv-context-w is derived here, so .is-dock-collapsed can still override it
+   (an inline --nv-context-w would beat any class rule and leave a 36px rail in a 360px column). */
+.nv-shell { --nv-context-w: var(--nv-dock-w, 360px); display: grid; grid-template-columns: var(--nv-nav-w) minmax(0, 1fr) var(--nv-context-w); height: 100vh; background: var(--nv-paper); }
 .nv-shell.is-nav-collapsed { --nv-nav-w: 0px; }
 .nv-shell.is-dock-collapsed { --nv-context-w: var(--nv-rail-w); }
 .nv-shell--none { grid-template-columns: var(--nv-nav-w) minmax(0, 1fr); }
@@ -131,7 +135,7 @@
 .nv-dock__rail-label { display: inline-block; writing-mode: vertical-rl; transform: rotate(180deg); font-size: 12px; letter-spacing: 0.04em; }
 .nv-dock--chat-first, .nv-dock--embedded { height: 100%; }
 .nv-dock__launcher { position: fixed; right: 16px; bottom: 16px; z-index: 30; }
-.nv-dock--sheet { position: fixed; top: 0; right: 0; bottom: 0; width: min(92vw, var(--nv-context-w)); z-index: 50; background: var(--nv-surface); box-shadow: var(--nv-sh-pop); }
+.nv-dock--sheet { position: fixed; top: 0; right: 0; bottom: 0; width: min(92vw, var(--nv-dock-w, 360px)); z-index: 50; background: var(--nv-surface); box-shadow: var(--nv-sh-pop); }
 /* Canvas */
 .nv-canvas { display: flex; flex-direction: column; height: 100%; min-width: 0; }
 .nv-canvas__header { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--nv-line); }

@@ -40,6 +40,12 @@ describe("WorkspaceShell", () => {
     expect(screen.getByRole("complementary").textContent).toBe("DOCK");
     expect(document.querySelector(".nv-shell--dock")).toBeTruthy();
   });
+  it("feeds the stored dock width to --nv-dock-w and leaves --nv-context-w to the stylesheet", () => {
+    shell();
+    const el = document.querySelector<HTMLElement>(".nv-shell")!;
+    expect(el.style.getPropertyValue("--nv-dock-w")).toBe("360px");
+    expect(el.style.getPropertyValue("--nv-context-w")).toBe("");
+  });
   it("has no aside for a declared none, and warns in dev when the reason is empty", () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
     shell({ kind: "none", reason: "admin console" });

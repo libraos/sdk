@@ -45,7 +45,9 @@ export function WorkspaceShell({ nav, context, topbar, labels = {}, children }: 
     layout.navCollapsed && !drawer ? "is-nav-collapsed" : "",
     pane.kind === "dock" && layout.dockCollapsed ? "is-dock-collapsed" : "",
     drawer ? "is-drawer" : "", drawerOpen ? "is-drawer-open" : ""].filter(Boolean).join(" ");
-  const style = { "--nv-context-w": `${layout.dockWidth}px` } as CSSProperties;
+  // --nv-dock-w, not --nv-context-w: the column width is derived from it in styles.css so the
+  // collapsed-dock rule can still shrink the column (an inline --nv-context-w would beat it)
+  const style = { "--nv-dock-w": `${layout.dockWidth}px` } as CSSProperties;
   return (
     <div className={cls} style={style}>
       <nav ref={navRef} className="nv-shell__nav" aria-label={labels.nav ?? "Navigation"}

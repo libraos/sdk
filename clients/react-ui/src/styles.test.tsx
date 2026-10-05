@@ -14,6 +14,13 @@ describe("layout tokens and classes", () => {
     expect(css).toContain("@media (max-width: 720px)");
     expect(css).toContain("prefers-reduced-motion");
   });
+  it("collapses the dock column to the rail: the inline width feeds --nv-dock-w, not --nv-context-w", () => {
+    // the shell's inline style sets --nv-dock-w; --nv-context-w is derived from it in CSS,
+    // so the collapsed-state override is not beaten by an inline declaration
+    expect(css).toMatch(/\.nv-shell\s*\{[^}]*--nv-context-w:\s*var\(--nv-dock-w/);
+    expect(css).toMatch(/\.nv-shell\.is-dock-collapsed\s*\{[^}]*--nv-context-w:\s*var\(--nv-rail-w\)/);
+    expect(css).toMatch(/\.nv-dock--sheet\s*\{[^}]*width:[^;]*var\(--nv-dock-w/);
+  });
   it("aliases Desk's bare tokens onto --nv-*", () => {
     for (const t of ["--paper", "--surface", "--surface-2", "--ink", "--ink-soft", "--muted", "--line", "--line-strong", "--accent", "--accent-ink", "--accent-tint", "--sh-1", "--sh-2", "--sh-pop", "--r-sm", "--r", "--r-lg"]) {
       expect(aliases).toMatch(new RegExp(`${t}:\\s*var\\(--nv-`));

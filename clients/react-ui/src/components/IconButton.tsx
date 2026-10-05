@@ -1,6 +1,6 @@
-import type { ButtonHTMLAttributes } from "react";
+import type { ComponentPropsWithRef } from "react";
 
-export interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface IconButtonProps extends ComponentPropsWithRef<"button"> {
   "aria-label": string;
   size?: "sm" | "md";
 }

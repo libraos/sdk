@@ -929,7 +929,8 @@ describe("DockFrame", () => {
     expect(dlg.contains(document.activeElement)).toBe(true);
     fireEvent.keyDown(window, { key: "Escape" });
     expect(screen.queryByRole("dialog")).toBeNull();
-    expect(document.activeElement).toBe(launcher);
+    // the launcher re-mounts after the sheet closes: re-query it
+    expect(document.activeElement).toBe(screen.getByRole("button", { name: "Open Copilot" }));
   });
   it("leaving the sheet breakpoint while the sheet is open returns to the docked frame", () => {
     sheet = true; dock();
@@ -1222,6 +1223,6 @@ export type SurfaceContext<Scope extends string = string> = { scope: Scope; iden
   - Then `cd ../../examples/react-ui-demo && npm install --no-audit --no-fund && npm run build`. Expected: the build succeeds. If the network is unavailable, report it and skip this step.
 - [ ] **Step 5: Commit**
 ```bash
-git add clients/react-ui examples/react-ui-demo/src/main.tsx
+git add clients/react-ui/src clients/react-ui/package.json clients/react-ui/README.md examples/react-ui-demo/src/main.tsx   # explicit paths: clients/react-ui/node_modules is an untracked symlink
 git commit -m "feat(react-ui): CanvasFrame + export helpers (Desk's filename rules), barrel exports, 0.2.0-alpha.0, README section and a three-pane demo"
 ```

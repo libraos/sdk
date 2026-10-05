@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
-import { useLayout } from "./LayoutProvider";
+import { useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import { DockToggleRegistry, useLayout, type DockToggleHandler } from "./LayoutProvider";
 import { SHEET_QUERY, useMediaQuery } from "./useMediaQuery";
 import { DOCK_MAX_WIDTH, DOCK_MIN_WIDTH } from "./store";
 import { IconButton } from "../components/IconButton";
@@ -64,6 +64,23 @@ export function DockFrame({ title, actions, variant = "docked", labels = {}, chi
     document.addEventListener("mousemove", move); document.addEventListener("mouseup", up);
   };
   useEffect(() => () => endDrag.current?.(), [sheetMode, l.dockCollapsed]);
+
+  // ⌘J: a docked frame registers itself with the provider while mounted; the handler reads the
+  // latest render through a ref so the registration itself never churns.
+  const register = useContext(DockToggleRegistry);
+  const onToggle = useRef<DockToggleHandler>(() => false);
+  useEffect(() => {
+    onToggle.current = () => {
+      if (frameRef.current?.parentElement?.closest("[inert]")) return false; // e.g. behind the nav drawer
+      if (sheetMode) { if (sheetOpen) closeSheet(); else setSheetOpen(true); }
+      else l.toggleDock();
+      return true;
+    };
+  });
+  useEffect(() => {
+    if (variant !== "docked" || !register) return;
+    return register(() => onToggle.current());
+  }, [variant, register]);
 
   const collapsed = variant === "docked" && !sheetMode && l.dockCollapsed;
   const visible = sheetMode ? sheetOpen : !collapsed;

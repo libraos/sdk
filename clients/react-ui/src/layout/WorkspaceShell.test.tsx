@@ -3,6 +3,7 @@ import { render, screen, fireEvent, act } from "@testing-library/react";
 import { LayoutProvider } from "./LayoutProvider";
 import { WorkspaceShell } from "./WorkspaceShell";
 import { NavRail } from "./NavRail";
+import { DockFrame } from "./DockFrame";
 import { resolveContextPane, warnIfNoReason, type ContextPane } from "./contextPane";
 
 type Listener = () => void;
@@ -88,6 +89,15 @@ describe("WorkspaceShell", () => {
     fireEvent.click(burger);
     fireEvent.click(document.querySelector(".nv-shell__backdrop")!);
     expect(nav.getAttribute("aria-hidden")).toBe("true");
+  });
+  it("⌘J while the nav drawer is open does nothing: the dock behind it is inert", () => {
+    narrow = { drawer: true, sheet: true };
+    shell({ kind: "dock", render: () => <DockFrame title="Copilot"><p>thread</p></DockFrame> });
+    fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
+    const ev = new KeyboardEvent("keydown", { key: "j", metaKey: true, bubbles: true, cancelable: true });
+    act(() => { window.dispatchEvent(ev); });
+    expect(ev.defaultPrevented).toBe(false);
+    expect(screen.queryByRole("dialog", { hidden: true })?.hasAttribute("hidden")).toBe(true);
   });
   it("leaving the narrow breakpoint closes the drawer and un-inerts the nav", () => {
     narrow = { drawer: true, sheet: true };

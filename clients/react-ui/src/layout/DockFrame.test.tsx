@@ -81,6 +81,15 @@ describe("DockFrame", () => {
     // the launcher re-mounts after the sheet closes: re-query it
     expect(document.activeElement).toBe(screen.getByRole("button", { name: "Open Copilot" }));
   });
+  it("⌘J in sheet mode opens the sheet and closes it again, without touching the docked state", () => {
+    sheet = true; const st = mem(); dock("docked", st);
+    fireEvent.keyDown(window, { key: "j", metaKey: true });
+    expect(screen.getByRole("dialog", { name: "Copilot" })).toBeTruthy();
+    fireEvent.keyDown(window, { key: "j", metaKey: true });
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(document.activeElement).toBe(screen.getByRole("button", { name: "Open Copilot" }));
+    expect(st.d["t.dock.collapsed"]).toBeUndefined();
+  });
   it("leaving the sheet breakpoint while the sheet is open returns to the docked frame", () => {
     sheet = true; dock();
     fireEvent.click(screen.getByRole("button", { name: "Open Copilot" }));

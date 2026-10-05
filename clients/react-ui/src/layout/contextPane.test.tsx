@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, act } from "@testing-library/react";
+import { DockFrame } from "./DockFrame";
 import { LayoutProvider, useLayout } from "./LayoutProvider";
 import { ContextPaneProvider, useContextPane } from "./contextPane";
 import { WorkspaceShell } from "./WorkspaceShell";
@@ -44,5 +45,18 @@ describe("ContextPaneProvider", () => {
     expect(document.querySelector(".nv-shell.is-dock-collapsed")).toBeNull();
     fireEvent.click(screen.getByText("close"));
     expect(document.querySelector(".nv-shell.is-dock-collapsed")).toBeTruthy();
+  });
+  it("⌘J while a canvas pre-empts the dock leaves the dock state alone", () => {
+    render(
+      <LayoutProvider namespace="t" storage={mem()}><ContextPaneProvider>
+        <WorkspaceShell nav={<div />} context={{ kind: "dock", render: () => <DockFrame title="Copilot"><p>thread</p></DockFrame> }}><Work /></WorkspaceShell>
+      </ContextPaneProvider></LayoutProvider>);
+    fireEvent.click(screen.getByText("open1"));
+    const ev = new KeyboardEvent("keydown", { key: "j", ctrlKey: true, bubbles: true, cancelable: true });
+    act(() => { window.dispatchEvent(ev); });
+    expect(ev.defaultPrevented).toBe(false);
+    fireEvent.click(screen.getByText("close"));
+    expect(document.querySelector(".nv-shell.is-dock-collapsed")).toBeNull();
+    expect(screen.getByRole("button", { name: "Collapse Copilot" })).toBeTruthy();
   });
 });

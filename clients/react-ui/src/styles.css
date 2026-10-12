@@ -26,6 +26,17 @@
   --nv-font-ui: "Spline Sans", ui-sans-serif, system-ui, sans-serif;
   --nv-font-display: "Fraunces", Georgia, serif;
   --nv-font-prose: "Newsreader", Georgia, serif;
+  --nv-nav-w: 260px;
+  --nv-rail-w: 36px;
+  --nv-context-w: 360px;
+  --nv-dock-w: 360px; /* the dock's stored width; WorkspaceShell sets it inline */
+  --nv-context-min: 280px;
+  --nv-context-max: 520px;
+  --nv-danger: #a3392f;
+  --nv-danger-ink: #7a2a22;
+  --nv-warn-bg: #fbf1dc;
+  --nv-warn-ink: #7a5212;
+  --nv-warn-line: rgba(122, 82, 18, 0.25);
   color: var(--nv-ink);
   font-family: var(--nv-font-ui);
 }
@@ -92,3 +103,60 @@
 .nv-composer__input { flex: 1; border: 0; outline: 0; resize: none; background: transparent; font-family: var(--nv-font-ui); font-size: 15.5px; line-height: 1.55; color: var(--nv-ink); max-height: 180px; padding: 11px 0; }
 .nv-composer__input::placeholder { color: var(--nv-muted); }
 .nv-composer__actions { display: inline-flex; align-items: center; gap: 8px; }
+
+/* ── Workspace shell (slice 2) ─────────────────────────────────────────── */
+/* Two variables on purpose: the shell's inline style sets --nv-dock-w (the stored width), and the
+   column width --nv-context-w is derived here, so .is-dock-collapsed can still override it
+   (an inline --nv-context-w would beat any class rule and leave a 36px rail in a 360px column). */
+.nv-shell { --nv-context-w: var(--nv-dock-w, 360px); display: grid; grid-template-columns: var(--nv-nav-w) minmax(0, 1fr) var(--nv-context-w); height: 100vh; background: var(--nv-paper); }
+.nv-shell.is-nav-collapsed { --nv-nav-w: 0px; }
+.nv-shell.is-dock-collapsed { --nv-context-w: var(--nv-rail-w); }
+.nv-shell--none { grid-template-columns: var(--nv-nav-w) minmax(0, 1fr); }
+.nv-shell--canvas { grid-template-columns: var(--nv-nav-w) minmax(0, 1fr) minmax(380px, 0.95fr); }
+.nv-shell__nav { overflow: auto; border-right: 1px solid var(--nv-line); background: var(--nv-surface); min-width: 0; }
+.nv-shell.is-nav-collapsed .nv-shell__nav { visibility: hidden; }
+.nv-shell__work { min-width: 0; overflow: auto; position: relative; }
+.nv-shell__context { min-width: 0; overflow: hidden; border-left: 1px solid var(--nv-line); background: var(--nv-surface); }
+/* the hamburger / nav-restore button and the product's topbar share one row at the top of <main> */
+.nv-shell__bar { display: flex; align-items: center; gap: 8px; min-width: 0; padding: 10px 12px; }
+.nv-shell__bar > .nv-shell__hamburger, .nv-shell__bar > .nv-shell__nav-restore { flex: none; }
+.nv-shell__backdrop { position: fixed; inset: 0; background: rgba(33, 30, 24, 0.28); z-index: 40; }
+.nv-navrail { display: flex; flex-direction: column; height: 100%; padding: 14px 12px; gap: 12px; }
+.nv-navrail__items { display: flex; flex-direction: column; gap: 2px; }
+.nv-navrail__recents { flex: 1; overflow: auto; }
+.nv-navrail__footer { margin-top: auto; }
+/* Dock */
+.nv-dock { position: relative; display: flex; flex-direction: column; height: 100%; min-width: 0; }
+.nv-dock__divider { position: absolute; left: -3px; top: 0; bottom: 0; width: 6px; cursor: col-resize; z-index: 3; }
+.nv-dock__divider:focus-visible { outline: 2px solid var(--nv-accent); }
+.nv-dock__header { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-bottom: 1px solid var(--nv-line); }
+.nv-dock__body { flex: 1; min-height: 0; overflow: auto; }
+.nv-dock--collapsed { height: 100%; }
+/* the frame stays mounted while collapsed or while the sheet is closed; .nv-dock's display:flex
+   would otherwise beat the UA [hidden] rule */
+.nv-dock[hidden] { display: none; }
+.nv-dock__rail { width: var(--nv-rail-w); height: 100%; border: 0; background: var(--nv-surface); cursor: pointer; color: var(--nv-muted); }
+.nv-dock__rail-label { display: inline-block; writing-mode: vertical-rl; transform: rotate(180deg); font-size: 12px; letter-spacing: 0.04em; }
+.nv-dock--chat-first, .nv-dock--embedded { height: 100%; }
+.nv-dock__launcher { position: fixed; right: 16px; bottom: 16px; z-index: 30; }
+.nv-dock--sheet { position: fixed; top: 0; right: 0; bottom: 0; width: min(92vw, var(--nv-dock-w, 360px)); z-index: 50; background: var(--nv-surface); box-shadow: var(--nv-sh-pop); }
+/* Canvas */
+.nv-canvas { display: flex; flex-direction: column; height: 100%; min-width: 0; }
+.nv-canvas__header { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--nv-line); }
+.nv-canvas__versions { display: inline-flex; align-items: center; gap: 4px; color: var(--nv-muted); font-size: 12px; }
+.nv-canvas__body { flex: 1; min-height: 0; overflow: auto; }
+
+@media (max-width: 1100px) {
+  .nv-shell, .nv-shell--canvas { grid-template-columns: var(--nv-nav-w) minmax(0, 1fr); }
+  /* the dock's launcher and sheet are position:fixed — keep the aside rendered but out of the grid */
+  .nv-shell__context { position: fixed; width: 0; height: 0; overflow: visible; border: 0; }
+  .nv-shell--canvas .nv-shell__context { height: auto; overflow: hidden; position: fixed; inset: 0 0 0 auto; width: min(100vw, 720px); z-index: 45; box-shadow: var(--nv-sh-pop); }
+}
+@media (max-width: 720px) {
+  .nv-shell, .nv-shell--canvas, .nv-shell--none { grid-template-columns: minmax(0, 1fr); }
+  .nv-shell.is-drawer .nv-shell__nav { position: fixed; top: 0; bottom: 0; left: 0; width: min(86vw, 300px); z-index: 50; transform: translateX(-100%); transition: transform 0.2s var(--nv-ease); visibility: visible; }
+  .nv-shell.is-drawer-open .nv-shell__nav { transform: translateX(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nv-shell.is-drawer .nv-shell__nav { transition: none; }
+}

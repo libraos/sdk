@@ -1,0 +1,158 @@
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import { useState, type ReactNode } from "react";
+import { render, screen, fireEvent, act } from "@testing-library/react";
+import { LayoutProvider } from "./LayoutProvider";
+import { DockFrame } from "./DockFrame";
+
+type Listener = () => void;
+let sheet = false; const listeners = new Set<Listener>();
+beforeEach(() => {
+  sheet = false; listeners.clear();
+  window.matchMedia = ((q: string) => ({ get matches() { return q.includes("1100") ? sheet : false; }, media: q,
+    addEventListener: (_: string, l: Listener) => listeners.add(l), removeEventListener: (_: string, l: Listener) => listeners.delete(l) })) as unknown as typeof window.matchMedia;
+});
+const setSheet = (v: boolean) => act(() => { sheet = v; listeners.forEach((l) => l()); });
+const mem = (init: Record<string, string> = {}) => { const d = { ...init }; return { d, getItem: (k: string) => d[k] ?? null, setItem: (k: string, v: string) => { d[k] = v; } }; };
+const dock = (variant?: "docked" | "chat-first" | "embedded", st = mem(), children: ReactNode = <textarea aria-label="ask" />) => render(
+  <LayoutProvider namespace="t" storage={st}>
+    <DockFrame title="Copilot" variant={variant} labels={{ name: "Copilot" }}>{children}</DockFrame>
+  </LayoutProvider>);
+// accessible-tree queries: a hidden dock body is still mounted, but must not be reachable
+const ask = () => screen.queryByRole("textbox", { name: "ask" });
+function Counter() { const [n, setN] = useState(0); return <button onClick={() => setN(n + 1)}>{`count ${n}`}</button>; }
+const counter = () => screen.getByText(/^count \d$/, { selector: "button" });
+
+describe("DockFrame", () => {
+  it("is open on a first visit and collapses to a labelled rail that expands again", () => {
+    const st = mem(); dock("docked", st);
+    expect(ask()).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Collapse Copilot" }));
+    expect(ask()).toBeNull();
+    // still mounted, but hidden and inert behind the rail
+    expect(screen.getByLabelText("ask").closest("[hidden]")).toBeTruthy();
+    expect(screen.getByLabelText("ask").closest("[inert]")).toBeTruthy();
+    expect(st.d["t.dock.collapsed"]).toBe("1");
+    fireEvent.click(screen.getByRole("button", { name: "Expand Copilot" }));
+    expect(ask()).toBeTruthy();
+    expect(screen.getByLabelText("ask").closest("[hidden],[inert]")).toBeNull();
+  });
+  it("honours a stored collapsed state", () => {
+    dock("docked", mem({ "t.dock.collapsed": "1" }));
+    expect(screen.getByRole("button", { name: "Expand Copilot" })).toBeTruthy();
+  });
+  it("resizes from the divider with arrow keys, clamped and persisted", () => {
+    const st = mem(); dock("docked", st);
+    const sep = screen.getByRole("separator", { name: "Resize Copilot" });
+    expect(sep.getAttribute("aria-valuenow")).toBe("360");
+    fireEvent.keyDown(sep, { key: "ArrowLeft" });   // dock is on the right: left = wider
+    expect(sep.getAttribute("aria-valuenow")).toBe("376");
+    for (let i = 0; i < 40; i++) fireEvent.keyDown(sep, { key: "ArrowLeft" });
+    expect(sep.getAttribute("aria-valuenow")).toBe("520");
+    expect(st.d["t.dock.width"]).toBe("520");
+  });
+  it("resizes by mouse drag", () => {
+    dock();
+    const sep = screen.getByRole("separator", { name: "Resize Copilot" });
+    fireEvent.mouseDown(sep, { clientX: 1000 });
+    fireEvent.mouseMove(document, { clientX: 960 });
+    fireEvent.mouseUp(document);
+    expect(sep.getAttribute("aria-valuenow")).toBe("400");
+  });
+  it("chat-first has no collapse or resize; embedded has no header", () => {
+    const a = dock("chat-first");
+    expect(screen.queryByRole("button", { name: "Collapse Copilot" })).toBeNull();
+    expect(screen.queryByRole("separator")).toBeNull();
+    a.unmount();
+    dock("embedded");
+    expect(screen.queryByText("Copilot")).toBeNull();
+    expect(screen.getByLabelText("ask")).toBeTruthy();
+  });
+  it("becomes a sheet at ≤1100px: a launcher opens a modal dialog, Escape closes it, focus returns", () => {
+    sheet = true; dock();
+    expect(ask()).toBeNull();
+    expect(screen.getByLabelText("ask").closest("[inert]")).toBeTruthy();
+    const launcher = screen.getByRole("button", { name: "Open Copilot" });
+    fireEvent.click(launcher);
+    const dlg = screen.getByRole("dialog", { name: "Copilot" });
+    expect(dlg.getAttribute("aria-modal")).toBe("true");
+    expect(dlg.contains(document.activeElement)).toBe(true);
+    fireEvent.keyDown(window, { key: "Escape" });
+    expect(screen.queryByRole("dialog")).toBeNull();
+    // the launcher re-mounts after the sheet closes: re-query it
+    expect(document.activeElement).toBe(screen.getByRole("button", { name: "Open Copilot" }));
+  });
+  it("⌘J in sheet mode opens the sheet and closes it again, without touching the docked state", () => {
+    sheet = true; const st = mem(); dock("docked", st);
+    fireEvent.keyDown(window, { key: "j", metaKey: true });
+    expect(screen.getByRole("dialog", { name: "Copilot" })).toBeTruthy();
+    fireEvent.keyDown(window, { key: "j", metaKey: true });
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(document.activeElement).toBe(screen.getByRole("button", { name: "Open Copilot" }));
+    expect(st.d["t.dock.collapsed"]).toBeUndefined();
+  });
+  it("leaving the sheet breakpoint while the sheet is open returns to the docked frame", () => {
+    sheet = true; dock();
+    fireEvent.click(screen.getByRole("button", { name: "Open Copilot" }));
+    setSheet(false);
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(ask()).toBeTruthy();
+  });
+  it("keeps its children mounted across collapse and expand", () => {
+    dock("docked", mem(), <Counter />);
+    fireEvent.click(counter());
+    fireEvent.click(screen.getByRole("button", { name: "Collapse Copilot" }));
+    fireEvent.click(screen.getByRole("button", { name: "Expand Copilot" }));
+    expect(counter().textContent).toBe("count 1");
+  });
+  it("keeps its children mounted across sheet open, close and reopen", () => {
+    sheet = true; dock("docked", mem(), <Counter />);
+    fireEvent.click(screen.getByRole("button", { name: "Open Copilot" }));
+    fireEvent.click(counter());
+    fireEvent.keyDown(window, { key: "Escape" });
+    fireEvent.click(screen.getByRole("button", { name: "Open Copilot" }));
+    expect(counter().textContent).toBe("count 1");
+  });
+  it("keeps its children mounted when the 1100px breakpoint is crossed either way", () => {
+    sheet = true; dock("docked", mem(), <Counter />);
+    fireEvent.click(screen.getByRole("button", { name: "Open Copilot" }));
+    fireEvent.click(counter());
+    setSheet(false);
+    expect(counter().textContent).toBe("count 1");
+    fireEvent.click(counter());
+    setSheet(true);
+    fireEvent.click(screen.getByRole("button", { name: "Open Copilot" }));
+    expect(counter().textContent).toBe("count 2");
+  });
+  it("traps Tab in the sheet over enabled controls only: a disabled last button doesn't let focus escape", () => {
+    sheet = true;
+    dock("docked", mem(), <><a>no href</a><textarea aria-label="ask" /><button disabled>later</button></>);
+    fireEvent.click(screen.getByRole("button", { name: "Open Copilot" }));
+    const close = screen.getByRole("button", { name: "Close Copilot" });
+    const ta = screen.getByLabelText("ask");
+    expect(document.activeElement).toBe(close); // first focusable
+    ta.focus();
+    fireEvent.keyDown(window, { key: "Tab" });
+    expect(document.activeElement).toBe(close);
+    fireEvent.keyDown(window, { key: "Tab", shiftKey: true });
+    expect(document.activeElement).toBe(ta);
+  });
+  it("ends a drag when the divider disappears mid-drag (collapsed via ⌘J), so a late mousemove is a no-op", () => {
+    dock();
+    const sep = screen.getByRole("separator", { name: "Resize Copilot" });
+    fireEvent.mouseDown(sep, { clientX: 1000 });
+    fireEvent.keyDown(window, { key: "j", metaKey: true }); // collapses the dock, unmounting the separator
+    fireEvent.click(screen.getByRole("button", { name: "Expand Copilot" }));
+    fireEvent.mouseMove(document, { clientX: 900 }); // dead drag: must not resize
+    expect(screen.getByRole("separator", { name: "Resize Copilot" }).getAttribute("aria-valuenow")).toBe("360");
+  });
+  it("ends a drag on unmount without throwing or warning", () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const a = dock();
+    const sep = screen.getByRole("separator", { name: "Resize Copilot" });
+    fireEvent.mouseDown(sep, { clientX: 1000 });
+    a.unmount();
+    expect(() => fireEvent.mouseMove(document, { clientX: 900 })).not.toThrow();
+    expect(errorSpy).not.toHaveBeenCalled();
+    errorSpy.mockRestore();
+  });
+});

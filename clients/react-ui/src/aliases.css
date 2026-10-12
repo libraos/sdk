@@ -1,0 +1,10 @@
+/* @libraos/react-ui — aliases for apps migrating from bare tokens (e.g. Desk).
+   Import AFTER styles.css. Bare names resolve to the kit's --nv-* tokens. Drop when migrated. */
+.nv {
+  --paper: var(--nv-paper); --surface: var(--nv-surface); --surface-2: var(--nv-surface-2);
+  --ink: var(--nv-ink); --ink-soft: var(--nv-ink-soft); --muted: var(--nv-muted);
+  --line: var(--nv-line); --line-strong: var(--nv-line-strong);
+  --accent: var(--nv-accent); --accent-ink: var(--nv-accent-ink); --accent-tint: var(--nv-accent-tint); --accent-glow: var(--nv-accent-glow);
+  --sh-1: var(--nv-sh-1); --sh-2: var(--nv-sh-2); --sh-pop: var(--nv-sh-pop);
+  --r-sm: var(--nv-r-sm); --r: var(--nv-r); --r-lg: var(--nv-r-lg);
+}

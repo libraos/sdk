@@ -6,29 +6,62 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-T = TypeVar("T", bound="AgentUpdateGuardrails")
+from ..types import UNSET, Unset
+
+T = TypeVar("T", bound="AgentSkillFound")
 
 
 @_attrs_define
-class AgentUpdateGuardrails:
-    """ """
+class AgentSkillFound:
+    """
+    Attributes:
+        name (str):
+        path (str):
+        error (str | Unset):
+    """
 
+    name: str
+    path: str
+    error: str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
+        name = self.name
+
+        path = self.path
+
+        error = self.error
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
+        field_dict.update(
+            {
+                "name": name,
+                "path": path,
+            }
+        )
+        if error is not UNSET:
+            field_dict["error"] = error
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        agent_update_guardrails = cls()
+        name = d.pop("name")
 
-        agent_update_guardrails.additional_properties = d
-        return agent_update_guardrails
+        path = d.pop("path")
+
+        error = d.pop("error", UNSET)
+
+        agent_skill_found = cls(
+            name=name,
+            path=path,
+            error=error,
+        )
+
+        agent_skill_found.additional_properties = d
+        return agent_skill_found
 
     @property
     def additional_keys(self) -> list[str]:

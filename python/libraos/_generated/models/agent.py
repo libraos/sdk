@@ -8,6 +8,9 @@ from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 from dateutil.parser import isoparse
 
+from ..models.agent_egress_guard import AgentEgressGuard
+from ..models.agent_on_ambiguous_entity import AgentOnAmbiguousEntity
+from ..models.agent_tool_scope import AgentToolScope
 from ..models.agent_type import AgentType
 from ..models.agent_visibility import AgentVisibility
 from ..types import UNSET, Unset
@@ -15,6 +18,8 @@ from ..types import UNSET, Unset
 if TYPE_CHECKING:
     from ..models.agent_filesystem import AgentFilesystem
     from ..models.agent_guardrails import AgentGuardrails
+    from ..models.agent_thinking import AgentThinking
+    from ..models.agent_triage import AgentTriage
     from ..models.output_type_contract import OutputTypeContract
 
 
@@ -43,7 +48,50 @@ class Agent:
             validates every assistant reply against `schema` before return.
             Server-side since v0.1.4.
         knowledge_bindings (list[str] | Unset):
-        guardrails (AgentGuardrails | Unset):
+        guardrails (AgentGuardrails | Unset): Per-agent opt-outs for the inbound guardrail chain. Each value is
+            `enabled`, `disabled` or empty (inherit). On PUT/PATCH an omitted key
+            keeps its value, a `null` key clears that override, and a top-level
+            `guardrails: null` clears every override.
+        thinking (AgentThinking | Unset): Native model reasoning on the agent's answer-tier call only (never the
+            planner, triage or skill sub-tasks). `off` (the default) sends no
+            reasoning parameter, so a model that reasons by default keeps
+            reasoning; `none` asks the model not to reason. Per-call
+            `metadata.thinking` wins. On PUT/PATCH send `{}` (or `effort: ""`) to
+            clear; `null` keeps the current value.
+        tool_choice (str | Unset): Forces (or forbids) a tool call on the first model call of the
+            agent loop: `auto` (default), `none`, `required`, or a tool name.
+            Per-call `metadata.tool_choice` wins. A named tool the request does
+            not carry is dropped with a server-side warning.
+        direct_tools (list[str] | Unset): Persona only. Tools offered on the persona's direct (non-planner)
+            answer path. Names are validated against the live tool registry.
+            Together with `tools`, this is the persona's declared tool scope;
+            declaring neither keeps the whole catalog.
+        tool_scope (AgentToolScope | Unset): `none` declares an agent that needs no catalog tools. Rejected
+            (400) together with a non-empty `tools` or `direct_tools`.
+        triage (AgentTriage | Unset): Persona planner routing pin. `triage` keeps the per-turn
+            regex/LLM triage cascade, `always` runs the planner every turn,
+            `never` skips it. Empty clears the pin (inherit the server default).
+            Per-call `metadata.brain` still wins.
+        turn_budget_tokens (int | Unset): Per-agent token budget for each model call of the agent's turn
+            (overrides the server-wide turn budget). `0` means unset. When
+            the agent is the outermost agent of a turn, its value also governs
+            the skill agents it dispatches.
+        agent_skills (list[str] | Unset): Agent Skills attached to this agent, as `name` (latest published
+            catalog version) or `name@N` (pinned version). No duplicate names.
+            Every entry must resolve for the caller's organization at write
+            time (a published `/v1/skills` version, or for unpinned names a
+            server-side skills folder); otherwise 400 with `field:
+            agent_skills`.
+        on_ambiguous_entity (AgentOnAmbiguousEntity | Unset): What a persona does when the documents its answer relies
+            on span
+            several sources the question does not choose between: `state`
+            names the document the answer is based on, `ask` returns a
+            clarifying question instead of an answer, `off` does nothing.
+            Per-call `metadata.on_ambiguous_entity` wins; empty inherits the
+            server default.
+        egress_guard (AgentEgressGuard | Unset): Outbound search-query guard for this agent's turns. Guards only
+            tighten: the server-wide, agent and per-call settings are combined,
+            and `off` never removes a guard set elsewhere.
         filesystem (AgentFilesystem | Unset):
         created_at (datetime.datetime | Unset):
         type_ (AgentType | Unset): Whether this agent dispatches to other skill agents (persona) or
@@ -68,6 +116,15 @@ class Agent:
     output_type: OutputTypeContract | Unset = UNSET
     knowledge_bindings: list[str] | Unset = UNSET
     guardrails: AgentGuardrails | Unset = UNSET
+    thinking: AgentThinking | Unset = UNSET
+    tool_choice: str | Unset = UNSET
+    direct_tools: list[str] | Unset = UNSET
+    tool_scope: AgentToolScope | Unset = UNSET
+    triage: AgentTriage | Unset = UNSET
+    turn_budget_tokens: int | Unset = UNSET
+    agent_skills: list[str] | Unset = UNSET
+    on_ambiguous_entity: AgentOnAmbiguousEntity | Unset = UNSET
+    egress_guard: AgentEgressGuard | Unset = UNSET
     filesystem: AgentFilesystem | Unset = UNSET
     created_at: datetime.datetime | Unset = UNSET
     type_: AgentType | Unset = UNSET
@@ -120,6 +177,38 @@ class Agent:
         if not isinstance(self.guardrails, Unset):
             guardrails = self.guardrails.to_dict()
 
+        thinking: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.thinking, Unset):
+            thinking = self.thinking.to_dict()
+
+        tool_choice = self.tool_choice
+
+        direct_tools: list[str] | Unset = UNSET
+        if not isinstance(self.direct_tools, Unset):
+            direct_tools = self.direct_tools
+
+        tool_scope: str | Unset = UNSET
+        if not isinstance(self.tool_scope, Unset):
+            tool_scope = self.tool_scope.value
+
+        triage: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.triage, Unset):
+            triage = self.triage.to_dict()
+
+        turn_budget_tokens = self.turn_budget_tokens
+
+        agent_skills: list[str] | Unset = UNSET
+        if not isinstance(self.agent_skills, Unset):
+            agent_skills = self.agent_skills
+
+        on_ambiguous_entity: str | Unset = UNSET
+        if not isinstance(self.on_ambiguous_entity, Unset):
+            on_ambiguous_entity = self.on_ambiguous_entity.value
+
+        egress_guard: str | Unset = UNSET
+        if not isinstance(self.egress_guard, Unset):
+            egress_guard = self.egress_guard.value
+
         filesystem: dict[str, Any] | Unset = UNSET
         if not isinstance(self.filesystem, Unset):
             filesystem = self.filesystem.to_dict()
@@ -170,6 +259,24 @@ class Agent:
             field_dict["knowledge_bindings"] = knowledge_bindings
         if guardrails is not UNSET:
             field_dict["guardrails"] = guardrails
+        if thinking is not UNSET:
+            field_dict["thinking"] = thinking
+        if tool_choice is not UNSET:
+            field_dict["tool_choice"] = tool_choice
+        if direct_tools is not UNSET:
+            field_dict["direct_tools"] = direct_tools
+        if tool_scope is not UNSET:
+            field_dict["tool_scope"] = tool_scope
+        if triage is not UNSET:
+            field_dict["triage"] = triage
+        if turn_budget_tokens is not UNSET:
+            field_dict["turn_budget_tokens"] = turn_budget_tokens
+        if agent_skills is not UNSET:
+            field_dict["agent_skills"] = agent_skills
+        if on_ambiguous_entity is not UNSET:
+            field_dict["on_ambiguous_entity"] = on_ambiguous_entity
+        if egress_guard is not UNSET:
+            field_dict["egress_guard"] = egress_guard
         if filesystem is not UNSET:
             field_dict["filesystem"] = filesystem
         if created_at is not UNSET:
@@ -187,6 +294,8 @@ class Agent:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.agent_filesystem import AgentFilesystem
         from ..models.agent_guardrails import AgentGuardrails
+        from ..models.agent_thinking import AgentThinking
+        from ..models.agent_triage import AgentTriage
         from ..models.output_type_contract import OutputTypeContract
 
         d = dict(src_dict)
@@ -240,6 +349,49 @@ class Agent:
         else:
             guardrails = AgentGuardrails.from_dict(_guardrails)
 
+        _thinking = d.pop("thinking", UNSET)
+        thinking: AgentThinking | Unset
+        if isinstance(_thinking, Unset):
+            thinking = UNSET
+        else:
+            thinking = AgentThinking.from_dict(_thinking)
+
+        tool_choice = d.pop("tool_choice", UNSET)
+
+        direct_tools = cast(list[str], d.pop("direct_tools", UNSET))
+
+        _tool_scope = d.pop("tool_scope", UNSET)
+        tool_scope: AgentToolScope | Unset
+        if isinstance(_tool_scope, Unset):
+            tool_scope = UNSET
+        else:
+            tool_scope = AgentToolScope(_tool_scope)
+
+        _triage = d.pop("triage", UNSET)
+        triage: AgentTriage | Unset
+        if isinstance(_triage, Unset):
+            triage = UNSET
+        else:
+            triage = AgentTriage.from_dict(_triage)
+
+        turn_budget_tokens = d.pop("turn_budget_tokens", UNSET)
+
+        agent_skills = cast(list[str], d.pop("agent_skills", UNSET))
+
+        _on_ambiguous_entity = d.pop("on_ambiguous_entity", UNSET)
+        on_ambiguous_entity: AgentOnAmbiguousEntity | Unset
+        if isinstance(_on_ambiguous_entity, Unset):
+            on_ambiguous_entity = UNSET
+        else:
+            on_ambiguous_entity = AgentOnAmbiguousEntity(_on_ambiguous_entity)
+
+        _egress_guard = d.pop("egress_guard", UNSET)
+        egress_guard: AgentEgressGuard | Unset
+        if isinstance(_egress_guard, Unset):
+            egress_guard = UNSET
+        else:
+            egress_guard = AgentEgressGuard(_egress_guard)
+
         _filesystem = d.pop("filesystem", UNSET)
         filesystem: AgentFilesystem | Unset
         if isinstance(_filesystem, Unset):
@@ -281,6 +433,15 @@ class Agent:
             output_type=output_type,
             knowledge_bindings=knowledge_bindings,
             guardrails=guardrails,
+            thinking=thinking,
+            tool_choice=tool_choice,
+            direct_tools=direct_tools,
+            tool_scope=tool_scope,
+            triage=triage,
+            turn_budget_tokens=turn_budget_tokens,
+            agent_skills=agent_skills,
+            on_ambiguous_entity=on_ambiguous_entity,
+            egress_guard=egress_guard,
             filesystem=filesystem,
             created_at=created_at,
             type_=type_,

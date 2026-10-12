@@ -10,17 +10,54 @@ from .add_group_member_request import AddGroupMemberRequest
 from .add_group_member_response_200 import AddGroupMemberResponse200
 from .agent import Agent
 from .agent_create import AgentCreate
+from .agent_create_egress_guard import AgentCreateEgressGuard
 from .agent_create_filesystem import AgentCreateFilesystem
-from .agent_create_guardrails import AgentCreateGuardrails
+from .agent_create_on_ambiguous_entity import AgentCreateOnAmbiguousEntity
+from .agent_create_tool_scope import AgentCreateToolScope
 from .agent_create_visibility import AgentCreateVisibility
+from .agent_egress_guard import AgentEgressGuard
 from .agent_filesystem import AgentFilesystem
 from .agent_guardrails import AgentGuardrails
+from .agent_guardrails_date_normalizer import AgentGuardrailsDateNormalizer
+from .agent_guardrails_pii_redactor import AgentGuardrailsPiiRedactor
 from .agent_key import AgentKey
 from .agent_list import AgentList
+from .agent_on_ambiguous_entity import AgentOnAmbiguousEntity
+from .agent_skill_diff import AgentSkillDiff
+from .agent_skill_edit import AgentSkillEdit
+from .agent_skill_edit_files import AgentSkillEditFiles
+from .agent_skill_file_diff import AgentSkillFileDiff
+from .agent_skill_file_diff_change import AgentSkillFileDiffChange
+from .agent_skill_files import AgentSkillFiles
+from .agent_skill_files_files import AgentSkillFilesFiles
+from .agent_skill_found import AgentSkillFound
+from .agent_skill_import_preview import AgentSkillImportPreview
+from .agent_skill_import_preview_preview import AgentSkillImportPreviewPreview
+from .agent_skill_import_request import AgentSkillImportRequest
+from .agent_skill_import_result import AgentSkillImportResult
+from .agent_skill_import_result_results_item import AgentSkillImportResultResultsItem
+from .agent_skill_list import AgentSkillList
+from .agent_skill_source import AgentSkillSource
+from .agent_skill_source_kind import AgentSkillSourceKind
+from .agent_skill_summary import AgentSkillSummary
+from .agent_skill_summary_latest_status import AgentSkillSummaryLatestStatus
+from .agent_skill_upstream import AgentSkillUpstream
+from .agent_skill_version import AgentSkillVersion
+from .agent_skill_version_files import AgentSkillVersionFiles
+from .agent_skill_version_list import AgentSkillVersionList
+from .agent_skill_version_status import AgentSkillVersionStatus
+from .agent_skill_write_result import AgentSkillWriteResult
+from .agent_thinking import AgentThinking
+from .agent_thinking_effort import AgentThinkingEffort
+from .agent_tool_scope import AgentToolScope
+from .agent_triage import AgentTriage
+from .agent_triage_default_brain import AgentTriageDefaultBrain
 from .agent_type import AgentType
 from .agent_update import AgentUpdate
+from .agent_update_egress_guard import AgentUpdateEgressGuard
 from .agent_update_filesystem import AgentUpdateFilesystem
-from .agent_update_guardrails import AgentUpdateGuardrails
+from .agent_update_on_ambiguous_entity import AgentUpdateOnAmbiguousEntity
+from .agent_update_tool_scope import AgentUpdateToolScope
 from .agent_update_visibility import AgentUpdateVisibility
 from .agent_visibility import AgentVisibility
 from .app import App
@@ -53,7 +90,15 @@ from .chat_completion_choice import ChatCompletionChoice
 from .chat_completion_choice_finish_reason import ChatCompletionChoiceFinishReason
 from .chat_completion_request import ChatCompletionRequest
 from .chat_completion_request_metadata import ChatCompletionRequestMetadata
+from .chat_completion_request_metadata_brain import ChatCompletionRequestMetadataBrain
+from .chat_completion_request_metadata_egress_guard import ChatCompletionRequestMetadataEgressGuard
+from .chat_completion_request_metadata_on_ambiguous_entity import ChatCompletionRequestMetadataOnAmbiguousEntity
+from .chat_completion_request_metadata_research_depth import ChatCompletionRequestMetadataResearchDepth
+from .chat_completion_request_metadata_thinking import ChatCompletionRequestMetadataThinking
+from .chat_completion_request_metadata_thinking_effort import ChatCompletionRequestMetadataThinkingEffort
+from .chat_completion_request_reasoning_effort import ChatCompletionRequestReasoningEffort
 from .chat_completion_response import ChatCompletionResponse
+from .chat_completion_response_format import ChatCompletionResponseFormat
 from .chat_completion_response_nova_grounding import ChatCompletionResponseNovaGrounding
 from .chat_completion_response_persisted_state import ChatCompletionResponsePersistedState
 from .chat_completion_usage import ChatCompletionUsage
@@ -93,6 +138,7 @@ from .create_action_request_input import CreateActionRequestInput
 from .create_action_request_preview import CreateActionRequestPreview
 from .create_action_request_risk import CreateActionRequestRisk
 from .create_agent_key_body import CreateAgentKeyBody
+from .create_agent_skill_files_body import CreateAgentSkillFilesBody
 from .create_eval_suite_revision_body import CreateEvalSuiteRevisionBody
 from .create_group_request import CreateGroupRequest
 from .create_knowledge_collection_body import CreateKnowledgeCollectionBody
@@ -108,6 +154,22 @@ from .custom_tool_callback_retry import CustomToolCallbackRetry
 from .custom_tool_callback_retry_backoff import CustomToolCallbackRetryBackoff
 from .custom_tool_result_request import CustomToolResultRequest
 from .debug_retrieve_knowledge_body import DebugRetrieveKnowledgeBody
+from .decision_activate_request import DecisionActivateRequest
+from .decision_activate_result import DecisionActivateResult
+from .decision_model import DecisionModel
+from .decision_not_better_error import DecisionNotBetterError
+from .decision_not_better_error_error import DecisionNotBetterErrorError
+from .decision_predict_request import DecisionPredictRequest
+from .decision_predict_result import DecisionPredictResult
+from .decision_prediction import DecisionPrediction
+from .decision_prediction_distribution import DecisionPredictionDistribution
+from .decision_prediction_ood import DecisionPredictionOod
+from .decision_report import DecisionReport
+from .decision_report_n_per_label import DecisionReportNPerLabel
+from .decision_report_recall_per_label import DecisionReportRecallPerLabel
+from .decision_train_request import DecisionTrainRequest
+from .decision_training_row import DecisionTrainingRow
+from .decision_version import DecisionVersion
 from .delete_connector_response_200 import DeleteConnectorResponse200
 from .delete_group_response_200 import DeleteGroupResponse200
 from .delete_service_key_response_200 import DeleteServiceKeyResponse200
@@ -172,6 +234,8 @@ from .field_access import FieldAccess
 from .field_access_event import FieldAccessEvent
 from .field_access_event_list import FieldAccessEventList
 from .field_caller import FieldCaller
+from .field_error import FieldError
+from .field_error_error import FieldErrorError
 from .field_evaluate_request import FieldEvaluateRequest
 from .field_evaluate_request_mode import FieldEvaluateRequestMode
 from .field_evaluate_request_record import FieldEvaluateRequestRecord
@@ -189,11 +253,13 @@ from .file_deleted import FileDeleted
 from .file_meta import FileMeta
 from .file_meta_list import FileMetaList
 from .file_object import FileObject
+from .flat_error import FlatError
 from .get_agent_schema_response_200 import GetAgentSchemaResponse200
 from .get_connector_response_200 import GetConnectorResponse200
 from .get_logs_level import GetLogsLevel
 from .get_logs_source import GetLogsSource
 from .get_memory_scope import GetMemoryScope
+from .get_model_recommendations_compatibility import GetModelRecommendationsCompatibility
 from .get_sharepoint_sync_status_response_200 import GetSharepointSyncStatusResponse200
 from .governance_mode import GovernanceMode
 from .group import Group
@@ -273,6 +339,11 @@ from .memory_log_scope import MemoryLogScope
 from .message import Message
 from .message_request import MessageRequest
 from .message_request_metadata import MessageRequestMetadata
+from .message_request_metadata_egress_guard import MessageRequestMetadataEgressGuard
+from .message_request_metadata_on_ambiguous_entity import MessageRequestMetadataOnAmbiguousEntity
+from .message_request_metadata_research_depth import MessageRequestMetadataResearchDepth
+from .message_request_metadata_thinking import MessageRequestMetadataThinking
+from .message_request_metadata_thinking_effort import MessageRequestMetadataThinkingEffort
 from .message_response import MessageResponse
 from .message_response_stop_reason import MessageResponseStopReason
 from .message_response_type import MessageResponseType
@@ -280,11 +351,30 @@ from .message_response_usage import MessageResponseUsage
 from .model_config import ModelConfig
 from .model_list import ModelList
 from .model_list_entry import ModelListEntry
+from .model_recommendation_report import ModelRecommendationReport
+from .model_recommendation_report_catalog import ModelRecommendationReportCatalog
+from .model_recommendation_report_environment import ModelRecommendationReportEnvironment
+from .model_recommendation_report_verification import ModelRecommendationReportVerification
+from .model_recommendation_result import ModelRecommendationResult
+from .model_recommendation_result_compatibility import ModelRecommendationResultCompatibility
+from .model_recommendation_result_evidence import ModelRecommendationResultEvidence
+from .model_recommendation_result_evidence_tier import ModelRecommendationResultEvidenceTier
+from .model_recommendation_result_figures import ModelRecommendationResultFigures
+from .model_recommendation_result_matched_by import ModelRecommendationResultMatchedBy
+from .model_recommendation_result_measured import ModelRecommendationResultMeasured
+from .model_recommendation_result_preference import ModelRecommendationResultPreference
+from .model_recommendation_result_serving import ModelRecommendationResultServing
+from .model_recommendation_result_settings_item import ModelRecommendationResultSettingsItem
 from .model_slot import ModelSlot
 from .my_group_list import MyGroupList
 from .my_group_membership import MyGroupMembership
 from .native_chat_metadata import NativeChatMetadata
 from .native_chat_metadata_brain import NativeChatMetadataBrain
+from .native_chat_metadata_egress_guard import NativeChatMetadataEgressGuard
+from .native_chat_metadata_on_ambiguous_entity import NativeChatMetadataOnAmbiguousEntity
+from .native_chat_metadata_research_depth import NativeChatMetadataResearchDepth
+from .native_chat_metadata_thinking import NativeChatMetadataThinking
+from .native_chat_metadata_thinking_effort import NativeChatMetadataThinkingEffort
 from .native_chat_request import NativeChatRequest
 from .native_chat_result import NativeChatResult
 from .native_chat_result_grounding import NativeChatResultGrounding
@@ -330,6 +420,8 @@ from .registry_agent_trust import RegistryAgentTrust
 from .reject_action_response_409 import RejectActionResponse409
 from .remove_group_member_response_200 import RemoveGroupMemberResponse200
 from .rename_conversation_body import RenameConversationBody
+from .retrieval_ambiguity import RetrievalAmbiguity
+from .retrieval_ambiguity_ambiguity_action import RetrievalAmbiguityAmbiguityAction
 from .reviewer_evidence import ReviewerEvidence
 from .revoke_authorization_grant_body import RevokeAuthorizationGrantBody
 from .revoke_execution_capability_body import RevokeExecutionCapabilityBody
@@ -342,6 +434,15 @@ from .route_hint_navigate_to_params import RouteHintNavigateToParams
 from .route_hint_render_inline import RouteHintRenderInline
 from .route_hint_render_inline_kind import RouteHintRenderInlineKind
 from .run_skill_tool_body import RunSkillToolBody
+from .schedule import Schedule
+from .schedule_delivery import ScheduleDelivery
+from .schedule_last_status import ScheduleLastStatus
+from .schedule_limit_error import ScheduleLimitError
+from .schedule_limit_error_error import ScheduleLimitErrorError
+from .schedule_list import ScheduleList
+from .schedule_metadata import ScheduleMetadata
+from .schedule_write import ScheduleWrite
+from .schedule_write_metadata import ScheduleWriteMetadata
 from .scim_email import ScimEmail
 from .scim_error import ScimError
 from .scim_list_response import ScimListResponse
@@ -407,8 +508,18 @@ from .update_conversation_metadata_response_200 import UpdateConversationMetadat
 from .update_conversation_metadata_response_200_metadata import UpdateConversationMetadataResponse200Metadata
 from .upload_document_body import UploadDocumentBody
 from .upload_file_body import UploadFileBody
+from .usage_agent_skill import UsageAgentSkill
+from .usage_agent_skills import UsageAgentSkills
 from .usage_block import UsageBlock
+from .usage_block_tool_calls import UsageBlockToolCalls
+from .usage_context_budget import UsageContextBudget
+from .usage_context_budget_turn_budget_source import UsageContextBudgetTurnBudgetSource
+from .usage_context_budget_window_source import UsageContextBudgetWindowSource
+from .usage_phase import UsagePhase
+from .usage_span import UsageSpan
 from .usage_stage import UsageStage
+from .usage_working_set import UsageWorkingSet
+from .usage_working_set_mode import UsageWorkingSetMode
 from .user import User
 from .user_create import UserCreate
 from .user_create_role import UserCreateRole
@@ -440,17 +551,54 @@ __all__ = (
     "AddGroupMemberResponse200",
     "Agent",
     "AgentCreate",
+    "AgentCreateEgressGuard",
     "AgentCreateFilesystem",
-    "AgentCreateGuardrails",
+    "AgentCreateOnAmbiguousEntity",
+    "AgentCreateToolScope",
     "AgentCreateVisibility",
+    "AgentEgressGuard",
     "AgentFilesystem",
     "AgentGuardrails",
+    "AgentGuardrailsDateNormalizer",
+    "AgentGuardrailsPiiRedactor",
     "AgentKey",
     "AgentList",
+    "AgentOnAmbiguousEntity",
+    "AgentSkillDiff",
+    "AgentSkillEdit",
+    "AgentSkillEditFiles",
+    "AgentSkillFileDiff",
+    "AgentSkillFileDiffChange",
+    "AgentSkillFiles",
+    "AgentSkillFilesFiles",
+    "AgentSkillFound",
+    "AgentSkillImportPreview",
+    "AgentSkillImportPreviewPreview",
+    "AgentSkillImportRequest",
+    "AgentSkillImportResult",
+    "AgentSkillImportResultResultsItem",
+    "AgentSkillList",
+    "AgentSkillSource",
+    "AgentSkillSourceKind",
+    "AgentSkillSummary",
+    "AgentSkillSummaryLatestStatus",
+    "AgentSkillUpstream",
+    "AgentSkillVersion",
+    "AgentSkillVersionFiles",
+    "AgentSkillVersionList",
+    "AgentSkillVersionStatus",
+    "AgentSkillWriteResult",
+    "AgentThinking",
+    "AgentThinkingEffort",
+    "AgentToolScope",
+    "AgentTriage",
+    "AgentTriageDefaultBrain",
     "AgentType",
     "AgentUpdate",
+    "AgentUpdateEgressGuard",
     "AgentUpdateFilesystem",
-    "AgentUpdateGuardrails",
+    "AgentUpdateOnAmbiguousEntity",
+    "AgentUpdateToolScope",
     "AgentUpdateVisibility",
     "AgentVisibility",
     "App",
@@ -483,7 +631,15 @@ __all__ = (
     "ChatCompletionChoiceFinishReason",
     "ChatCompletionRequest",
     "ChatCompletionRequestMetadata",
+    "ChatCompletionRequestMetadataBrain",
+    "ChatCompletionRequestMetadataEgressGuard",
+    "ChatCompletionRequestMetadataOnAmbiguousEntity",
+    "ChatCompletionRequestMetadataResearchDepth",
+    "ChatCompletionRequestMetadataThinking",
+    "ChatCompletionRequestMetadataThinkingEffort",
+    "ChatCompletionRequestReasoningEffort",
     "ChatCompletionResponse",
+    "ChatCompletionResponseFormat",
     "ChatCompletionResponseNovaGrounding",
     "ChatCompletionResponsePersistedState",
     "ChatCompletionUsage",
@@ -523,6 +679,7 @@ __all__ = (
     "CreateActionRequestPreview",
     "CreateActionRequestRisk",
     "CreateAgentKeyBody",
+    "CreateAgentSkillFilesBody",
     "CreateEvalSuiteRevisionBody",
     "CreateGroupRequest",
     "CreateKnowledgeCollectionBody",
@@ -538,6 +695,22 @@ __all__ = (
     "CustomToolCallbackRetryBackoff",
     "CustomToolResultRequest",
     "DebugRetrieveKnowledgeBody",
+    "DecisionActivateRequest",
+    "DecisionActivateResult",
+    "DecisionModel",
+    "DecisionNotBetterError",
+    "DecisionNotBetterErrorError",
+    "DecisionPrediction",
+    "DecisionPredictionDistribution",
+    "DecisionPredictionOod",
+    "DecisionPredictRequest",
+    "DecisionPredictResult",
+    "DecisionReport",
+    "DecisionReportNPerLabel",
+    "DecisionReportRecallPerLabel",
+    "DecisionTrainingRow",
+    "DecisionTrainRequest",
+    "DecisionVersion",
     "DeleteConnectorResponse200",
     "DeleteGroupResponse200",
     "DeleteServiceKeyResponse200",
@@ -600,6 +773,8 @@ __all__ = (
     "FieldAccessEvent",
     "FieldAccessEventList",
     "FieldCaller",
+    "FieldError",
+    "FieldErrorError",
     "FieldEvaluateRequest",
     "FieldEvaluateRequestMode",
     "FieldEvaluateRequestRecord",
@@ -617,11 +792,13 @@ __all__ = (
     "FileMeta",
     "FileMetaList",
     "FileObject",
+    "FlatError",
     "GetAgentSchemaResponse200",
     "GetConnectorResponse200",
     "GetLogsLevel",
     "GetLogsSource",
     "GetMemoryScope",
+    "GetModelRecommendationsCompatibility",
     "GetSharepointSyncStatusResponse200",
     "GovernanceMode",
     "Group",
@@ -701,6 +878,11 @@ __all__ = (
     "Message",
     "MessageRequest",
     "MessageRequestMetadata",
+    "MessageRequestMetadataEgressGuard",
+    "MessageRequestMetadataOnAmbiguousEntity",
+    "MessageRequestMetadataResearchDepth",
+    "MessageRequestMetadataThinking",
+    "MessageRequestMetadataThinkingEffort",
     "MessageResponse",
     "MessageResponseStopReason",
     "MessageResponseType",
@@ -708,11 +890,30 @@ __all__ = (
     "ModelConfig",
     "ModelList",
     "ModelListEntry",
+    "ModelRecommendationReport",
+    "ModelRecommendationReportCatalog",
+    "ModelRecommendationReportEnvironment",
+    "ModelRecommendationReportVerification",
+    "ModelRecommendationResult",
+    "ModelRecommendationResultCompatibility",
+    "ModelRecommendationResultEvidence",
+    "ModelRecommendationResultEvidenceTier",
+    "ModelRecommendationResultFigures",
+    "ModelRecommendationResultMatchedBy",
+    "ModelRecommendationResultMeasured",
+    "ModelRecommendationResultPreference",
+    "ModelRecommendationResultServing",
+    "ModelRecommendationResultSettingsItem",
     "ModelSlot",
     "MyGroupList",
     "MyGroupMembership",
     "NativeChatMetadata",
     "NativeChatMetadataBrain",
+    "NativeChatMetadataEgressGuard",
+    "NativeChatMetadataOnAmbiguousEntity",
+    "NativeChatMetadataResearchDepth",
+    "NativeChatMetadataThinking",
+    "NativeChatMetadataThinkingEffort",
     "NativeChatRequest",
     "NativeChatResult",
     "NativeChatResultGrounding",
@@ -758,6 +959,8 @@ __all__ = (
     "RejectActionResponse409",
     "RemoveGroupMemberResponse200",
     "RenameConversationBody",
+    "RetrievalAmbiguity",
+    "RetrievalAmbiguityAmbiguityAction",
     "ReviewerEvidence",
     "RevokeAuthorizationGrantBody",
     "RevokeExecutionCapabilityBody",
@@ -770,6 +973,15 @@ __all__ = (
     "RouteHintRenderInline",
     "RouteHintRenderInlineKind",
     "RunSkillToolBody",
+    "Schedule",
+    "ScheduleDelivery",
+    "ScheduleLastStatus",
+    "ScheduleLimitError",
+    "ScheduleLimitErrorError",
+    "ScheduleList",
+    "ScheduleMetadata",
+    "ScheduleWrite",
+    "ScheduleWriteMetadata",
     "ScimEmail",
     "ScimError",
     "ScimListResponse",
@@ -835,8 +1047,18 @@ __all__ = (
     "UpdateConversationMetadataResponse200Metadata",
     "UploadDocumentBody",
     "UploadFileBody",
+    "UsageAgentSkill",
+    "UsageAgentSkills",
     "UsageBlock",
+    "UsageBlockToolCalls",
+    "UsageContextBudget",
+    "UsageContextBudgetTurnBudgetSource",
+    "UsageContextBudgetWindowSource",
+    "UsagePhase",
+    "UsageSpan",
     "UsageStage",
+    "UsageWorkingSet",
+    "UsageWorkingSetMode",
     "User",
     "UserCreate",
     "UserCreateRole",

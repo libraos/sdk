@@ -6,29 +6,43 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-T = TypeVar("T", bound="AgentCreateGuardrails")
+T = TypeVar("T", bound="DecisionActivateRequest")
 
 
 @_attrs_define
-class AgentCreateGuardrails:
-    """ """
+class DecisionActivateRequest:
+    """
+    Attributes:
+        version (int):
+    """
 
+    version: int
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
+        version = self.version
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
+        field_dict.update(
+            {
+                "version": version,
+            }
+        )
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        agent_create_guardrails = cls()
+        version = d.pop("version")
 
-        agent_create_guardrails.additional_properties = d
-        return agent_create_guardrails
+        decision_activate_request = cls(
+            version=version,
+        )
+
+        decision_activate_request.additional_properties = d
+        return decision_activate_request
 
     @property
     def additional_keys(self) -> list[str]:

@@ -2903,6 +2903,395 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/skills": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Agent Skills in the catalog
+         * @description Any authenticated caller; scoped to the caller's organization. Agents attach skills by name through `agent_skills`. The catalog is registered only on deployments with PostgreSQL; otherwise every `/v1/skills` route answers 404.
+         */
+        get: operations["listAgentSkills"];
+        put?: never;
+        /**
+         * Upload a skill version
+         * @description Admin-only. Body is either JSON `{files}` or multipart with a `file` field holding a `SKILL.md` (a filename ending `.md`) or a zip (at most 8 MiB, 200 files; a single shared top-level folder is stripped). The skill name comes from the `SKILL.md` frontmatter. A new version always starts as `draft`. Content identical to the latest non-archived version returns that version with 200 and `created: false`. Request body limit 10 MB (413).
+         */
+        post: operations["createAgentSkill"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/skills/import": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Import skills from GitHub
+         * @description Admin-only. Fetches every skill (folder with a `SKILL.md`) under a GitHub link, at most 50, and stores each as a new draft version recording the repository, ref and commit. A repository without a licence file is refused. `dry_run: true` returns a preview instead.
+         */
+        post: operations["importAgentSkills"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/skills/{name}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                name: string;
+            };
+            cookie?: never;
+        };
+        /**
+         * List a skill's versions
+         * @description Any authenticated caller; organization-scoped.
+         */
+        get: operations["getAgentSkill"];
+        /**
+         * Save an edited skill as a new draft version
+         * @description Admin-only. Never overwrites a version: the files become a new draft (`source.kind: edit`). The `SKILL.md` frontmatter name must stay the path name. Identical content returns the latest version with 200.
+         */
+        put: operations["editAgentSkill"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/skills/{name}/versions/{version}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                name: string;
+                version: number;
+            };
+            cookie?: never;
+        };
+        /**
+         * Fetch one skill version with its files
+         * @description Any authenticated caller; organization-scoped.
+         */
+        get: operations["getAgentSkillVersion"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/skills/{name}/versions/{version}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                name: string;
+                version: number;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Publish a draft version
+         * @description Admin-only. Allowed only from `draft`. Unpinned `agent_skills` references resolve to the highest published version.
+         */
+        post: operations["publishAgentSkillVersion"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/skills/{name}/versions/{version}/archive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                name: string;
+                version: number;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Archive a version
+         * @description Admin-only. Allowed from `draft` or `published`; archived is final.
+         */
+        post: operations["archiveAgentSkillVersion"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/skills/{name}/diff": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                name: string;
+            };
+            cookie?: never;
+        };
+        /**
+         * Diff two versions of a skill
+         * @description Any authenticated caller; organization-scoped.
+         */
+        get: operations["diffAgentSkillVersions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/skills/{name}/upstream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                name: string;
+            };
+            cookie?: never;
+        };
+        /**
+         * Compare an imported version with its GitHub upstream
+         * @description Admin-only. Only for versions imported from GitHub.
+         */
+        get: operations["checkAgentSkillUpstream"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/managed/schedules": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List scheduled runs
+         * @description Users see their own schedules; admins see every schedule and may filter by `owner`. Requires a user session (API keys get 403). Registered only when `LIBRA_OS_SCHEDULES_ENABLED` is on and PostgreSQL is configured; otherwise the route answers 404.
+         */
+        get: operations["listSchedules"];
+        put?: never;
+        /**
+         * Create a scheduled run
+         * @description Runs `prompt` against `agent` on a cron expression or fixed interval, as the caller, through the async job path, and appends each finished answer to the `deliver_to` conversation. The interval must not be below the deployment minimum (`LIBRA_OS_SCHEDULES_MIN_INTERVAL`, default 15m). A schedule is auto-paused (`last_status: paused_failures`) after `LIBRA_OS_SCHEDULES_MAX_FAILURES` (default 3) consecutive failed runs. Requires a user session (API keys get 403).
+         */
+        post: operations["createSchedule"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/managed/schedules/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        /**
+         * Fetch a scheduled run
+         * @description Owner or admin. Another user's schedule reads as 404.
+         */
+        get: operations["getSchedule"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete a scheduled run
+         * @description Owner or admin.
+         */
+        delete: operations["deleteSchedule"];
+        options?: never;
+        head?: never;
+        /**
+         * Update a scheduled run
+         * @description Owner or admin. Every field is optional; the merged schedule is validated as on create. Pause with `{"enabled": false}`; re-enabling resets the failure count. `next_run_at` is recomputed when the timing changes or the schedule is re-enabled.
+         */
+        patch: operations["updateSchedule"];
+        trace?: never;
+    };
+    "/v1/decision/{name}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Model name, kebab-case, at most 64 characters. */
+                name: string;
+            };
+            cookie?: never;
+        };
+        /**
+         * List a decision probe's versions
+         * @description Named, calibrated text classifiers a client can consult before falling back to its own model: trust a prediction whose confidence clears the version's gate, send the rest to the fallback. Admin, or a connector-role service client. Registered only when `LIBRA_OS_DECISION_API_ENABLED` is on and PostgreSQL is configured; otherwise the routes answer 404.
+         */
+        get: operations["getDecisionModel"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/decision/{name}/train": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Model name, kebab-case, at most 64 characters. */
+                name: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Train a candidate version
+         * @description Fits a calibrated classifier (70/15/15 train/calibrate/test split) and stores it as a **candidate**; training never activates a version. A `Content-Type` starting with `application/json` reads `{rows, gate}`; any other content type reads JSONL, one `{"text","label"}` object per line. Limits: 16 MB body, 100,000 rows, 2-32 labels, enough rows for 20 calibration and 20 test examples. Training rows are not stored. One training run per server instance at a time. Admin, or a connector-role service client.
+         */
+        post: operations["trainDecisionModel"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/decision/{name}/activate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Model name, kebab-case, at most 64 characters. */
+                name: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Activate a version (also rollback)
+         * @description Makes `version` the active one. Admin, or a connector-role service client. Other replicas pick up the change within 15 seconds.
+         */
+        post: operations["activateDecisionModel"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/decision/{name}/predict": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Model name, kebab-case, at most 64 characters. */
+                name: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Classify texts
+         * @description Classifies up to 1000 texts with `version`, or the active version when omitted. A 404 means "no usable model — use your fallback". Admin, or a connector-role service client.
+         */
+        post: operations["predictDecisionModel"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/managed/models/recommendations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Model recommendations for this deployment
+         * @description Matches the deployment's model catalog against the detected host (hardware, inference and embedding paths). With no operator catalog configured, the built-in public starter profiles are used and no measured figures are returned. Any authenticated user; inference-scope keys and connector-role service clients are refused. Results are cached per task for 5 minutes.
+         */
+        get: operations["getModelRecommendations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/managed/models/recommendations.md": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Model recommendations as Markdown
+         * @description The same report as `GET /v1/managed/models/recommendations`, rendered as Markdown. Same access rules and query parameters.
+         */
+        get: operations["getModelRecommendationsMarkdown"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/managed/models/recommendations/{profile_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * One model recommendation
+         * @description One result by its `cell_id`. Same access rules as the list.
+         */
+        get: operations["getModelRecommendation"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -3057,9 +3446,62 @@ export interface components {
             max_turns?: number;
             output_type?: components["schemas"]["OutputTypeContract"];
             knowledge_bindings?: string[];
-            guardrails?: {
-                [key: string]: unknown;
-            };
+            guardrails?: components["schemas"]["AgentGuardrails"];
+            thinking?: components["schemas"]["AgentThinking"];
+            /**
+             * @description Forces (or forbids) a tool call on the first model call of the
+             *     agent loop: `auto` (default), `none`, `required`, or a tool name.
+             *     Per-call `metadata.tool_choice` wins. A named tool the request does
+             *     not carry is dropped with a server-side warning.
+             */
+            tool_choice?: string;
+            /**
+             * @description Persona only. Tools offered on the persona's direct (non-planner)
+             *     answer path. Names are validated against the live tool registry.
+             *     Together with `tools`, this is the persona's declared tool scope;
+             *     declaring neither keeps the whole catalog.
+             */
+            direct_tools?: string[];
+            /**
+             * @description `none` declares an agent that needs no catalog tools. Rejected
+             *     (400) together with a non-empty `tools` or `direct_tools`.
+             * @enum {string}
+             */
+            tool_scope?: "" | "none";
+            triage?: components["schemas"]["AgentTriage"];
+            /**
+             * @description Per-agent token budget for each model call of the agent's turn
+             *     (overrides the server-wide turn budget). `0` means unset. When
+             *     the agent is the outermost agent of a turn, its value also governs
+             *     the skill agents it dispatches.
+             */
+            turn_budget_tokens?: number;
+            /**
+             * @description Agent Skills attached to this agent, as `name` (latest published
+             *     catalog version) or `name@N` (pinned version). No duplicate names.
+             *     Every entry must resolve for the caller's organization at write
+             *     time (a published `/v1/skills` version, or for unpinned names a
+             *     server-side skills folder); otherwise 400 with `field:
+             *     agent_skills`.
+             */
+            agent_skills?: string[];
+            /**
+             * @description What a persona does when the documents its answer relies on span
+             *     several sources the question does not choose between: `state`
+             *     names the document the answer is based on, `ask` returns a
+             *     clarifying question instead of an answer, `off` does nothing.
+             *     Per-call `metadata.on_ambiguous_entity` wins; empty inherits the
+             *     server default.
+             * @enum {string}
+             */
+            on_ambiguous_entity?: "" | "state" | "ask" | "off";
+            /**
+             * @description Outbound search-query guard for this agent's turns. Guards only
+             *     tighten: the server-wide, agent and per-call settings are combined,
+             *     and `off` never removes a guard set elsewhere.
+             * @enum {string}
+             */
+            egress_guard?: "" | "off" | "callback" | "detector";
             filesystem?: {
                 [key: string]: unknown;
             };
@@ -3089,9 +3531,62 @@ export interface components {
             max_turns?: number;
             output_type?: components["schemas"]["OutputTypeContract"];
             knowledge_bindings?: string[];
-            guardrails?: {
-                [key: string]: unknown;
-            };
+            guardrails?: components["schemas"]["AgentGuardrails"];
+            thinking?: components["schemas"]["AgentThinking"];
+            /**
+             * @description Forces (or forbids) a tool call on the first model call of the
+             *     agent loop: `auto` (default), `none`, `required`, or a tool name.
+             *     Per-call `metadata.tool_choice` wins. A named tool the request does
+             *     not carry is dropped with a server-side warning.
+             */
+            tool_choice?: string;
+            /**
+             * @description Persona only. Tools offered on the persona's direct (non-planner)
+             *     answer path. Names are validated against the live tool registry.
+             *     Together with `tools`, this is the persona's declared tool scope;
+             *     declaring neither keeps the whole catalog.
+             */
+            direct_tools?: string[];
+            /**
+             * @description `none` declares an agent that needs no catalog tools. Rejected
+             *     (400) together with a non-empty `tools` or `direct_tools`.
+             * @enum {string}
+             */
+            tool_scope?: "" | "none";
+            triage?: components["schemas"]["AgentTriage"];
+            /**
+             * @description Per-agent token budget for each model call of the agent's turn
+             *     (overrides the server-wide turn budget). `0` means unset. When
+             *     the agent is the outermost agent of a turn, its value also governs
+             *     the skill agents it dispatches.
+             */
+            turn_budget_tokens?: number;
+            /**
+             * @description Agent Skills attached to this agent, as `name` (latest published
+             *     catalog version) or `name@N` (pinned version). No duplicate names.
+             *     Every entry must resolve for the caller's organization at write
+             *     time (a published `/v1/skills` version, or for unpinned names a
+             *     server-side skills folder); otherwise 400 with `field:
+             *     agent_skills`.
+             */
+            agent_skills?: string[];
+            /**
+             * @description What a persona does when the documents its answer relies on span
+             *     several sources the question does not choose between: `state`
+             *     names the document the answer is based on, `ask` returns a
+             *     clarifying question instead of an answer, `off` does nothing.
+             *     Per-call `metadata.on_ambiguous_entity` wins; empty inherits the
+             *     server default.
+             * @enum {string}
+             */
+            on_ambiguous_entity?: "" | "state" | "ask" | "off";
+            /**
+             * @description Outbound search-query guard for this agent's turns. Guards only
+             *     tighten: the server-wide, agent and per-call settings are combined,
+             *     and `off` never removes a guard set elsewhere.
+             * @enum {string}
+             */
+            egress_guard?: "" | "off" | "callback" | "detector";
         };
         /** @description Partial update; only the fields supplied are changed. */
         AgentUpdate: {
@@ -3111,9 +3606,100 @@ export interface components {
             max_turns?: number;
             output_type?: components["schemas"]["OutputTypeContract"];
             knowledge_bindings?: string[];
-            guardrails?: {
-                [key: string]: unknown;
-            };
+            guardrails?: components["schemas"]["AgentGuardrails"];
+            thinking?: components["schemas"]["AgentThinking"];
+            /**
+             * @description Forces (or forbids) a tool call on the first model call of the
+             *     agent loop: `auto` (default), `none`, `required`, or a tool name.
+             *     Per-call `metadata.tool_choice` wins. A named tool the request does
+             *     not carry is dropped with a server-side warning.
+             */
+            tool_choice?: string;
+            /**
+             * @description Persona only. Tools offered on the persona's direct (non-planner)
+             *     answer path. Names are validated against the live tool registry.
+             *     Together with `tools`, this is the persona's declared tool scope;
+             *     declaring neither keeps the whole catalog.
+             */
+            direct_tools?: string[];
+            /**
+             * @description `none` declares an agent that needs no catalog tools. Rejected
+             *     (400) together with a non-empty `tools` or `direct_tools`.
+             * @enum {string}
+             */
+            tool_scope?: "" | "none";
+            triage?: components["schemas"]["AgentTriage"];
+            /**
+             * @description Per-agent token budget for each model call of the agent's turn
+             *     (overrides the server-wide turn budget). `0` means unset. When
+             *     the agent is the outermost agent of a turn, its value also governs
+             *     the skill agents it dispatches.
+             */
+            turn_budget_tokens?: number;
+            /**
+             * @description Agent Skills attached to this agent, as `name` (latest published
+             *     catalog version) or `name@N` (pinned version). No duplicate names.
+             *     Every entry must resolve for the caller's organization at write
+             *     time (a published `/v1/skills` version, or for unpinned names a
+             *     server-side skills folder); otherwise 400 with `field:
+             *     agent_skills`.
+             */
+            agent_skills?: string[];
+            /**
+             * @description What a persona does when the documents its answer relies on span
+             *     several sources the question does not choose between: `state`
+             *     names the document the answer is based on, `ask` returns a
+             *     clarifying question instead of an answer, `off` does nothing.
+             *     Per-call `metadata.on_ambiguous_entity` wins; empty inherits the
+             *     server default.
+             * @enum {string}
+             */
+            on_ambiguous_entity?: "" | "state" | "ask" | "off";
+            /**
+             * @description Outbound search-query guard for this agent's turns. Guards only
+             *     tighten: the server-wide, agent and per-call settings are combined,
+             *     and `off` never removes a guard set elsewhere.
+             * @enum {string}
+             */
+            egress_guard?: "" | "off" | "callback" | "detector";
+            /** @description When true, clears the agent's `triage` pin (same as `triage: null`). */
+            clear_triage?: boolean;
+        };
+        /**
+         * @description Native model reasoning on the agent's answer-tier call only (never the
+         *     planner, triage or skill sub-tasks). `off` (the default) sends no
+         *     reasoning parameter, so a model that reasons by default keeps
+         *     reasoning; `none` asks the model not to reason. Per-call
+         *     `metadata.thinking` wins. On PUT/PATCH send `{}` (or `effort: ""`) to
+         *     clear; `null` keeps the current value.
+         */
+        AgentThinking: {
+            /** @enum {string} */
+            effort?: "" | "off" | "none" | "low" | "medium" | "high" | "xhigh";
+            /** @description Explicit thinking-token budget; 0 derives it from `effort`. */
+            budget_tokens?: number;
+        };
+        /**
+         * @description Persona planner routing pin. `triage` keeps the per-turn
+         *     regex/LLM triage cascade, `always` runs the planner every turn,
+         *     `never` skips it. Empty clears the pin (inherit the server default).
+         *     Per-call `metadata.brain` still wins.
+         */
+        AgentTriage: {
+            /** @enum {string} */
+            default_brain?: "" | "triage" | "always" | "never";
+        };
+        /**
+         * @description Per-agent opt-outs for the inbound guardrail chain. Each value is
+         *     `enabled`, `disabled` or empty (inherit). On PUT/PATCH an omitted key
+         *     keeps its value, a `null` key clears that override, and a top-level
+         *     `guardrails: null` clears every override.
+         */
+        AgentGuardrails: {
+            /** @enum {string} */
+            pii_redactor?: "" | "enabled" | "disabled";
+            /** @enum {string} */
+            date_normalizer?: "" | "enabled" | "disabled";
         };
         AgentList: {
             data: components["schemas"]["Agent"][];
@@ -3291,6 +3877,37 @@ export interface components {
                 stream_events?: boolean;
                 /** @description Per-call planner-thinking event toggle. */
                 stream_thinking?: boolean;
+                /** @description The research question as its own field, when the message is an assembled prompt. Overrides the query used for outbound search. */
+                research_query?: string;
+                /** @description Fixed-query mode: every outbound search of the turn is exactly `research_query`, and fetches are limited to URLs those searches returned. Requires a non-empty, single-line `research_query` of at most 300 characters; otherwise 400. */
+                research_query_only?: boolean;
+                /** @description Per-turn cap on outbound search calls across every tool of the turn. Absent or 0 means unlimited. */
+                max_searches?: number;
+                /**
+                 * @description Adds the outbound query guard for this request. May only tighten: `off` never removes a guard set by the server or the agent. Any other value is a 400.
+                 * @enum {string}
+                 */
+                egress_guard?: "" | "off" | "callback" | "detector";
+                /** @description Narrows a persona's planner to these skills for this turn. A name the persona does not have is a 400; ignored on non-persona agents. */
+                allowed_skills?: string[];
+                /**
+                 * @description Per-call research depth. `fast` skips the planner; `deep` runs it; `auto` runs it single-shot, without multi-wave skills such as `deep_research`. `brain` wins when both are set. Unknown values are ignored.
+                 * @enum {string}
+                 */
+                research_depth?: "fast" | "auto" | "deep";
+                /**
+                 * @description Overrides the agent's handling of answers whose evidence spans several documents the question does not choose between. Invalid values are ignored.
+                 * @enum {string}
+                 */
+                on_ambiguous_entity?: "state" | "ask" | "off";
+                /** @description Per-call native reasoning on the answer-tier call; overrides the agent's `thinking`. `off` sends no reasoning parameter, `none` asks the model not to reason. `budget_tokens` is clamped to 1024-32768. An invalid override is ignored. */
+                thinking?: {
+                    /** @enum {string} */
+                    effort?: "" | "off" | "none" | "low" | "medium" | "high" | "xhigh";
+                    budget_tokens?: number;
+                };
+                /** @description Per-call tool choice for the first model call: `auto`, `none`, `required`, or a tool name. Overrides the agent's `tool_choice`. Invalid values are ignored. */
+                tool_choice?: string;
             } & {
                 [key: string]: unknown;
             };
@@ -3788,6 +4405,37 @@ export interface components {
              * @enum {string}
              */
             brain?: "always" | "never";
+            /** @description The research question as its own field, when the message is an assembled prompt. Overrides the query used for outbound search. */
+            research_query?: string;
+            /** @description Fixed-query mode: every outbound search of the turn is exactly `research_query`, and fetches are limited to URLs those searches returned. Requires a non-empty, single-line `research_query` of at most 300 characters; otherwise 400. */
+            research_query_only?: boolean;
+            /** @description Per-turn cap on outbound search calls across every tool of the turn. Absent or 0 means unlimited. */
+            max_searches?: number;
+            /**
+             * @description Adds the outbound query guard for this request. May only tighten: `off` never removes a guard set by the server or the agent. Any other value is a 400.
+             * @enum {string}
+             */
+            egress_guard?: "" | "off" | "callback" | "detector";
+            /** @description Narrows a persona's planner to these skills for this turn. A name the persona does not have is a 400; ignored on non-persona agents. */
+            allowed_skills?: string[];
+            /**
+             * @description Per-call research depth. `fast` skips the planner; `deep` runs it; `auto` runs it single-shot, without multi-wave skills such as `deep_research`. `brain` wins when both are set. Unknown values are ignored.
+             * @enum {string}
+             */
+            research_depth?: "fast" | "auto" | "deep";
+            /**
+             * @description Overrides the agent's handling of answers whose evidence spans several documents the question does not choose between. Invalid values are ignored.
+             * @enum {string}
+             */
+            on_ambiguous_entity?: "state" | "ask" | "off";
+            /** @description Per-call native reasoning on the answer-tier call; overrides the agent's `thinking`. `off` sends no reasoning parameter, `none` asks the model not to reason. `budget_tokens` is clamped to 1024-32768. An invalid override is ignored. */
+            thinking?: {
+                /** @enum {string} */
+                effort?: "" | "off" | "none" | "low" | "medium" | "high" | "xhigh";
+                budget_tokens?: number;
+            };
+            /** @description Per-call tool choice for the first model call: `auto`, `none`, `required`, or a tool name. Overrides the agent's `tool_choice`. Invalid values are ignored. */
+            tool_choice?: string;
         } & {
             [key: string]: unknown;
         };
@@ -3819,13 +4467,109 @@ export interface components {
             model?: string;
             prompt_tokens?: number;
             completion_tokens?: number;
+            cache_read_tokens?: number;
+            cache_write_tokens?: number;
+            /** @description Summed model wall time for this stage's calls. */
+            duration_ms?: number;
+            /** @description Number of model calls in this stage. */
+            llm_calls?: number;
+            /** @description Time to first token of the stage's first streamed call. */
+            first_token_ms?: number;
+            /** @description Tool calls made by this stage. */
+            tool_calls?: number;
+            /** @description Summed tool wall time for this stage. */
+            tool_ms?: number;
+        };
+        /** @description Wall time of one phase of the turn. Phases are interval unions, so parallel tasks count once. A final `turn` row is always present. */
+        UsagePhase: {
+            /** @description One of `triage`, `planner`, `skills`, `tools`, `synthesis`, `direct`, `llm`, `turn`. */
+            phase?: string;
+            duration_ms?: number;
+            count?: number;
+        };
+        /** @description One span of the turn timeline, relative to the turn start. */
+        UsageSpan: {
+            /** @description One of `triage`, `planner`, `task`, `aspect`, `tool`, `llm`, `synthesis`, `direct`, `phase`. */
+            kind?: string;
+            name?: string;
+            start_ms?: number;
+            duration_ms?: number;
+            first_token_ms?: number;
+            phase?: string;
+            stage?: string;
+            model?: string;
+            task_id?: string;
+            capability?: string;
+            skill?: string;
+            /** @description DAG level of a planner task. */
+            level?: number;
+            tool?: string;
+            status?: string;
+        };
+        /** @description Context window and turn budget applied to the model calls of one model in this turn. */
+        UsageContextBudget: {
+            model?: string;
+            /** @description Context window in tokens; omitted when unbounded. */
+            window?: number;
+            /** @enum {string} */
+            window_source?: "catalog" | "env" | "none";
+            /** @description Per-turn token budget; omitted when none applies. */
+            turn_budget?: number;
+            /** @enum {string} */
+            turn_budget_source?: "agent" | "env" | "none";
+            /** @description Effective budget (the tighter of window and turn budget). */
+            budget?: number;
+            calls?: number;
+            /** @description Calls whose conversation was trimmed to fit. */
+            trimmed?: number;
+        };
+        /** @description The conversation working set (documents attached in chat) carried by this turn. */
+        UsageWorkingSet: {
+            /**
+             * @description `full` injects the documents' text; `manifest` lists them and the model reads them with `read_document`.
+             * @enum {string}
+             */
+            mode?: "full" | "manifest";
+            docs?: number;
+            chars?: number;
+            /** @description Token limit from the share of the context window. */
+            share_limit_tokens?: number;
+            /** @description Absolute token ceiling for full mode; omitted when none. */
+            max_tokens?: number;
+            /** @description `locked`, or `unlocked:<via>` when web retrieval was unlocked on a working-set turn. */
+            web_gate?: string;
+        };
+        UsageAgentSkill: {
+            skill?: string;
+            version?: number;
+            sha256?: string;
+            source?: string;
+        };
+        /** @description Agent Skills attached to and loaded by this turn. */
+        UsageAgentSkills: {
+            attached?: components["schemas"]["UsageAgentSkill"][];
+            /** @description Skills loaded during the turn, in order. */
+            loaded?: string[];
+            inlined?: boolean;
+            unresolved?: string[];
         };
         /** @description Aggregated token usage across all of the turn's model sub-calls, with a per-stage breakdown. Omitted on non-model/zero-usage turns. Excludes embedding calls. */
         UsageBlock: {
             prompt_tokens?: number;
             completion_tokens?: number;
             total_tokens?: number;
+            cache_read_tokens?: number;
+            cache_write_tokens?: number;
             by_stage?: components["schemas"]["UsageStage"][];
+            /** @description Tool calls this turn, by tool name. */
+            tool_calls?: {
+                [key: string]: number;
+            };
+            phases?: components["schemas"]["UsagePhase"][];
+            timeline?: components["schemas"]["UsageSpan"][];
+            context_budget?: components["schemas"]["UsageContextBudget"][];
+            working_set?: components["schemas"]["UsageWorkingSet"];
+            agent_skills?: components["schemas"]["UsageAgentSkills"];
         };
         /** @description Synchronous native chat response. */
         NativeChatResult: {
@@ -3841,12 +4585,20 @@ export interface components {
              * @description Per-turn grounded-vs-refusal outcome. Omitted on non-retrieval turns.
              * @enum {string}
              */
-            grounding?: "grounded" | "ungrounded_refusal" | "ungrounded_no_chunks" | "degraded" | "unsupported_claim" | "degraded_retrieval" | "unopened_sources";
+            grounding?: "grounded" | "ungrounded_refusal" | "ungrounded_no_chunks" | "degraded" | "unsupported_claim" | "degraded_retrieval" | "unopened_sources" | "unsupported_figures";
             /** @description Source ids of knowledge chunks surfaced by this turn. */
             retrieved_chunks?: string[];
             /** @description Unique tool names dispatched this turn (include_metadata only). */
             tools_used?: string[];
+            retrieval?: components["schemas"]["RetrievalAmbiguity"];
             usage?: components["schemas"]["UsageBlock"];
+        };
+        /** @description Present only when the evidence the answer relied on spanned several documents the conversation did not choose between and the agent's ambiguous-entity handling is `state` or `ask`. */
+        RetrievalAmbiguity: {
+            /** @description Source ids of the candidate documents. */
+            ambiguous_sources: string[];
+            /** @enum {string} */
+            ambiguity_action: "state" | "ask";
         };
         /** @description Response to an accepted async job submission (202). */
         NativeJobAccepted: {
@@ -3900,14 +4652,70 @@ export interface components {
             stream?: boolean;
             /** @description Output-token cap (folded into the per-call answer limit). */
             max_tokens?: number;
-            /** @description Newer OpenAI field for the output-token cap; preferred over max_tokens when both are set. */
+            /** @description Newer OpenAI field for the output-token cap; preferred over max_tokens when both are set. On the agent path it becomes the per-call answer cap (clamped to 32768) unless `metadata.max_tokens` is set. */
             max_completion_tokens?: number;
-            /** @description Sampling temperature. Accepted for OpenAI-client compatibility; server-side routing controls the effective value on the agent path. */
+            /** @description Sampling temperature, 0-2 (otherwise 400). On the passthrough path it is sent to the provider; on the agent path it becomes the per-call answer temperature unless `metadata.temperature` is set. */
             temperature?: number;
-            /** @description Nova OS extension channel for per-call fields (e.g. a per-call model override). */
+            /**
+             * @description Native reasoning effort for the answer call (otherwise 400). `off` or empty sends no reasoning parameter (the model's default); `none` asks the model not to reason. On the agent path it becomes `metadata.thinking.effort` unless `metadata.thinking` is set.
+             * @enum {string}
+             */
+            reasoning_effort?: "" | "off" | "none" | "low" | "medium" | "high" | "xhigh";
+            response_format?: components["schemas"]["ChatCompletionResponseFormat"];
+            /** @description Nova OS extension channel for per-call fields (e.g. a per-call model override). The documented keys below are honoured on this surface the same way as on native chat. */
             metadata?: {
+                /** @description Per-call answer output-token cap; wins over the top-level fields. */
+                max_tokens?: number;
+                /** @description Per-call answer temperature; wins over the top-level field. */
+                temperature?: number;
+                /**
+                 * @description Per-call planning override.
+                 * @enum {string}
+                 */
+                brain?: "always" | "never";
+                /** @description Per-call orchestration event streaming toggle. */
+                stream_events?: boolean;
+                /** @description The research question as its own field, when the message is an assembled prompt. Overrides the query used for outbound search. */
+                research_query?: string;
+                /** @description Fixed-query mode: every outbound search of the turn is exactly `research_query`, and fetches are limited to URLs those searches returned. Requires a non-empty, single-line `research_query` of at most 300 characters; otherwise 400. */
+                research_query_only?: boolean;
+                /** @description Per-turn cap on outbound search calls across every tool of the turn. Absent or 0 means unlimited. */
+                max_searches?: number;
+                /**
+                 * @description Adds the outbound query guard for this request. May only tighten: `off` never removes a guard set by the server or the agent. Any other value is a 400.
+                 * @enum {string}
+                 */
+                egress_guard?: "" | "off" | "callback" | "detector";
+                /** @description Narrows a persona's planner to these skills for this turn. A name the persona does not have is a 400; ignored on non-persona agents. */
+                allowed_skills?: string[];
+                /**
+                 * @description Per-call research depth. `fast` skips the planner; `deep` runs it; `auto` runs it single-shot, without multi-wave skills such as `deep_research`. `brain` wins when both are set. Unknown values are ignored.
+                 * @enum {string}
+                 */
+                research_depth?: "fast" | "auto" | "deep";
+                /**
+                 * @description Overrides the agent's handling of answers whose evidence spans several documents the question does not choose between. Invalid values are ignored.
+                 * @enum {string}
+                 */
+                on_ambiguous_entity?: "state" | "ask" | "off";
+                /** @description Per-call native reasoning on the answer-tier call; overrides the agent's `thinking`. `off` sends no reasoning parameter, `none` asks the model not to reason. `budget_tokens` is clamped to 1024-32768. An invalid override is ignored. */
+                thinking?: {
+                    /** @enum {string} */
+                    effort?: "" | "off" | "none" | "low" | "medium" | "high" | "xhigh";
+                    budget_tokens?: number;
+                };
+                /** @description Per-call tool choice for the first model call: `auto`, `none`, `required`, or a tool name. Overrides the agent's `tool_choice`. Invalid values are ignored. */
+                tool_choice?: string;
+            } & {
                 [key: string]: unknown;
             };
+        };
+        /** @description OpenAI-style response format. Must be an object with a non-empty `type` (otherwise 400); the value of `type` is not checked. Forwarded verbatim to OpenAI-compatible providers on the passthrough path; ignored on the agent path, where the agent's `output_type` decides the reply shape. */
+        ChatCompletionResponseFormat: {
+            /** @description e.g. `text`, `json_object`, `json_schema`. */
+            type: string;
+        } & {
+            [key: string]: unknown;
         };
         ChatCompletionChoice: {
             index?: number;
@@ -3938,11 +4746,12 @@ export interface components {
              * @description Nova OS extension — per-turn grounded-vs-refusal outcome. Omitted on non-retrieval turns.
              * @enum {string}
              */
-            nova_grounding?: "grounded" | "ungrounded_refusal" | "ungrounded_no_chunks" | "degraded" | "unsupported_claim" | "degraded_retrieval" | "unopened_sources";
+            nova_grounding?: "grounded" | "ungrounded_refusal" | "ungrounded_no_chunks" | "degraded" | "unsupported_claim" | "degraded_retrieval" | "unopened_sources" | "unsupported_figures";
             /** @description Merged persisted field state, present only for agents that declare a persist-fields schema. */
             persisted_state?: {
                 [key: string]: unknown;
             };
+            nova_usage?: components["schemas"]["UsageBlock"];
         };
         ModelListEntry: {
             /** @description Model/agent id. Passthrough models carry an `llm:` prefix. */
@@ -5473,6 +6282,391 @@ export interface components {
             source: "server" | "requests";
             total_in_buffer: number;
         };
+        /** @description Error envelope `{"error": "<code or text>", "message"?: "<text>"}`. */
+        FlatError: {
+            error: string;
+            message?: string;
+        };
+        /** @description Error envelope `{"error": {"type", "message", "field"?}}`. */
+        FieldError: {
+            error: {
+                type: string;
+                message: string;
+                /** @description The request field the error is about, when there is one. */
+                field?: string;
+            };
+        };
+        AgentSkillSource: {
+            /** @enum {string} */
+            kind: "upload" | "github" | "edit";
+            /** @description `owner/repo` for GitHub imports. */
+            repo?: string;
+            ref?: string;
+            commit?: string;
+            path?: string;
+        };
+        AgentSkillVersion: {
+            name: string;
+            version: number;
+            description: string;
+            sha256: string;
+            source: components["schemas"]["AgentSkillSource"];
+            license?: string;
+            /** @description The version this edit was based on. */
+            forked_from?: number;
+            /** @enum {string} */
+            status: "draft" | "published" | "archived";
+            created_by?: string;
+            /** Format: date-time */
+            created_at: string;
+            status_by?: string;
+            /** Format: date-time */
+            status_at?: string;
+            /** @description Files other than `SKILL.md`, sorted. May be null when there are none. */
+            file_list?: string[];
+            /** @description Path to text content, `SKILL.md` included. Only on single-version reads. */
+            files?: {
+                [key: string]: string;
+            };
+        };
+        AgentSkillSummary: {
+            name: string;
+            description: string;
+            latest_version: number;
+            /** @enum {string} */
+            latest_status: "draft" | "published" | "archived";
+            /** @description Highest published version; omitted when none is published. */
+            published_version?: number;
+            /** @description Number of versions. */
+            versions: number;
+            source: components["schemas"]["AgentSkillSource"];
+            license?: string;
+        };
+        AgentSkillList: {
+            data: components["schemas"]["AgentSkillSummary"][];
+        };
+        AgentSkillVersionList: {
+            name: string;
+            /** @description Newest first; `files` is omitted. */
+            versions: components["schemas"]["AgentSkillVersion"][];
+        };
+        AgentSkillFiles: {
+            /** @description Path to text content. Must include `SKILL.md` with `name` and `description` frontmatter; at most 200 other files and 4 MiB in total, clean relative paths, UTF-8 text. */
+            files: {
+                [key: string]: string;
+            };
+        };
+        AgentSkillEdit: {
+            /** @description The full file set; `SKILL.md` frontmatter `name` must equal the path name. */
+            files: {
+                [key: string]: string;
+            };
+            /** @description Version this edit is based on. The new version keeps its source and licence and records `forked_from`. */
+            base_version?: number;
+        };
+        AgentSkillWriteResult: {
+            version: components["schemas"]["AgentSkillVersion"];
+            /** @description False when the content matched the latest version, which is returned instead. */
+            created: boolean;
+        };
+        AgentSkillImportRequest: {
+            /** @description HTTPS link to a GitHub repository, a `tree`/`blob` folder or file in one, or a `raw.githubusercontent.com` file. A link to a `SKILL.md` means its folder. */
+            url: string;
+            /** @description Import only these skill names; empty imports all found. */
+            skills?: string[];
+            /** @description Return what would be imported without writing anything. */
+            dry_run?: boolean;
+        };
+        AgentSkillFound: {
+            name: string;
+            path: string;
+            error?: string;
+        };
+        AgentSkillImportPreview: {
+            preview: {
+                repo: string;
+                ref: string;
+                commit: string;
+                license: string;
+                skills: components["schemas"]["AgentSkillFound"][];
+            };
+        };
+        AgentSkillImportResult: {
+            repo: string;
+            commit: string;
+            license: string;
+            /** @description One entry per skill; per-skill failures are reported here. */
+            results: {
+                name?: string;
+                path: string;
+                version?: components["schemas"]["AgentSkillVersion"];
+                created: boolean;
+                error?: string;
+            }[];
+        };
+        AgentSkillFileDiff: {
+            path: string;
+            /** @enum {string} */
+            change: "added" | "removed" | "modified";
+            /** @description Unified diff; omitted for very large files. */
+            diff?: string;
+        };
+        AgentSkillDiff: {
+            from: number;
+            to: number;
+            /** @description Changed files only; empty when the versions are identical. */
+            files: components["schemas"]["AgentSkillFileDiff"][];
+        };
+        AgentSkillUpstream: {
+            version: number;
+            source: components["schemas"]["AgentSkillSource"];
+            upstream_commit: string;
+            up_to_date: boolean;
+            /** @description Differences from upstream, when not up to date and the path still exists. */
+            files?: components["schemas"]["AgentSkillFileDiff"][];
+            license?: string;
+            /** @description True when the skill's path no longer exists upstream. */
+            removed_upstream?: boolean;
+        };
+        /** @description Where each run's answer is appended. Exactly one of the two. */
+        ScheduleDelivery: {
+            /** @description An existing conversation owned by the schedule's owner. */
+            conversation_id?: string;
+            /** @description Create a dedicated conversation on the first run. */
+            new_conversation?: boolean;
+        };
+        /** @description Create body (`agent`, `prompt`, `deliver_to` and one of `cron` / `every` required) or PATCH body (every field optional; the merged schedule is re-validated). */
+        ScheduleWrite: {
+            /** @description Agent the run is submitted to; must be runnable by the caller and support streaming. */
+            agent?: string;
+            /** @description The message each run sends. */
+            prompt?: string;
+            /** @description Per-run chat metadata; replaced as a whole. */
+            metadata?: {
+                [key: string]: unknown;
+            };
+            /** @description Five-field cron expression or a descriptor such as `@daily`. No `TZ=` prefix and no `@every`. Setting it clears `every`. */
+            cron?: string;
+            /** @description Fixed interval as a duration (e.g. `30m`, `1h`), at least `1m`. Setting it clears `cron`. */
+            every?: string;
+            /** @description IANA time zone name. Default `UTC`. */
+            timezone?: string;
+            deliver_to?: components["schemas"]["ScheduleDelivery"];
+            /** @description Default true. Re-enabling resets the failure count. */
+            enabled?: boolean;
+        };
+        Schedule: {
+            /** @description `sched_` followed by 24 hex characters. */
+            id: string;
+            tenant_id: string;
+            owner_user_id: string;
+            /** @description Null on schedules created before organizations were recorded. */
+            org_id?: string | null;
+            app_id?: string;
+            agent: string;
+            prompt: string;
+            metadata?: {
+                [key: string]: unknown;
+            };
+            cron?: string;
+            every?: string;
+            timezone: string;
+            deliver_to: components["schemas"]["ScheduleDelivery"];
+            enabled: boolean;
+            /**
+             * Format: date-time
+             * @description Null when disabled.
+             */
+            next_run_at?: string | null;
+            /** Format: date-time */
+            last_run_at?: string | null;
+            /** @description Async job id of the last run; empty until the first run. */
+            last_job_id: string;
+            /** @enum {string} */
+            last_status: "" | "claimed" | "submitted" | "delivering" | "delivered" | "failed" | "cancelled" | "skipped" | "owner_inactive" | "paused_failures" | "org_unrecorded";
+            last_error?: string;
+            missed_runs: number;
+            consecutive_failures: number;
+            /** Format: date-time */
+            created_at: string;
+            /** Format: date-time */
+            updated_at: string;
+        };
+        ScheduleList: {
+            schedules: components["schemas"]["Schedule"][];
+            total: number;
+        };
+        ScheduleLimitError: {
+            /** @enum {string} */
+            error: "schedule_limit_reached";
+            limit: number;
+            message: string;
+        };
+        /** @description Held-out evaluation of a trained version. */
+        DecisionReport: {
+            labels?: string[];
+            n_train?: number;
+            n_calibrate?: number;
+            n_test?: number;
+            n_per_label?: {
+                [key: string]: number;
+            };
+            /** @description Confidence at or above which a prediction should be trusted. */
+            gate?: number;
+            /** @description Calibration temperature. */
+            temperature?: number;
+            acc?: number;
+            /** @description Expected calibration error. */
+            ece?: number;
+            /** @description Share of test rows at or above the gate. */
+            coverage?: number;
+            acc_above_gate?: number;
+            acc_below_gate?: number;
+            n_above_gate?: number;
+            recall_per_label?: {
+                [key: string]: number;
+            };
+            /** @description Share of the most common label (the prior a model must beat). */
+            majority_share?: number;
+            /** @description 95% Wilson lower bound of the above-gate accuracy. */
+            acc_above_gate_lower?: number;
+            /** @description Shuffled-label control, rows above the gate (report only). */
+            control_above_gate?: number;
+            control_acc_above_gate?: number;
+        };
+        DecisionVersion: {
+            name: string;
+            version: number;
+            labels: string[];
+            report: components["schemas"]["DecisionReport"];
+            active: boolean;
+            created_by?: string;
+            /** Format: date-time */
+            created_at: string;
+            /** Format: date-time */
+            activated_at?: string;
+        };
+        DecisionModel: {
+            name: string;
+            /** @description Newest first. */
+            versions: components["schemas"]["DecisionVersion"][];
+        };
+        DecisionTrainingRow: {
+            text: string;
+            label: string;
+        };
+        DecisionTrainRequest: {
+            rows: components["schemas"]["DecisionTrainingRow"][];
+            /** @description Confidence gate; 0 or absent uses the `gate` query parameter (default 0.7). */
+            gate?: number;
+        };
+        DecisionNotBetterError: {
+            /** @enum {string} */
+            error: "confidence_not_better_than_prior";
+            message: string;
+            report: components["schemas"]["DecisionReport"];
+        };
+        DecisionActivateRequest: {
+            version: number;
+        };
+        DecisionActivateResult: {
+            name: string;
+            active_version: number;
+        };
+        DecisionPredictRequest: {
+            texts: string[];
+            /** @description Version to use; omitted means the active version. */
+            version?: number;
+        };
+        DecisionPrediction: {
+            label: string;
+            /** @description Calibrated probability of `label`. Compare with the version's `report.gate`. */
+            confidence: number;
+            distribution: {
+                [key: string]: number;
+            };
+            /** @description Corpus-drift signals (present when the version carries them). Not a per-request out-of-distribution detector. */
+            ood?: {
+                oov_mass?: number;
+                centroid_cos?: number;
+            };
+        };
+        DecisionPredictResult: {
+            name: string;
+            model_version: number;
+            /** @description In the order of `texts`. */
+            results: components["schemas"]["DecisionPrediction"][];
+        };
+        ModelRecommendationResult: {
+            cell_id: string;
+            model: string;
+            served_name?: string;
+            hardware: string;
+            hardware_label?: string;
+            task: string;
+            task_label?: string;
+            /** @enum {string} */
+            compatibility: "validated_match" | "potentially_compatible" | "incompatible";
+            reasons: string[];
+            evidence: {
+                /** @enum {string} */
+                tier?: "verified" | "indicative" | "none";
+                stale?: boolean;
+                stale_reason?: string;
+                date?: string;
+                libraos?: string;
+            };
+            preference: {
+                badges?: string[];
+                recommendation?: string;
+            };
+            /** @enum {string} */
+            matched_by: "requirements" | "hardware_table";
+            status?: string;
+            status_text?: string;
+            dependencies?: string[];
+            settings?: {
+                key?: string;
+                value?: string;
+            }[];
+            red_flags?: string[];
+            licence_notes?: string[];
+            served_locally?: boolean;
+            /** @description Measured figures; present only on a `validated_match` from the scored catalog. */
+            measured?: {
+                [key: string]: unknown;
+            };
+            /** @description Catalog figures; present only on a `validated_match` from the scored catalog. */
+            figures?: {
+                [key: string]: unknown;
+            };
+            /** @description Serving recipe (`engine`, `recipe`, `image`, `flags`). */
+            serving?: {
+                [key: string]: unknown;
+            };
+        };
+        ModelRecommendationReport: {
+            catalog: {
+                /** @description Empty over HTTP unless the built-in starter profiles are in use. */
+                path?: string;
+                tier?: string;
+                schema_version?: number;
+                as_of?: string;
+                current_release?: string;
+                notice?: string;
+            };
+            verification: {
+                verified?: boolean;
+                note?: string;
+            };
+            /** @description The detected host (`os`, `arch`, `libraos_version`, `ram_gib`, `gpu`, `inference`, `embeddings`). Endpoint addresses are removed. */
+            environment: {
+                [key: string]: unknown;
+            };
+            task?: string;
+            warnings?: string[];
+            results: components["schemas"]["ModelRecommendationResult"][];
+        };
     };
     responses: {
         /** @description Request validation failed. */
@@ -6996,7 +8190,7 @@ export interface operations {
                     "text/event-stream": string;
                 };
             };
-            /** @description Invalid request body. */
+            /** @description Invalid request body; `temperature` outside 0-2; an unknown `reasoning_effort`; a `response_format` that is not an object with a `type`; or an invalid `metadata.allowed_skills`, `metadata.egress_guard` or `metadata.research_query_only`. */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -11779,6 +12973,1200 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    listAgentSkills: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description One summary per skill. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentSkillList"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+        };
+    };
+    createAgentSkill: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AgentSkillFiles"];
+                "multipart/form-data": {
+                    /** Format: binary */
+                    file: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Identical to the latest version; that version is returned. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentSkillWriteResult"];
+                };
+            };
+            /** @description New draft version created. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentSkillWriteResult"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description Not an admin. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            /** @description Body larger than 10 MB. */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unreadable upload or invalid skill content (`type: invalid_skill`, `field: files`), e.g. missing `SKILL.md`, bad frontmatter name or description, too many files, unsafe paths, non-UTF-8 content. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+        };
+    };
+    importAgentSkills: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AgentSkillImportRequest"];
+            };
+        };
+        responses: {
+            /** @description Import results, or the preview when `dry_run` is true. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentSkillImportResult"] | components["schemas"]["AgentSkillImportPreview"];
+                };
+            };
+            /** @description Invalid JSON body. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description Not an admin. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            /** @description `unsupported_link` (not a GitHub link) or `import_refused` (no licence file, or no `SKILL.md` at the link); `field: url`. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+            /** @description `fetch_failed`: GitHub could not be read, the ref did not resolve, or the link holds more than 50 skills. */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+        };
+    };
+    getAgentSkill: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                name: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Versions, newest first, without file contents. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentSkillVersionList"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description Unknown skill. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+        };
+    };
+    editAgentSkill: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                name: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AgentSkillEdit"];
+            };
+        };
+        responses: {
+            /** @description Identical to the latest version; that version is returned. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentSkillWriteResult"];
+                };
+            };
+            /** @description New draft version created. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentSkillWriteResult"];
+                };
+            };
+            /** @description Invalid JSON body. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description Not an admin. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            /** @description Unknown skill or `base_version`. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+            /** @description Body larger than 10 MB. */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid skill content (`invalid_skill`, `field: files`). */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+        };
+    };
+    getAgentSkillVersion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                name: string;
+                version: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The version, including `files`. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentSkillVersion"];
+                };
+            };
+            /** @description `version` is not a positive integer. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description Unknown skill or version. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+        };
+    };
+    publishAgentSkillVersion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                name: string;
+                version: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The updated version. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentSkillVersion"];
+                };
+            };
+            /** @description `version` is not a positive integer. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description Not an admin. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            /** @description Unknown skill or version. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+            /** @description Status change not allowed (`invalid_status`, `field: status`). */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+        };
+    };
+    archiveAgentSkillVersion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                name: string;
+                version: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The updated version. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentSkillVersion"];
+                };
+            };
+            /** @description `version` is not a positive integer. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description Not an admin. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            /** @description Unknown skill or version. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+            /** @description Status change not allowed (`invalid_status`, `field: status`). */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+        };
+    };
+    diffAgentSkillVersions: {
+        parameters: {
+            query: {
+                from: number;
+                to: number;
+            };
+            header?: never;
+            path: {
+                name: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Changed files. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentSkillDiff"];
+                };
+            };
+            /** @description `from` or `to` is not a version number. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description Unknown skill or version. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+        };
+    };
+    checkAgentSkillUpstream: {
+        parameters: {
+            query: {
+                version: number;
+            };
+            header?: never;
+            path: {
+                name: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Upstream status. When up to date only `version`, `source`, `upstream_commit` and `up_to_date` are present. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentSkillUpstream"];
+                };
+            };
+            /** @description `version` is not a version number. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description Not an admin. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            /** @description Unknown skill or version. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+            /** @description The version was not imported from GitHub (`no_upstream`). */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+            /** @description GitHub could not be read (`fetch_failed`). */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+        };
+    };
+    listSchedules: {
+        parameters: {
+            query?: {
+                /** @description Admin only — restrict to this owner user id. Ignored for non-admins. */
+                owner?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Schedules, newest first. Not paginated. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScheduleList"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description Called with an API key instead of a user session. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+        };
+    };
+    createSchedule: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ScheduleWrite"];
+            };
+        };
+        responses: {
+            /** @description The created schedule. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Schedule"];
+                };
+            };
+            /** @description Invalid body: missing `agent`/`prompt`/`deliver_to`, not exactly one of `cron`/`every`, bad cron or time zone, interval below the minimum, or an agent that cannot run as a job. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description API-key caller, or the agent is not available to the calling app. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            /** @description Unknown agent, or a `deliver_to.conversation_id` the caller does not own. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            /** @description The caller already has the maximum number of schedules (`LIBRA_OS_SCHEDULES_MAX_PER_USER`, default 20). */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScheduleLimitError"];
+                };
+            };
+        };
+    };
+    getSchedule: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The schedule. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Schedule"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description Called with an API key instead of a user session. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            /** @description Unknown schedule, or not the caller's. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+        };
+    };
+    deleteSchedule: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted. */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description Called with an API key instead of a user session. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            /** @description Unknown schedule, or not the caller's. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+        };
+    };
+    updateSchedule: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ScheduleWrite"];
+            };
+        };
+        responses: {
+            /** @description The updated schedule. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Schedule"];
+                };
+            };
+            /** @description Invalid body or merged schedule. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description API-key caller, or the agent is not available to the calling app. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            /** @description Unknown schedule (or not the caller's), unknown agent, or unknown conversation. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+        };
+    };
+    getDecisionModel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Model name, kebab-case, at most 64 characters. */
+                name: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The model's versions with their evaluation reports. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DecisionModel"];
+                };
+            };
+            /** @description `invalid_name`: names are kebab-case, at most 64 characters. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description `admin_required`. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            /** @description `decision_model_not_found`: no versions under this name. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+        };
+    };
+    trainDecisionModel: {
+        parameters: {
+            query?: {
+                /** @description Confidence gate in (1/labels, 1]. Default 0.7; a non-zero `gate` in a JSON body wins. */
+                gate?: number;
+            };
+            header?: never;
+            path: {
+                /** @description Model name, kebab-case, at most 64 characters. */
+                name: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DecisionTrainRequest"];
+                "application/x-ndjson": string;
+            };
+        };
+        responses: {
+            /** @description The new candidate version (`active: false`). */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DecisionVersion"];
+                };
+            };
+            /** @description `invalid_name`, `invalid_request` (bad gate, malformed rows, empty text or label, over 100,000 rows) or `cannot_train` (too few labels or examples, too many labels, gate out of range). */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description `admin_required`. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            /** @description Body larger than 16 MB. */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The model's above-gate accuracy (95% lower bound) does not beat the majority-class share; nothing was written. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DecisionNotBetterError"];
+                };
+            };
+            /** @description `training_busy`: another training run is in progress on this instance. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+        };
+    };
+    activateDecisionModel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Model name, kebab-case, at most 64 characters. */
+                name: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DecisionActivateRequest"];
+            };
+        };
+        responses: {
+            /** @description The now-active version. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DecisionActivateResult"];
+                };
+            };
+            /** @description `invalid_name`, or `invalid_request` (missing or non-positive `version`). */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description `admin_required`. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            /** @description `decision_model_not_found`. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+        };
+    };
+    predictDecisionModel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Model name, kebab-case, at most 64 characters. */
+                name: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DecisionPredictRequest"];
+            };
+        };
+        responses: {
+            /** @description One prediction per text, in order. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DecisionPredictResult"];
+                };
+            };
+            /** @description `invalid_name`, or `invalid_request` (empty `texts`, more than 1000 texts, non-positive `version`). */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description `admin_required`. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            /** @description `decision_model_not_found`: unknown version, or no active version. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            /** @description Body larger than 16 MB. */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getModelRecommendations: {
+        parameters: {
+            query?: {
+                /** @description Restrict to one catalog task. Unknown tasks are a 400. */
+                task?: string;
+                /** @description Exact-match filter on `hardware`. */
+                hardware?: string;
+                /** @description Exact-match filter on `compatibility`. */
+                compatibility?: "validated_match" | "potentially_compatible" | "incompatible";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The match report. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ModelRecommendationReport"];
+                };
+            };
+            /** @description `unknown_task`. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            /** @description Not authenticated. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            /** @description Inference-scope key or connector-role service client. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            /** @description `catalog_unavailable`: the configured catalog file cannot be read. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+        };
+    };
+    getModelRecommendationsMarkdown: {
+        parameters: {
+            query?: {
+                task?: string;
+                hardware?: string;
+                compatibility?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The report. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/markdown": string;
+                };
+            };
+            /** @description `unknown_task`. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            /** @description Not authenticated. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            /** @description Inference-scope key or connector-role service client. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            /** @description `catalog_unavailable`. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+        };
+    };
+    getModelRecommendation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A result's `cell_id`. */
+                profile_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The result. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ModelRecommendationResult"];
+                };
+            };
+            /** @description `bad_profile_id`. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            /** @description Not authenticated. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            /** @description Inference-scope key or connector-role service client. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            /** @description `unknown_profile`. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            /** @description `catalog_unavailable`. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
                 };
             };
         };

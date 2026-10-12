@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     from ..models.chat_completion_choice import ChatCompletionChoice
     from ..models.chat_completion_response_persisted_state import ChatCompletionResponsePersistedState
     from ..models.chat_completion_usage import ChatCompletionUsage
+    from ..models.usage_block import UsageBlock
 
 
 T = TypeVar("T", bound="ChatCompletionResponse")
@@ -33,6 +34,8 @@ class ChatCompletionResponse:
             outcome. Omitted on non-retrieval turns.
         persisted_state (ChatCompletionResponsePersistedState | Unset): Merged persisted field state, present only for
             agents that declare a persist-fields schema.
+        nova_usage (UsageBlock | Unset): Aggregated token usage across all of the turn's model sub-calls, with a per-
+            stage breakdown. Omitted on non-model/zero-usage turns. Excludes embedding calls.
     """
 
     id: str | Unset = UNSET
@@ -43,6 +46,7 @@ class ChatCompletionResponse:
     usage: ChatCompletionUsage | Unset = UNSET
     nova_grounding: ChatCompletionResponseNovaGrounding | Unset = UNSET
     persisted_state: ChatCompletionResponsePersistedState | Unset = UNSET
+    nova_usage: UsageBlock | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -73,6 +77,10 @@ class ChatCompletionResponse:
         if not isinstance(self.persisted_state, Unset):
             persisted_state = self.persisted_state.to_dict()
 
+        nova_usage: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.nova_usage, Unset):
+            nova_usage = self.nova_usage.to_dict()
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update({})
@@ -92,6 +100,8 @@ class ChatCompletionResponse:
             field_dict["nova_grounding"] = nova_grounding
         if persisted_state is not UNSET:
             field_dict["persisted_state"] = persisted_state
+        if nova_usage is not UNSET:
+            field_dict["nova_usage"] = nova_usage
 
         return field_dict
 
@@ -100,6 +110,7 @@ class ChatCompletionResponse:
         from ..models.chat_completion_choice import ChatCompletionChoice
         from ..models.chat_completion_response_persisted_state import ChatCompletionResponsePersistedState
         from ..models.chat_completion_usage import ChatCompletionUsage
+        from ..models.usage_block import UsageBlock
 
         d = dict(src_dict)
         id = d.pop("id", UNSET)
@@ -140,6 +151,13 @@ class ChatCompletionResponse:
         else:
             persisted_state = ChatCompletionResponsePersistedState.from_dict(_persisted_state)
 
+        _nova_usage = d.pop("nova_usage", UNSET)
+        nova_usage: UsageBlock | Unset
+        if isinstance(_nova_usage, Unset):
+            nova_usage = UNSET
+        else:
+            nova_usage = UsageBlock.from_dict(_nova_usage)
+
         chat_completion_response = cls(
             id=id,
             object_=object_,
@@ -149,6 +167,7 @@ class ChatCompletionResponse:
             usage=usage,
             nova_grounding=nova_grounding,
             persisted_state=persisted_state,
+            nova_usage=nova_usage,
         )
 
         chat_completion_response.additional_properties = d

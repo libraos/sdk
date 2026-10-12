@@ -10,6 +10,7 @@ from ..models.native_chat_result_grounding import NativeChatResultGrounding
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
+    from ..models.retrieval_ambiguity import RetrievalAmbiguity
     from ..models.usage_block import UsageBlock
 
 
@@ -31,6 +32,8 @@ class NativeChatResult:
             turns.
         retrieved_chunks (list[str] | Unset): Source ids of knowledge chunks surfaced by this turn.
         tools_used (list[str] | Unset): Unique tool names dispatched this turn (include_metadata only).
+        retrieval (RetrievalAmbiguity | Unset): Present only when the evidence the answer relied on spanned several
+            documents the conversation did not choose between and the agent's ambiguous-entity handling is `state` or `ask`.
         usage (UsageBlock | Unset): Aggregated token usage across all of the turn's model sub-calls, with a per-stage
             breakdown. Omitted on non-model/zero-usage turns. Excludes embedding calls.
     """
@@ -44,6 +47,7 @@ class NativeChatResult:
     grounding: NativeChatResultGrounding | Unset = UNSET
     retrieved_chunks: list[str] | Unset = UNSET
     tools_used: list[str] | Unset = UNSET
+    retrieval: RetrievalAmbiguity | Unset = UNSET
     usage: UsageBlock | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
@@ -76,6 +80,10 @@ class NativeChatResult:
         if not isinstance(self.tools_used, Unset):
             tools_used = self.tools_used
 
+        retrieval: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.retrieval, Unset):
+            retrieval = self.retrieval.to_dict()
+
         usage: dict[str, Any] | Unset = UNSET
         if not isinstance(self.usage, Unset):
             usage = self.usage.to_dict()
@@ -101,6 +109,8 @@ class NativeChatResult:
             field_dict["retrieved_chunks"] = retrieved_chunks
         if tools_used is not UNSET:
             field_dict["tools_used"] = tools_used
+        if retrieval is not UNSET:
+            field_dict["retrieval"] = retrieval
         if usage is not UNSET:
             field_dict["usage"] = usage
 
@@ -108,6 +118,7 @@ class NativeChatResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.retrieval_ambiguity import RetrievalAmbiguity
         from ..models.usage_block import UsageBlock
 
         d = dict(src_dict)
@@ -134,6 +145,13 @@ class NativeChatResult:
 
         tools_used = cast(list[str], d.pop("tools_used", UNSET))
 
+        _retrieval = d.pop("retrieval", UNSET)
+        retrieval: RetrievalAmbiguity | Unset
+        if isinstance(_retrieval, Unset):
+            retrieval = UNSET
+        else:
+            retrieval = RetrievalAmbiguity.from_dict(_retrieval)
+
         _usage = d.pop("usage", UNSET)
         usage: UsageBlock | Unset
         if isinstance(_usage, Unset):
@@ -151,6 +169,7 @@ class NativeChatResult:
             grounding=grounding,
             retrieved_chunks=retrieved_chunks,
             tools_used=tools_used,
+            retrieval=retrieval,
             usage=usage,
         )
 

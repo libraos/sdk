@@ -2,7 +2,7 @@
 
 All notable changes to `libraos-sdk` (Python) will be documented in this file.
 
-## [Unreleased] — towards 1.2.0
+## [1.2.0] — 2026-10-12
 
 ### Added
 
@@ -48,6 +48,19 @@ All notable changes to `libraos-sdk` (Python) will be documented in this file.
   - The `usage` block: per-stage timing, `phases`, `timeline`, `context_budget`, `working_set`,
     `tool_calls`, `agent_skills`, and cache token counts. Native chat gains the `retrieval`
     ambiguity block. The `grounding` enum gains `unsupported_figures`.
+
+- **Also generated since `1.1.1`** (reached through `libraos._generated`, no wrappers):
+  `POST /v1/search` (#98), `/api/knowledge/*`, `/api/super-nova/*` and `/api/capabilities` (#97),
+  knowledge signals and eval suites (#93), the authorization lifecycle — intents, grants,
+  capabilities, decisions (#90), the Desk chat contract — conversations and attachments (#96),
+  `GET /api/agents` (#101), and three grounding enum values the server already returned (#100).
+
+### Fixed
+
+- **`python-dateutil` is now a declared dependency.** The generated models (`libraos._generated`)
+  import it, but it was never listed, so on a clean `pip install libraos-sdk` (1.1.1 included)
+  `from libraos._generated import models` raised `ModuleNotFoundError`. CI did not see it because
+  the dev extras pull it in transitively.
 
 ### Upgrade note
 

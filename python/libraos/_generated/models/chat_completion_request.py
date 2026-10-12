@@ -6,10 +6,12 @@ from typing import TYPE_CHECKING, Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
+from ..models.chat_completion_request_reasoning_effort import ChatCompletionRequestReasoningEffort
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
     from ..models.chat_completion_request_metadata import ChatCompletionRequestMetadata
+    from ..models.chat_completion_response_format import ChatCompletionResponseFormat
     from ..models.chat_message import ChatMessage
 
 
@@ -27,11 +29,19 @@ class ChatCompletionRequest:
         stream (bool | Unset): When true the response is an SSE stream terminated by `[DONE]`.
         max_tokens (int | Unset): Output-token cap (folded into the per-call answer limit).
         max_completion_tokens (int | Unset): Newer OpenAI field for the output-token cap; preferred over max_tokens when
-            both are set.
-        temperature (float | Unset): Sampling temperature. Accepted for OpenAI-client compatibility; server-side routing
-            controls the effective value on the agent path.
+            both are set. On the agent path it becomes the per-call answer cap (clamped to 32768) unless
+            `metadata.max_tokens` is set.
+        temperature (float | Unset): Sampling temperature, 0-2 (otherwise 400). On the passthrough path it is sent to
+            the provider; on the agent path it becomes the per-call answer temperature unless `metadata.temperature` is set.
+        reasoning_effort (ChatCompletionRequestReasoningEffort | Unset): Native reasoning effort for the answer call
+            (otherwise 400). `off` or empty sends no reasoning parameter (the model's default); `none` asks the model not to
+            reason. On the agent path it becomes `metadata.thinking.effort` unless `metadata.thinking` is set.
+        response_format (ChatCompletionResponseFormat | Unset): OpenAI-style response format. Must be an object with a
+            non-empty `type` (otherwise 400); the value of `type` is not checked. Forwarded verbatim to OpenAI-compatible
+            providers on the passthrough path; ignored on the agent path, where the agent's `output_type` decides the reply
+            shape.
         metadata (ChatCompletionRequestMetadata | Unset): Nova OS extension channel for per-call fields (e.g. a per-call
-            model override).
+            model override). The documented keys below are honoured on this surface the same way as on native chat.
     """
 
     messages: list[ChatMessage]
@@ -40,6 +50,8 @@ class ChatCompletionRequest:
     max_tokens: int | Unset = UNSET
     max_completion_tokens: int | Unset = UNSET
     temperature: float | Unset = UNSET
+    reasoning_effort: ChatCompletionRequestReasoningEffort | Unset = UNSET
+    response_format: ChatCompletionResponseFormat | Unset = UNSET
     metadata: ChatCompletionRequestMetadata | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
@@ -58,6 +70,14 @@ class ChatCompletionRequest:
         max_completion_tokens = self.max_completion_tokens
 
         temperature = self.temperature
+
+        reasoning_effort: str | Unset = UNSET
+        if not isinstance(self.reasoning_effort, Unset):
+            reasoning_effort = self.reasoning_effort.value
+
+        response_format: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.response_format, Unset):
+            response_format = self.response_format.to_dict()
 
         metadata: dict[str, Any] | Unset = UNSET
         if not isinstance(self.metadata, Unset):
@@ -80,6 +100,10 @@ class ChatCompletionRequest:
             field_dict["max_completion_tokens"] = max_completion_tokens
         if temperature is not UNSET:
             field_dict["temperature"] = temperature
+        if reasoning_effort is not UNSET:
+            field_dict["reasoning_effort"] = reasoning_effort
+        if response_format is not UNSET:
+            field_dict["response_format"] = response_format
         if metadata is not UNSET:
             field_dict["metadata"] = metadata
 
@@ -88,6 +112,7 @@ class ChatCompletionRequest:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.chat_completion_request_metadata import ChatCompletionRequestMetadata
+        from ..models.chat_completion_response_format import ChatCompletionResponseFormat
         from ..models.chat_message import ChatMessage
 
         d = dict(src_dict)
@@ -108,6 +133,20 @@ class ChatCompletionRequest:
 
         temperature = d.pop("temperature", UNSET)
 
+        _reasoning_effort = d.pop("reasoning_effort", UNSET)
+        reasoning_effort: ChatCompletionRequestReasoningEffort | Unset
+        if isinstance(_reasoning_effort, Unset):
+            reasoning_effort = UNSET
+        else:
+            reasoning_effort = ChatCompletionRequestReasoningEffort(_reasoning_effort)
+
+        _response_format = d.pop("response_format", UNSET)
+        response_format: ChatCompletionResponseFormat | Unset
+        if isinstance(_response_format, Unset):
+            response_format = UNSET
+        else:
+            response_format = ChatCompletionResponseFormat.from_dict(_response_format)
+
         _metadata = d.pop("metadata", UNSET)
         metadata: ChatCompletionRequestMetadata | Unset
         if isinstance(_metadata, Unset):
@@ -122,6 +161,8 @@ class ChatCompletionRequest:
             max_tokens=max_tokens,
             max_completion_tokens=max_completion_tokens,
             temperature=temperature,
+            reasoning_effort=reasoning_effort,
+            response_format=response_format,
             metadata=metadata,
         )
 

@@ -25,6 +25,72 @@ const (
 	ScimBearerScopes     = "scimBearer.Scopes"
 )
 
+// Defines values for AgentEgressGuard.
+const (
+	AgentEgressGuardCallback AgentEgressGuard = "callback"
+	AgentEgressGuardDetector AgentEgressGuard = "detector"
+	AgentEgressGuardEmpty    AgentEgressGuard = ""
+	AgentEgressGuardOff      AgentEgressGuard = "off"
+)
+
+// Valid indicates whether the value is a known member of the AgentEgressGuard enum.
+func (e AgentEgressGuard) Valid() bool {
+	switch e {
+	case AgentEgressGuardCallback:
+		return true
+	case AgentEgressGuardDetector:
+		return true
+	case AgentEgressGuardEmpty:
+		return true
+	case AgentEgressGuardOff:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AgentOnAmbiguousEntity.
+const (
+	AgentOnAmbiguousEntityAsk   AgentOnAmbiguousEntity = "ask"
+	AgentOnAmbiguousEntityEmpty AgentOnAmbiguousEntity = ""
+	AgentOnAmbiguousEntityOff   AgentOnAmbiguousEntity = "off"
+	AgentOnAmbiguousEntityState AgentOnAmbiguousEntity = "state"
+)
+
+// Valid indicates whether the value is a known member of the AgentOnAmbiguousEntity enum.
+func (e AgentOnAmbiguousEntity) Valid() bool {
+	switch e {
+	case AgentOnAmbiguousEntityAsk:
+		return true
+	case AgentOnAmbiguousEntityEmpty:
+		return true
+	case AgentOnAmbiguousEntityOff:
+		return true
+	case AgentOnAmbiguousEntityState:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AgentToolScope.
+const (
+	AgentToolScopeEmpty AgentToolScope = ""
+	AgentToolScopeNone  AgentToolScope = "none"
+)
+
+// Valid indicates whether the value is a known member of the AgentToolScope enum.
+func (e AgentToolScope) Valid() bool {
+	switch e {
+	case AgentToolScopeEmpty:
+		return true
+	case AgentToolScopeNone:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for AgentVisibility.
 const (
 	AgentVisibilityEmpty   AgentVisibility = ""
@@ -40,6 +106,72 @@ func (e AgentVisibility) Valid() bool {
 	case AgentVisibilityPrivate:
 		return true
 	case AgentVisibilityPublic:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AgentCreateEgressGuard.
+const (
+	AgentCreateEgressGuardCallback AgentCreateEgressGuard = "callback"
+	AgentCreateEgressGuardDetector AgentCreateEgressGuard = "detector"
+	AgentCreateEgressGuardEmpty    AgentCreateEgressGuard = ""
+	AgentCreateEgressGuardOff      AgentCreateEgressGuard = "off"
+)
+
+// Valid indicates whether the value is a known member of the AgentCreateEgressGuard enum.
+func (e AgentCreateEgressGuard) Valid() bool {
+	switch e {
+	case AgentCreateEgressGuardCallback:
+		return true
+	case AgentCreateEgressGuardDetector:
+		return true
+	case AgentCreateEgressGuardEmpty:
+		return true
+	case AgentCreateEgressGuardOff:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AgentCreateOnAmbiguousEntity.
+const (
+	AgentCreateOnAmbiguousEntityAsk   AgentCreateOnAmbiguousEntity = "ask"
+	AgentCreateOnAmbiguousEntityEmpty AgentCreateOnAmbiguousEntity = ""
+	AgentCreateOnAmbiguousEntityOff   AgentCreateOnAmbiguousEntity = "off"
+	AgentCreateOnAmbiguousEntityState AgentCreateOnAmbiguousEntity = "state"
+)
+
+// Valid indicates whether the value is a known member of the AgentCreateOnAmbiguousEntity enum.
+func (e AgentCreateOnAmbiguousEntity) Valid() bool {
+	switch e {
+	case AgentCreateOnAmbiguousEntityAsk:
+		return true
+	case AgentCreateOnAmbiguousEntityEmpty:
+		return true
+	case AgentCreateOnAmbiguousEntityOff:
+		return true
+	case AgentCreateOnAmbiguousEntityState:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AgentCreateToolScope.
+const (
+	AgentCreateToolScopeEmpty AgentCreateToolScope = ""
+	AgentCreateToolScopeNone  AgentCreateToolScope = "none"
+)
+
+// Valid indicates whether the value is a known member of the AgentCreateToolScope enum.
+func (e AgentCreateToolScope) Valid() bool {
+	switch e {
+	case AgentCreateToolScopeEmpty:
+		return true
+	case AgentCreateToolScopeNone:
 		return true
 	default:
 		return false
@@ -67,6 +199,189 @@ func (e AgentCreateVisibility) Valid() bool {
 	}
 }
 
+// Defines values for AgentGuardrailsDateNormalizer.
+const (
+	AgentGuardrailsDateNormalizerDisabled AgentGuardrailsDateNormalizer = "disabled"
+	AgentGuardrailsDateNormalizerEmpty    AgentGuardrailsDateNormalizer = ""
+	AgentGuardrailsDateNormalizerEnabled  AgentGuardrailsDateNormalizer = "enabled"
+)
+
+// Valid indicates whether the value is a known member of the AgentGuardrailsDateNormalizer enum.
+func (e AgentGuardrailsDateNormalizer) Valid() bool {
+	switch e {
+	case AgentGuardrailsDateNormalizerDisabled:
+		return true
+	case AgentGuardrailsDateNormalizerEmpty:
+		return true
+	case AgentGuardrailsDateNormalizerEnabled:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AgentGuardrailsPiiRedactor.
+const (
+	AgentGuardrailsPiiRedactorDisabled AgentGuardrailsPiiRedactor = "disabled"
+	AgentGuardrailsPiiRedactorEmpty    AgentGuardrailsPiiRedactor = ""
+	AgentGuardrailsPiiRedactorEnabled  AgentGuardrailsPiiRedactor = "enabled"
+)
+
+// Valid indicates whether the value is a known member of the AgentGuardrailsPiiRedactor enum.
+func (e AgentGuardrailsPiiRedactor) Valid() bool {
+	switch e {
+	case AgentGuardrailsPiiRedactorDisabled:
+		return true
+	case AgentGuardrailsPiiRedactorEmpty:
+		return true
+	case AgentGuardrailsPiiRedactorEnabled:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AgentSkillFileDiffChange.
+const (
+	AgentSkillFileDiffChangeAdded    AgentSkillFileDiffChange = "added"
+	AgentSkillFileDiffChangeModified AgentSkillFileDiffChange = "modified"
+	AgentSkillFileDiffChangeRemoved  AgentSkillFileDiffChange = "removed"
+)
+
+// Valid indicates whether the value is a known member of the AgentSkillFileDiffChange enum.
+func (e AgentSkillFileDiffChange) Valid() bool {
+	switch e {
+	case AgentSkillFileDiffChangeAdded:
+		return true
+	case AgentSkillFileDiffChangeModified:
+		return true
+	case AgentSkillFileDiffChangeRemoved:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AgentSkillSourceKind.
+const (
+	AgentSkillSourceKindEdit   AgentSkillSourceKind = "edit"
+	AgentSkillSourceKindGithub AgentSkillSourceKind = "github"
+	AgentSkillSourceKindUpload AgentSkillSourceKind = "upload"
+)
+
+// Valid indicates whether the value is a known member of the AgentSkillSourceKind enum.
+func (e AgentSkillSourceKind) Valid() bool {
+	switch e {
+	case AgentSkillSourceKindEdit:
+		return true
+	case AgentSkillSourceKindGithub:
+		return true
+	case AgentSkillSourceKindUpload:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AgentSkillSummaryLatestStatus.
+const (
+	AgentSkillSummaryLatestStatusArchived  AgentSkillSummaryLatestStatus = "archived"
+	AgentSkillSummaryLatestStatusDraft     AgentSkillSummaryLatestStatus = "draft"
+	AgentSkillSummaryLatestStatusPublished AgentSkillSummaryLatestStatus = "published"
+)
+
+// Valid indicates whether the value is a known member of the AgentSkillSummaryLatestStatus enum.
+func (e AgentSkillSummaryLatestStatus) Valid() bool {
+	switch e {
+	case AgentSkillSummaryLatestStatusArchived:
+		return true
+	case AgentSkillSummaryLatestStatusDraft:
+		return true
+	case AgentSkillSummaryLatestStatusPublished:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AgentSkillVersionStatus.
+const (
+	AgentSkillVersionStatusArchived  AgentSkillVersionStatus = "archived"
+	AgentSkillVersionStatusDraft     AgentSkillVersionStatus = "draft"
+	AgentSkillVersionStatusPublished AgentSkillVersionStatus = "published"
+)
+
+// Valid indicates whether the value is a known member of the AgentSkillVersionStatus enum.
+func (e AgentSkillVersionStatus) Valid() bool {
+	switch e {
+	case AgentSkillVersionStatusArchived:
+		return true
+	case AgentSkillVersionStatusDraft:
+		return true
+	case AgentSkillVersionStatusPublished:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AgentThinkingEffort.
+const (
+	AgentThinkingEffortEmpty  AgentThinkingEffort = ""
+	AgentThinkingEffortHigh   AgentThinkingEffort = "high"
+	AgentThinkingEffortLow    AgentThinkingEffort = "low"
+	AgentThinkingEffortMedium AgentThinkingEffort = "medium"
+	AgentThinkingEffortNone   AgentThinkingEffort = "none"
+	AgentThinkingEffortOff    AgentThinkingEffort = "off"
+	AgentThinkingEffortXhigh  AgentThinkingEffort = "xhigh"
+)
+
+// Valid indicates whether the value is a known member of the AgentThinkingEffort enum.
+func (e AgentThinkingEffort) Valid() bool {
+	switch e {
+	case AgentThinkingEffortEmpty:
+		return true
+	case AgentThinkingEffortHigh:
+		return true
+	case AgentThinkingEffortLow:
+		return true
+	case AgentThinkingEffortMedium:
+		return true
+	case AgentThinkingEffortNone:
+		return true
+	case AgentThinkingEffortOff:
+		return true
+	case AgentThinkingEffortXhigh:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AgentTriageDefaultBrain.
+const (
+	AgentTriageDefaultBrainAlways AgentTriageDefaultBrain = "always"
+	AgentTriageDefaultBrainEmpty  AgentTriageDefaultBrain = ""
+	AgentTriageDefaultBrainNever  AgentTriageDefaultBrain = "never"
+	AgentTriageDefaultBrainTriage AgentTriageDefaultBrain = "triage"
+)
+
+// Valid indicates whether the value is a known member of the AgentTriageDefaultBrain enum.
+func (e AgentTriageDefaultBrain) Valid() bool {
+	switch e {
+	case AgentTriageDefaultBrainAlways:
+		return true
+	case AgentTriageDefaultBrainEmpty:
+		return true
+	case AgentTriageDefaultBrainNever:
+		return true
+	case AgentTriageDefaultBrainTriage:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for AgentType.
 const (
 	AgentTypePersona AgentType = "persona"
@@ -79,6 +394,72 @@ func (e AgentType) Valid() bool {
 	case AgentTypePersona:
 		return true
 	case AgentTypeSkill:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AgentUpdateEgressGuard.
+const (
+	AgentUpdateEgressGuardCallback AgentUpdateEgressGuard = "callback"
+	AgentUpdateEgressGuardDetector AgentUpdateEgressGuard = "detector"
+	AgentUpdateEgressGuardEmpty    AgentUpdateEgressGuard = ""
+	AgentUpdateEgressGuardOff      AgentUpdateEgressGuard = "off"
+)
+
+// Valid indicates whether the value is a known member of the AgentUpdateEgressGuard enum.
+func (e AgentUpdateEgressGuard) Valid() bool {
+	switch e {
+	case AgentUpdateEgressGuardCallback:
+		return true
+	case AgentUpdateEgressGuardDetector:
+		return true
+	case AgentUpdateEgressGuardEmpty:
+		return true
+	case AgentUpdateEgressGuardOff:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AgentUpdateOnAmbiguousEntity.
+const (
+	AgentUpdateOnAmbiguousEntityAsk   AgentUpdateOnAmbiguousEntity = "ask"
+	AgentUpdateOnAmbiguousEntityEmpty AgentUpdateOnAmbiguousEntity = ""
+	AgentUpdateOnAmbiguousEntityOff   AgentUpdateOnAmbiguousEntity = "off"
+	AgentUpdateOnAmbiguousEntityState AgentUpdateOnAmbiguousEntity = "state"
+)
+
+// Valid indicates whether the value is a known member of the AgentUpdateOnAmbiguousEntity enum.
+func (e AgentUpdateOnAmbiguousEntity) Valid() bool {
+	switch e {
+	case AgentUpdateOnAmbiguousEntityAsk:
+		return true
+	case AgentUpdateOnAmbiguousEntityEmpty:
+		return true
+	case AgentUpdateOnAmbiguousEntityOff:
+		return true
+	case AgentUpdateOnAmbiguousEntityState:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AgentUpdateToolScope.
+const (
+	AgentUpdateToolScopeEmpty AgentUpdateToolScope = ""
+	AgentUpdateToolScopeNone  AgentUpdateToolScope = "none"
+)
+
+// Valid indicates whether the value is a known member of the AgentUpdateToolScope enum.
+func (e AgentUpdateToolScope) Valid() bool {
+	switch e {
+	case AgentUpdateToolScopeEmpty:
+		return true
+	case AgentUpdateToolScopeNone:
 		return true
 	default:
 		return false
@@ -172,6 +553,156 @@ func (e ChatCompletionChoiceFinishReason) Valid() bool {
 	}
 }
 
+// Defines values for ChatCompletionRequestMetadataBrain.
+const (
+	ChatCompletionRequestMetadataBrainAlways ChatCompletionRequestMetadataBrain = "always"
+	ChatCompletionRequestMetadataBrainNever  ChatCompletionRequestMetadataBrain = "never"
+)
+
+// Valid indicates whether the value is a known member of the ChatCompletionRequestMetadataBrain enum.
+func (e ChatCompletionRequestMetadataBrain) Valid() bool {
+	switch e {
+	case ChatCompletionRequestMetadataBrainAlways:
+		return true
+	case ChatCompletionRequestMetadataBrainNever:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ChatCompletionRequestMetadataEgressGuard.
+const (
+	ChatCompletionRequestMetadataEgressGuardCallback ChatCompletionRequestMetadataEgressGuard = "callback"
+	ChatCompletionRequestMetadataEgressGuardDetector ChatCompletionRequestMetadataEgressGuard = "detector"
+	ChatCompletionRequestMetadataEgressGuardEmpty    ChatCompletionRequestMetadataEgressGuard = ""
+	ChatCompletionRequestMetadataEgressGuardOff      ChatCompletionRequestMetadataEgressGuard = "off"
+)
+
+// Valid indicates whether the value is a known member of the ChatCompletionRequestMetadataEgressGuard enum.
+func (e ChatCompletionRequestMetadataEgressGuard) Valid() bool {
+	switch e {
+	case ChatCompletionRequestMetadataEgressGuardCallback:
+		return true
+	case ChatCompletionRequestMetadataEgressGuardDetector:
+		return true
+	case ChatCompletionRequestMetadataEgressGuardEmpty:
+		return true
+	case ChatCompletionRequestMetadataEgressGuardOff:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ChatCompletionRequestMetadataOnAmbiguousEntity.
+const (
+	ChatCompletionRequestMetadataOnAmbiguousEntityAsk   ChatCompletionRequestMetadataOnAmbiguousEntity = "ask"
+	ChatCompletionRequestMetadataOnAmbiguousEntityOff   ChatCompletionRequestMetadataOnAmbiguousEntity = "off"
+	ChatCompletionRequestMetadataOnAmbiguousEntityState ChatCompletionRequestMetadataOnAmbiguousEntity = "state"
+)
+
+// Valid indicates whether the value is a known member of the ChatCompletionRequestMetadataOnAmbiguousEntity enum.
+func (e ChatCompletionRequestMetadataOnAmbiguousEntity) Valid() bool {
+	switch e {
+	case ChatCompletionRequestMetadataOnAmbiguousEntityAsk:
+		return true
+	case ChatCompletionRequestMetadataOnAmbiguousEntityOff:
+		return true
+	case ChatCompletionRequestMetadataOnAmbiguousEntityState:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ChatCompletionRequestMetadataResearchDepth.
+const (
+	ChatCompletionRequestMetadataResearchDepthAuto ChatCompletionRequestMetadataResearchDepth = "auto"
+	ChatCompletionRequestMetadataResearchDepthDeep ChatCompletionRequestMetadataResearchDepth = "deep"
+	ChatCompletionRequestMetadataResearchDepthFast ChatCompletionRequestMetadataResearchDepth = "fast"
+)
+
+// Valid indicates whether the value is a known member of the ChatCompletionRequestMetadataResearchDepth enum.
+func (e ChatCompletionRequestMetadataResearchDepth) Valid() bool {
+	switch e {
+	case ChatCompletionRequestMetadataResearchDepthAuto:
+		return true
+	case ChatCompletionRequestMetadataResearchDepthDeep:
+		return true
+	case ChatCompletionRequestMetadataResearchDepthFast:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ChatCompletionRequestMetadataThinkingEffort.
+const (
+	ChatCompletionRequestMetadataThinkingEffortEmpty  ChatCompletionRequestMetadataThinkingEffort = ""
+	ChatCompletionRequestMetadataThinkingEffortHigh   ChatCompletionRequestMetadataThinkingEffort = "high"
+	ChatCompletionRequestMetadataThinkingEffortLow    ChatCompletionRequestMetadataThinkingEffort = "low"
+	ChatCompletionRequestMetadataThinkingEffortMedium ChatCompletionRequestMetadataThinkingEffort = "medium"
+	ChatCompletionRequestMetadataThinkingEffortNone   ChatCompletionRequestMetadataThinkingEffort = "none"
+	ChatCompletionRequestMetadataThinkingEffortOff    ChatCompletionRequestMetadataThinkingEffort = "off"
+	ChatCompletionRequestMetadataThinkingEffortXhigh  ChatCompletionRequestMetadataThinkingEffort = "xhigh"
+)
+
+// Valid indicates whether the value is a known member of the ChatCompletionRequestMetadataThinkingEffort enum.
+func (e ChatCompletionRequestMetadataThinkingEffort) Valid() bool {
+	switch e {
+	case ChatCompletionRequestMetadataThinkingEffortEmpty:
+		return true
+	case ChatCompletionRequestMetadataThinkingEffortHigh:
+		return true
+	case ChatCompletionRequestMetadataThinkingEffortLow:
+		return true
+	case ChatCompletionRequestMetadataThinkingEffortMedium:
+		return true
+	case ChatCompletionRequestMetadataThinkingEffortNone:
+		return true
+	case ChatCompletionRequestMetadataThinkingEffortOff:
+		return true
+	case ChatCompletionRequestMetadataThinkingEffortXhigh:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ChatCompletionRequestReasoningEffort.
+const (
+	ChatCompletionRequestReasoningEffortEmpty  ChatCompletionRequestReasoningEffort = ""
+	ChatCompletionRequestReasoningEffortHigh   ChatCompletionRequestReasoningEffort = "high"
+	ChatCompletionRequestReasoningEffortLow    ChatCompletionRequestReasoningEffort = "low"
+	ChatCompletionRequestReasoningEffortMedium ChatCompletionRequestReasoningEffort = "medium"
+	ChatCompletionRequestReasoningEffortNone   ChatCompletionRequestReasoningEffort = "none"
+	ChatCompletionRequestReasoningEffortOff    ChatCompletionRequestReasoningEffort = "off"
+	ChatCompletionRequestReasoningEffortXhigh  ChatCompletionRequestReasoningEffort = "xhigh"
+)
+
+// Valid indicates whether the value is a known member of the ChatCompletionRequestReasoningEffort enum.
+func (e ChatCompletionRequestReasoningEffort) Valid() bool {
+	switch e {
+	case ChatCompletionRequestReasoningEffortEmpty:
+		return true
+	case ChatCompletionRequestReasoningEffortHigh:
+		return true
+	case ChatCompletionRequestReasoningEffortLow:
+		return true
+	case ChatCompletionRequestReasoningEffortMedium:
+		return true
+	case ChatCompletionRequestReasoningEffortNone:
+		return true
+	case ChatCompletionRequestReasoningEffortOff:
+		return true
+	case ChatCompletionRequestReasoningEffortXhigh:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for ChatCompletionResponseNovaGrounding.
 const (
 	ChatCompletionResponseNovaGroundingDegraded           ChatCompletionResponseNovaGrounding = "degraded"
@@ -181,6 +712,7 @@ const (
 	ChatCompletionResponseNovaGroundingUngroundedRefusal  ChatCompletionResponseNovaGrounding = "ungrounded_refusal"
 	ChatCompletionResponseNovaGroundingUnopenedSources    ChatCompletionResponseNovaGrounding = "unopened_sources"
 	ChatCompletionResponseNovaGroundingUnsupportedClaim   ChatCompletionResponseNovaGrounding = "unsupported_claim"
+	ChatCompletionResponseNovaGroundingUnsupportedFigures ChatCompletionResponseNovaGrounding = "unsupported_figures"
 )
 
 // Valid indicates whether the value is a known member of the ChatCompletionResponseNovaGrounding enum.
@@ -199,6 +731,8 @@ func (e ChatCompletionResponseNovaGrounding) Valid() bool {
 	case ChatCompletionResponseNovaGroundingUnopenedSources:
 		return true
 	case ChatCompletionResponseNovaGroundingUnsupportedClaim:
+		return true
+	case ChatCompletionResponseNovaGroundingUnsupportedFigures:
 		return true
 	default:
 		return false
@@ -334,6 +868,21 @@ func (e CustomToolCallbackRetryBackoff) Valid() bool {
 	case CustomToolCallbackRetryBackoffFixed:
 		return true
 	case CustomToolCallbackRetryBackoffLinear:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for DecisionNotBetterErrorError.
+const (
+	DecisionNotBetterErrorErrorConfidenceNotBetterThanPrior DecisionNotBetterErrorError = "confidence_not_better_than_prior"
+)
+
+// Valid indicates whether the value is a known member of the DecisionNotBetterErrorError enum.
+func (e DecisionNotBetterErrorError) Valid() bool {
+	switch e {
+	case DecisionNotBetterErrorErrorConfidenceNotBetterThanPrior:
 		return true
 	default:
 		return false
@@ -922,6 +1471,105 @@ func (e MemoryLogScope) Valid() bool {
 	}
 }
 
+// Defines values for MessageRequestMetadataEgressGuard.
+const (
+	MessageRequestMetadataEgressGuardCallback MessageRequestMetadataEgressGuard = "callback"
+	MessageRequestMetadataEgressGuardDetector MessageRequestMetadataEgressGuard = "detector"
+	MessageRequestMetadataEgressGuardEmpty    MessageRequestMetadataEgressGuard = ""
+	MessageRequestMetadataEgressGuardOff      MessageRequestMetadataEgressGuard = "off"
+)
+
+// Valid indicates whether the value is a known member of the MessageRequestMetadataEgressGuard enum.
+func (e MessageRequestMetadataEgressGuard) Valid() bool {
+	switch e {
+	case MessageRequestMetadataEgressGuardCallback:
+		return true
+	case MessageRequestMetadataEgressGuardDetector:
+		return true
+	case MessageRequestMetadataEgressGuardEmpty:
+		return true
+	case MessageRequestMetadataEgressGuardOff:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for MessageRequestMetadataOnAmbiguousEntity.
+const (
+	MessageRequestMetadataOnAmbiguousEntityAsk   MessageRequestMetadataOnAmbiguousEntity = "ask"
+	MessageRequestMetadataOnAmbiguousEntityOff   MessageRequestMetadataOnAmbiguousEntity = "off"
+	MessageRequestMetadataOnAmbiguousEntityState MessageRequestMetadataOnAmbiguousEntity = "state"
+)
+
+// Valid indicates whether the value is a known member of the MessageRequestMetadataOnAmbiguousEntity enum.
+func (e MessageRequestMetadataOnAmbiguousEntity) Valid() bool {
+	switch e {
+	case MessageRequestMetadataOnAmbiguousEntityAsk:
+		return true
+	case MessageRequestMetadataOnAmbiguousEntityOff:
+		return true
+	case MessageRequestMetadataOnAmbiguousEntityState:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for MessageRequestMetadataResearchDepth.
+const (
+	MessageRequestMetadataResearchDepthAuto MessageRequestMetadataResearchDepth = "auto"
+	MessageRequestMetadataResearchDepthDeep MessageRequestMetadataResearchDepth = "deep"
+	MessageRequestMetadataResearchDepthFast MessageRequestMetadataResearchDepth = "fast"
+)
+
+// Valid indicates whether the value is a known member of the MessageRequestMetadataResearchDepth enum.
+func (e MessageRequestMetadataResearchDepth) Valid() bool {
+	switch e {
+	case MessageRequestMetadataResearchDepthAuto:
+		return true
+	case MessageRequestMetadataResearchDepthDeep:
+		return true
+	case MessageRequestMetadataResearchDepthFast:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for MessageRequestMetadataThinkingEffort.
+const (
+	MessageRequestMetadataThinkingEffortEmpty  MessageRequestMetadataThinkingEffort = ""
+	MessageRequestMetadataThinkingEffortHigh   MessageRequestMetadataThinkingEffort = "high"
+	MessageRequestMetadataThinkingEffortLow    MessageRequestMetadataThinkingEffort = "low"
+	MessageRequestMetadataThinkingEffortMedium MessageRequestMetadataThinkingEffort = "medium"
+	MessageRequestMetadataThinkingEffortNone   MessageRequestMetadataThinkingEffort = "none"
+	MessageRequestMetadataThinkingEffortOff    MessageRequestMetadataThinkingEffort = "off"
+	MessageRequestMetadataThinkingEffortXhigh  MessageRequestMetadataThinkingEffort = "xhigh"
+)
+
+// Valid indicates whether the value is a known member of the MessageRequestMetadataThinkingEffort enum.
+func (e MessageRequestMetadataThinkingEffort) Valid() bool {
+	switch e {
+	case MessageRequestMetadataThinkingEffortEmpty:
+		return true
+	case MessageRequestMetadataThinkingEffortHigh:
+		return true
+	case MessageRequestMetadataThinkingEffortLow:
+		return true
+	case MessageRequestMetadataThinkingEffortMedium:
+		return true
+	case MessageRequestMetadataThinkingEffortNone:
+		return true
+	case MessageRequestMetadataThinkingEffortOff:
+		return true
+	case MessageRequestMetadataThinkingEffortXhigh:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for MessageResponseStopReason.
 const (
 	MessageResponseStopReasonEndTurn      MessageResponseStopReason = "end_turn"
@@ -961,6 +1609,66 @@ func (e MessageResponseType) Valid() bool {
 	}
 }
 
+// Defines values for ModelRecommendationResultCompatibility.
+const (
+	ModelRecommendationResultCompatibilityIncompatible          ModelRecommendationResultCompatibility = "incompatible"
+	ModelRecommendationResultCompatibilityPotentiallyCompatible ModelRecommendationResultCompatibility = "potentially_compatible"
+	ModelRecommendationResultCompatibilityValidatedMatch        ModelRecommendationResultCompatibility = "validated_match"
+)
+
+// Valid indicates whether the value is a known member of the ModelRecommendationResultCompatibility enum.
+func (e ModelRecommendationResultCompatibility) Valid() bool {
+	switch e {
+	case ModelRecommendationResultCompatibilityIncompatible:
+		return true
+	case ModelRecommendationResultCompatibilityPotentiallyCompatible:
+		return true
+	case ModelRecommendationResultCompatibilityValidatedMatch:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ModelRecommendationResultEvidenceTier.
+const (
+	ModelRecommendationResultEvidenceTierIndicative ModelRecommendationResultEvidenceTier = "indicative"
+	ModelRecommendationResultEvidenceTierNone       ModelRecommendationResultEvidenceTier = "none"
+	ModelRecommendationResultEvidenceTierVerified   ModelRecommendationResultEvidenceTier = "verified"
+)
+
+// Valid indicates whether the value is a known member of the ModelRecommendationResultEvidenceTier enum.
+func (e ModelRecommendationResultEvidenceTier) Valid() bool {
+	switch e {
+	case ModelRecommendationResultEvidenceTierIndicative:
+		return true
+	case ModelRecommendationResultEvidenceTierNone:
+		return true
+	case ModelRecommendationResultEvidenceTierVerified:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ModelRecommendationResultMatchedBy.
+const (
+	ModelRecommendationResultMatchedByHardwareTable ModelRecommendationResultMatchedBy = "hardware_table"
+	ModelRecommendationResultMatchedByRequirements  ModelRecommendationResultMatchedBy = "requirements"
+)
+
+// Valid indicates whether the value is a known member of the ModelRecommendationResultMatchedBy enum.
+func (e ModelRecommendationResultMatchedBy) Valid() bool {
+	switch e {
+	case ModelRecommendationResultMatchedByHardwareTable:
+		return true
+	case ModelRecommendationResultMatchedByRequirements:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for NativeChatMetadataBrain.
 const (
 	NativeChatMetadataBrainAlways NativeChatMetadataBrain = "always"
@@ -979,6 +1687,105 @@ func (e NativeChatMetadataBrain) Valid() bool {
 	}
 }
 
+// Defines values for NativeChatMetadataEgressGuard.
+const (
+	NativeChatMetadataEgressGuardCallback NativeChatMetadataEgressGuard = "callback"
+	NativeChatMetadataEgressGuardDetector NativeChatMetadataEgressGuard = "detector"
+	NativeChatMetadataEgressGuardEmpty    NativeChatMetadataEgressGuard = ""
+	NativeChatMetadataEgressGuardOff      NativeChatMetadataEgressGuard = "off"
+)
+
+// Valid indicates whether the value is a known member of the NativeChatMetadataEgressGuard enum.
+func (e NativeChatMetadataEgressGuard) Valid() bool {
+	switch e {
+	case NativeChatMetadataEgressGuardCallback:
+		return true
+	case NativeChatMetadataEgressGuardDetector:
+		return true
+	case NativeChatMetadataEgressGuardEmpty:
+		return true
+	case NativeChatMetadataEgressGuardOff:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for NativeChatMetadataOnAmbiguousEntity.
+const (
+	NativeChatMetadataOnAmbiguousEntityAsk   NativeChatMetadataOnAmbiguousEntity = "ask"
+	NativeChatMetadataOnAmbiguousEntityOff   NativeChatMetadataOnAmbiguousEntity = "off"
+	NativeChatMetadataOnAmbiguousEntityState NativeChatMetadataOnAmbiguousEntity = "state"
+)
+
+// Valid indicates whether the value is a known member of the NativeChatMetadataOnAmbiguousEntity enum.
+func (e NativeChatMetadataOnAmbiguousEntity) Valid() bool {
+	switch e {
+	case NativeChatMetadataOnAmbiguousEntityAsk:
+		return true
+	case NativeChatMetadataOnAmbiguousEntityOff:
+		return true
+	case NativeChatMetadataOnAmbiguousEntityState:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for NativeChatMetadataResearchDepth.
+const (
+	NativeChatMetadataResearchDepthAuto NativeChatMetadataResearchDepth = "auto"
+	NativeChatMetadataResearchDepthDeep NativeChatMetadataResearchDepth = "deep"
+	NativeChatMetadataResearchDepthFast NativeChatMetadataResearchDepth = "fast"
+)
+
+// Valid indicates whether the value is a known member of the NativeChatMetadataResearchDepth enum.
+func (e NativeChatMetadataResearchDepth) Valid() bool {
+	switch e {
+	case NativeChatMetadataResearchDepthAuto:
+		return true
+	case NativeChatMetadataResearchDepthDeep:
+		return true
+	case NativeChatMetadataResearchDepthFast:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for NativeChatMetadataThinkingEffort.
+const (
+	NativeChatMetadataThinkingEffortEmpty  NativeChatMetadataThinkingEffort = ""
+	NativeChatMetadataThinkingEffortHigh   NativeChatMetadataThinkingEffort = "high"
+	NativeChatMetadataThinkingEffortLow    NativeChatMetadataThinkingEffort = "low"
+	NativeChatMetadataThinkingEffortMedium NativeChatMetadataThinkingEffort = "medium"
+	NativeChatMetadataThinkingEffortNone   NativeChatMetadataThinkingEffort = "none"
+	NativeChatMetadataThinkingEffortOff    NativeChatMetadataThinkingEffort = "off"
+	NativeChatMetadataThinkingEffortXhigh  NativeChatMetadataThinkingEffort = "xhigh"
+)
+
+// Valid indicates whether the value is a known member of the NativeChatMetadataThinkingEffort enum.
+func (e NativeChatMetadataThinkingEffort) Valid() bool {
+	switch e {
+	case NativeChatMetadataThinkingEffortEmpty:
+		return true
+	case NativeChatMetadataThinkingEffortHigh:
+		return true
+	case NativeChatMetadataThinkingEffortLow:
+		return true
+	case NativeChatMetadataThinkingEffortMedium:
+		return true
+	case NativeChatMetadataThinkingEffortNone:
+		return true
+	case NativeChatMetadataThinkingEffortOff:
+		return true
+	case NativeChatMetadataThinkingEffortXhigh:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for NativeChatResultGrounding.
 const (
 	NativeChatResultGroundingDegraded           NativeChatResultGrounding = "degraded"
@@ -988,6 +1795,7 @@ const (
 	NativeChatResultGroundingUngroundedRefusal  NativeChatResultGrounding = "ungrounded_refusal"
 	NativeChatResultGroundingUnopenedSources    NativeChatResultGrounding = "unopened_sources"
 	NativeChatResultGroundingUnsupportedClaim   NativeChatResultGrounding = "unsupported_claim"
+	NativeChatResultGroundingUnsupportedFigures NativeChatResultGrounding = "unsupported_figures"
 )
 
 // Valid indicates whether the value is a known member of the NativeChatResultGrounding enum.
@@ -1006,6 +1814,8 @@ func (e NativeChatResultGrounding) Valid() bool {
 	case NativeChatResultGroundingUnopenedSources:
 		return true
 	case NativeChatResultGroundingUnsupportedClaim:
+		return true
+	case NativeChatResultGroundingUnsupportedFigures:
 		return true
 	default:
 		return false
@@ -1186,6 +1996,24 @@ func (e RegistryAgentSource) Valid() bool {
 	}
 }
 
+// Defines values for RetrievalAmbiguityAmbiguityAction.
+const (
+	RetrievalAmbiguityAmbiguityActionAsk   RetrievalAmbiguityAmbiguityAction = "ask"
+	RetrievalAmbiguityAmbiguityActionState RetrievalAmbiguityAmbiguityAction = "state"
+)
+
+// Valid indicates whether the value is a known member of the RetrievalAmbiguityAmbiguityAction enum.
+func (e RetrievalAmbiguityAmbiguityAction) Valid() bool {
+	switch e {
+	case RetrievalAmbiguityAmbiguityActionAsk:
+		return true
+	case RetrievalAmbiguityAmbiguityActionState:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for Role.
 const (
 	RoleAssistant Role = "assistant"
@@ -1246,6 +2074,66 @@ const (
 func (e RouteHintRenderInlineKind) Valid() bool {
 	switch e {
 	case RouteHintRenderInlineKindRenderInline:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ScheduleLastStatus.
+const (
+	ScheduleLastStatusCancelled      ScheduleLastStatus = "cancelled"
+	ScheduleLastStatusClaimed        ScheduleLastStatus = "claimed"
+	ScheduleLastStatusDelivered      ScheduleLastStatus = "delivered"
+	ScheduleLastStatusDelivering     ScheduleLastStatus = "delivering"
+	ScheduleLastStatusEmpty          ScheduleLastStatus = ""
+	ScheduleLastStatusFailed         ScheduleLastStatus = "failed"
+	ScheduleLastStatusOrgUnrecorded  ScheduleLastStatus = "org_unrecorded"
+	ScheduleLastStatusOwnerInactive  ScheduleLastStatus = "owner_inactive"
+	ScheduleLastStatusPausedFailures ScheduleLastStatus = "paused_failures"
+	ScheduleLastStatusSkipped        ScheduleLastStatus = "skipped"
+	ScheduleLastStatusSubmitted      ScheduleLastStatus = "submitted"
+)
+
+// Valid indicates whether the value is a known member of the ScheduleLastStatus enum.
+func (e ScheduleLastStatus) Valid() bool {
+	switch e {
+	case ScheduleLastStatusCancelled:
+		return true
+	case ScheduleLastStatusClaimed:
+		return true
+	case ScheduleLastStatusDelivered:
+		return true
+	case ScheduleLastStatusDelivering:
+		return true
+	case ScheduleLastStatusEmpty:
+		return true
+	case ScheduleLastStatusFailed:
+		return true
+	case ScheduleLastStatusOrgUnrecorded:
+		return true
+	case ScheduleLastStatusOwnerInactive:
+		return true
+	case ScheduleLastStatusPausedFailures:
+		return true
+	case ScheduleLastStatusSkipped:
+		return true
+	case ScheduleLastStatusSubmitted:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ScheduleLimitErrorError.
+const (
+	ScheduleLimitErrorErrorScheduleLimitReached ScheduleLimitErrorError = "schedule_limit_reached"
+)
+
+// Valid indicates whether the value is a known member of the ScheduleLimitErrorError enum.
+func (e ScheduleLimitErrorError) Valid() bool {
+	switch e {
+	case ScheduleLimitErrorErrorScheduleLimitReached:
 		return true
 	default:
 		return false
@@ -1525,6 +2413,66 @@ func (e TranscriptionRequestResponseFormat) Valid() bool {
 	case TranscriptionRequestResponseFormatVerboseJson:
 		return true
 	case TranscriptionRequestResponseFormatVtt:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for UsageContextBudgetTurnBudgetSource.
+const (
+	UsageContextBudgetTurnBudgetSourceAgent UsageContextBudgetTurnBudgetSource = "agent"
+	UsageContextBudgetTurnBudgetSourceEnv   UsageContextBudgetTurnBudgetSource = "env"
+	UsageContextBudgetTurnBudgetSourceNone  UsageContextBudgetTurnBudgetSource = "none"
+)
+
+// Valid indicates whether the value is a known member of the UsageContextBudgetTurnBudgetSource enum.
+func (e UsageContextBudgetTurnBudgetSource) Valid() bool {
+	switch e {
+	case UsageContextBudgetTurnBudgetSourceAgent:
+		return true
+	case UsageContextBudgetTurnBudgetSourceEnv:
+		return true
+	case UsageContextBudgetTurnBudgetSourceNone:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for UsageContextBudgetWindowSource.
+const (
+	UsageContextBudgetWindowSourceCatalog UsageContextBudgetWindowSource = "catalog"
+	UsageContextBudgetWindowSourceEnv     UsageContextBudgetWindowSource = "env"
+	UsageContextBudgetWindowSourceNone    UsageContextBudgetWindowSource = "none"
+)
+
+// Valid indicates whether the value is a known member of the UsageContextBudgetWindowSource enum.
+func (e UsageContextBudgetWindowSource) Valid() bool {
+	switch e {
+	case UsageContextBudgetWindowSourceCatalog:
+		return true
+	case UsageContextBudgetWindowSourceEnv:
+		return true
+	case UsageContextBudgetWindowSourceNone:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for UsageWorkingSetMode.
+const (
+	UsageWorkingSetModeFull     UsageWorkingSetMode = "full"
+	UsageWorkingSetModeManifest UsageWorkingSetMode = "manifest"
+)
+
+// Valid indicates whether the value is a known member of the UsageWorkingSetMode enum.
+func (e UsageWorkingSetMode) Valid() bool {
+	switch e {
+	case UsageWorkingSetModeFull:
+		return true
+	case UsageWorkingSetModeManifest:
 		return true
 	default:
 		return false
@@ -1981,6 +2929,27 @@ func (e GetMemoryParamsScope) Valid() bool {
 	}
 }
 
+// Defines values for GetModelRecommendationsParamsCompatibility.
+const (
+	GetModelRecommendationsParamsCompatibilityIncompatible          GetModelRecommendationsParamsCompatibility = "incompatible"
+	GetModelRecommendationsParamsCompatibilityPotentiallyCompatible GetModelRecommendationsParamsCompatibility = "potentially_compatible"
+	GetModelRecommendationsParamsCompatibilityValidatedMatch        GetModelRecommendationsParamsCompatibility = "validated_match"
+)
+
+// Valid indicates whether the value is a known member of the GetModelRecommendationsParamsCompatibility enum.
+func (e GetModelRecommendationsParamsCompatibility) Valid() bool {
+	switch e {
+	case GetModelRecommendationsParamsCompatibilityIncompatible:
+		return true
+	case GetModelRecommendationsParamsCompatibilityPotentiallyCompatible:
+		return true
+	case GetModelRecommendationsParamsCompatibilityValidatedMatch:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for CreateMessageParamsXProtocol.
 const (
 	CreateMessageParamsXProtocolAgUi CreateMessageParamsXProtocol = "ag-ui"
@@ -2035,15 +3004,39 @@ type AddGroupMemberRequest struct {
 
 // Agent defines model for Agent.
 type Agent struct {
+	// AgentSkills Agent Skills attached to this agent, as `name` (latest published
+	// catalog version) or `name@N` (pinned version). No duplicate names.
+	// Every entry must resolve for the caller's organization at write
+	// time (a published `/v1/skills` version, or for unpinned names a
+	// server-side skills folder); otherwise 400 with `field:
+	// agent_skills`.
+	AgentSkills *[]string `json:"agent_skills,omitempty"`
+
 	// AgentType Whether this agent dispatches to other skill agents (persona) or
 	// executes one skill directly (skill). Maps to nova-os internals;
 	// partners only see the discriminator.
-	AgentType    *AgentType              `json:"agent_type,omitempty"`
-	Brain        *bool                   `json:"brain,omitempty"`
-	Capabilities *[]string               `json:"capabilities,omitempty"`
-	CreatedAt    *time.Time              `json:"created_at,omitempty"`
-	Filesystem   *map[string]interface{} `json:"filesystem,omitempty"`
-	Guardrails   *map[string]interface{} `json:"guardrails,omitempty"`
+	AgentType    *AgentType `json:"agent_type,omitempty"`
+	Brain        *bool      `json:"brain,omitempty"`
+	Capabilities *[]string  `json:"capabilities,omitempty"`
+	CreatedAt    *time.Time `json:"created_at,omitempty"`
+
+	// DirectTools Persona only. Tools offered on the persona's direct (non-planner)
+	// answer path. Names are validated against the live tool registry.
+	// Together with `tools`, this is the persona's declared tool scope;
+	// declaring neither keeps the whole catalog.
+	DirectTools *[]string `json:"direct_tools,omitempty"`
+
+	// EgressGuard Outbound search-query guard for this agent's turns. Guards only
+	// tighten: the server-wide, agent and per-call settings are combined,
+	// and `off` never removes a guard set elsewhere.
+	EgressGuard *AgentEgressGuard       `json:"egress_guard,omitempty"`
+	Filesystem  *map[string]interface{} `json:"filesystem,omitempty"`
+
+	// Guardrails Per-agent opt-outs for the inbound guardrail chain. Each value is
+	// `enabled`, `disabled` or empty (inherit). On PUT/PATCH an omitted key
+	// keeps its value, a `null` key clears that override, and a top-level
+	// `guardrails: null` clears every override.
+	Guardrails *AgentGuardrails `json:"guardrails,omitempty"`
 
 	// Id Slug generated from the agent name.
 	Id                string    `json:"id"`
@@ -2053,6 +3046,14 @@ type Agent struct {
 	// Model Optional model override; empty means inherit the server tier default.
 	Model *string `json:"model,omitempty"`
 	Name  string  `json:"name"`
+
+	// OnAmbiguousEntity What a persona does when the documents its answer relies on span
+	// several sources the question does not choose between: `state`
+	// names the document the answer is based on, `ask` returns a
+	// clarifying question instead of an answer, `off` does nothing.
+	// Per-call `metadata.on_ambiguous_entity` wins; empty inherits the
+	// server default.
+	OnAmbiguousEntity *AgentOnAmbiguousEntity `json:"on_ambiguous_entity,omitempty"`
 
 	// OutputType Structured-output contract for agent replies. When set, Nova OS
 	// validates every assistant reply against `schema` before return.
@@ -2065,8 +3066,38 @@ type Agent struct {
 	OwnerEmployee *string `json:"owner_employee,omitempty"`
 	System        *string `json:"system,omitempty"`
 	// Deprecated: this property has been marked as deprecated upstream, but no `x-deprecated-reason` was set
-	SystemPrompt *string   `json:"system_prompt,omitempty"`
-	Tools        *[]string `json:"tools,omitempty"`
+	SystemPrompt *string `json:"system_prompt,omitempty"`
+
+	// Thinking Native model reasoning on the agent's answer-tier call only (never the
+	// planner, triage or skill sub-tasks). `off` (the default) sends no
+	// reasoning parameter, so a model that reasons by default keeps
+	// reasoning; `none` asks the model not to reason. Per-call
+	// `metadata.thinking` wins. On PUT/PATCH send `{}` (or `effort: ""`) to
+	// clear; `null` keeps the current value.
+	Thinking *AgentThinking `json:"thinking,omitempty"`
+
+	// ToolChoice Forces (or forbids) a tool call on the first model call of the
+	// agent loop: `auto` (default), `none`, `required`, or a tool name.
+	// Per-call `metadata.tool_choice` wins. A named tool the request does
+	// not carry is dropped with a server-side warning.
+	ToolChoice *string `json:"tool_choice,omitempty"`
+
+	// ToolScope `none` declares an agent that needs no catalog tools. Rejected
+	// (400) together with a non-empty `tools` or `direct_tools`.
+	ToolScope *AgentToolScope `json:"tool_scope,omitempty"`
+	Tools     *[]string       `json:"tools,omitempty"`
+
+	// Triage Persona planner routing pin. `triage` keeps the per-turn
+	// regex/LLM triage cascade, `always` runs the planner every turn,
+	// `never` skips it. Empty clears the pin (inherit the server default).
+	// Per-call `metadata.brain` still wins.
+	Triage *AgentTriage `json:"triage,omitempty"`
+
+	// TurnBudgetTokens Per-agent token budget for each model call of the agent's turn
+	// (overrides the server-wide turn budget). `0` means unset. When
+	// the agent is the outermost agent of a turn, its value also governs
+	// the skill agents it dispatches.
+	TurnBudgetTokens *int `json:"turn_budget_tokens,omitempty"`
 
 	// Type Whether this agent dispatches to other skill agents (persona) or
 	// executes one skill directly (skill). Maps to nova-os internals;
@@ -2076,36 +3107,147 @@ type Agent struct {
 	Visibility *AgentVisibility `json:"visibility,omitempty"`
 }
 
+// AgentEgressGuard Outbound search-query guard for this agent's turns. Guards only
+// tighten: the server-wide, agent and per-call settings are combined,
+// and `off` never removes a guard set elsewhere.
+type AgentEgressGuard string
+
+// AgentOnAmbiguousEntity What a persona does when the documents its answer relies on span
+// several sources the question does not choose between: `state`
+// names the document the answer is based on, `ask` returns a
+// clarifying question instead of an answer, `off` does nothing.
+// Per-call `metadata.on_ambiguous_entity` wins; empty inherits the
+// server default.
+type AgentOnAmbiguousEntity string
+
+// AgentToolScope `none` declares an agent that needs no catalog tools. Rejected
+// (400) together with a non-empty `tools` or `direct_tools`.
+type AgentToolScope string
+
 // AgentVisibility defines model for Agent.Visibility.
 type AgentVisibility string
 
 // AgentCreate defines model for AgentCreate.
 type AgentCreate struct {
+	// AgentSkills Agent Skills attached to this agent, as `name` (latest published
+	// catalog version) or `name@N` (pinned version). No duplicate names.
+	// Every entry must resolve for the caller's organization at write
+	// time (a published `/v1/skills` version, or for unpinned names a
+	// server-side skills folder); otherwise 400 with `field:
+	// agent_skills`.
+	AgentSkills *[]string `json:"agent_skills,omitempty"`
+
 	// AgentType Whether this agent dispatches to other skill agents (persona) or
 	// executes one skill directly (skill). Maps to nova-os internals;
 	// partners only see the discriminator.
-	AgentType         *AgentType              `json:"agent_type,omitempty"`
-	Brain             *bool                   `json:"brain,omitempty"`
-	Capabilities      *[]string               `json:"capabilities,omitempty"`
-	Filesystem        *map[string]interface{} `json:"filesystem,omitempty"`
-	Guardrails        *map[string]interface{} `json:"guardrails,omitempty"`
-	KnowledgeBindings *[]string               `json:"knowledge_bindings,omitempty"`
-	MaxTurns          *int                    `json:"max_turns,omitempty"`
-	Model             *string                 `json:"model,omitempty"`
-	Name              string                  `json:"name"`
+	AgentType    *AgentType `json:"agent_type,omitempty"`
+	Brain        *bool      `json:"brain,omitempty"`
+	Capabilities *[]string  `json:"capabilities,omitempty"`
+
+	// DirectTools Persona only. Tools offered on the persona's direct (non-planner)
+	// answer path. Names are validated against the live tool registry.
+	// Together with `tools`, this is the persona's declared tool scope;
+	// declaring neither keeps the whole catalog.
+	DirectTools *[]string `json:"direct_tools,omitempty"`
+
+	// EgressGuard Outbound search-query guard for this agent's turns. Guards only
+	// tighten: the server-wide, agent and per-call settings are combined,
+	// and `off` never removes a guard set elsewhere.
+	EgressGuard *AgentCreateEgressGuard `json:"egress_guard,omitempty"`
+	Filesystem  *map[string]interface{} `json:"filesystem,omitempty"`
+
+	// Guardrails Per-agent opt-outs for the inbound guardrail chain. Each value is
+	// `enabled`, `disabled` or empty (inherit). On PUT/PATCH an omitted key
+	// keeps its value, a `null` key clears that override, and a top-level
+	// `guardrails: null` clears every override.
+	Guardrails        *AgentGuardrails `json:"guardrails,omitempty"`
+	KnowledgeBindings *[]string        `json:"knowledge_bindings,omitempty"`
+	MaxTurns          *int             `json:"max_turns,omitempty"`
+	Model             *string          `json:"model,omitempty"`
+	Name              string           `json:"name"`
+
+	// OnAmbiguousEntity What a persona does when the documents its answer relies on span
+	// several sources the question does not choose between: `state`
+	// names the document the answer is based on, `ask` returns a
+	// clarifying question instead of an answer, `off` does nothing.
+	// Per-call `metadata.on_ambiguous_entity` wins; empty inherits the
+	// server default.
+	OnAmbiguousEntity *AgentCreateOnAmbiguousEntity `json:"on_ambiguous_entity,omitempty"`
 
 	// OutputType Structured-output contract for agent replies. When set, Nova OS
 	// validates every assistant reply against `schema` before return.
 	// Server-side since v0.1.4.
-	OutputType *OutputTypeContract    `json:"output_type,omitempty"`
-	Owner      *string                `json:"owner,omitempty"`
-	System     *string                `json:"system,omitempty"`
-	Tools      *[]string              `json:"tools,omitempty"`
-	Visibility *AgentCreateVisibility `json:"visibility,omitempty"`
+	OutputType *OutputTypeContract `json:"output_type,omitempty"`
+	Owner      *string             `json:"owner,omitempty"`
+	System     *string             `json:"system,omitempty"`
+
+	// Thinking Native model reasoning on the agent's answer-tier call only (never the
+	// planner, triage or skill sub-tasks). `off` (the default) sends no
+	// reasoning parameter, so a model that reasons by default keeps
+	// reasoning; `none` asks the model not to reason. Per-call
+	// `metadata.thinking` wins. On PUT/PATCH send `{}` (or `effort: ""`) to
+	// clear; `null` keeps the current value.
+	Thinking *AgentThinking `json:"thinking,omitempty"`
+
+	// ToolChoice Forces (or forbids) a tool call on the first model call of the
+	// agent loop: `auto` (default), `none`, `required`, or a tool name.
+	// Per-call `metadata.tool_choice` wins. A named tool the request does
+	// not carry is dropped with a server-side warning.
+	ToolChoice *string `json:"tool_choice,omitempty"`
+
+	// ToolScope `none` declares an agent that needs no catalog tools. Rejected
+	// (400) together with a non-empty `tools` or `direct_tools`.
+	ToolScope *AgentCreateToolScope `json:"tool_scope,omitempty"`
+	Tools     *[]string             `json:"tools,omitempty"`
+
+	// Triage Persona planner routing pin. `triage` keeps the per-turn
+	// regex/LLM triage cascade, `always` runs the planner every turn,
+	// `never` skips it. Empty clears the pin (inherit the server default).
+	// Per-call `metadata.brain` still wins.
+	Triage *AgentTriage `json:"triage,omitempty"`
+
+	// TurnBudgetTokens Per-agent token budget for each model call of the agent's turn
+	// (overrides the server-wide turn budget). `0` means unset. When
+	// the agent is the outermost agent of a turn, its value also governs
+	// the skill agents it dispatches.
+	TurnBudgetTokens *int                   `json:"turn_budget_tokens,omitempty"`
+	Visibility       *AgentCreateVisibility `json:"visibility,omitempty"`
 }
+
+// AgentCreateEgressGuard Outbound search-query guard for this agent's turns. Guards only
+// tighten: the server-wide, agent and per-call settings are combined,
+// and `off` never removes a guard set elsewhere.
+type AgentCreateEgressGuard string
+
+// AgentCreateOnAmbiguousEntity What a persona does when the documents its answer relies on span
+// several sources the question does not choose between: `state`
+// names the document the answer is based on, `ask` returns a
+// clarifying question instead of an answer, `off` does nothing.
+// Per-call `metadata.on_ambiguous_entity` wins; empty inherits the
+// server default.
+type AgentCreateOnAmbiguousEntity string
+
+// AgentCreateToolScope `none` declares an agent that needs no catalog tools. Rejected
+// (400) together with a non-empty `tools` or `direct_tools`.
+type AgentCreateToolScope string
 
 // AgentCreateVisibility defines model for AgentCreate.Visibility.
 type AgentCreateVisibility string
+
+// AgentGuardrails Per-agent opt-outs for the inbound guardrail chain. Each value is
+// `enabled`, `disabled` or empty (inherit). On PUT/PATCH an omitted key
+// keeps its value, a `null` key clears that override, and a top-level
+// `guardrails: null` clears every override.
+type AgentGuardrails struct {
+	DateNormalizer *AgentGuardrailsDateNormalizer `json:"date_normalizer,omitempty"`
+	PiiRedactor    *AgentGuardrailsPiiRedactor    `json:"pii_redactor,omitempty"`
+}
+
+// AgentGuardrailsDateNormalizer defines model for AgentGuardrails.DateNormalizer.
+type AgentGuardrailsDateNormalizer string
+
+// AgentGuardrailsPiiRedactor defines model for AgentGuardrails.PiiRedactor.
+type AgentGuardrailsPiiRedactor string
 
 // AgentKey One-time mint response for a per-agent key carrying the full secret.
 type AgentKey struct {
@@ -2125,6 +3267,207 @@ type AgentList struct {
 	NextCursor *string `json:"next_cursor,omitempty"`
 }
 
+// AgentSkillDiff defines model for AgentSkillDiff.
+type AgentSkillDiff struct {
+	// Files Changed files only; empty when the versions are identical.
+	Files []AgentSkillFileDiff `json:"files"`
+	From  int                  `json:"from"`
+	To    int                  `json:"to"`
+}
+
+// AgentSkillEdit defines model for AgentSkillEdit.
+type AgentSkillEdit struct {
+	// BaseVersion Version this edit is based on. The new version keeps its source and licence and records `forked_from`.
+	BaseVersion *int `json:"base_version,omitempty"`
+
+	// Files The full file set; `SKILL.md` frontmatter `name` must equal the path name.
+	Files map[string]string `json:"files"`
+}
+
+// AgentSkillFileDiff defines model for AgentSkillFileDiff.
+type AgentSkillFileDiff struct {
+	Change AgentSkillFileDiffChange `json:"change"`
+
+	// Diff Unified diff; omitted for very large files.
+	Diff *string `json:"diff,omitempty"`
+	Path string  `json:"path"`
+}
+
+// AgentSkillFileDiffChange defines model for AgentSkillFileDiff.Change.
+type AgentSkillFileDiffChange string
+
+// AgentSkillFiles defines model for AgentSkillFiles.
+type AgentSkillFiles struct {
+	// Files Path to text content. Must include `SKILL.md` with `name` and `description` frontmatter; at most 200 other files and 4 MiB in total, clean relative paths, UTF-8 text.
+	Files map[string]string `json:"files"`
+}
+
+// AgentSkillFound defines model for AgentSkillFound.
+type AgentSkillFound struct {
+	Error *string `json:"error,omitempty"`
+	Name  string  `json:"name"`
+	Path  string  `json:"path"`
+}
+
+// AgentSkillImportPreview defines model for AgentSkillImportPreview.
+type AgentSkillImportPreview struct {
+	Preview struct {
+		Commit  string            `json:"commit"`
+		License string            `json:"license"`
+		Ref     string            `json:"ref"`
+		Repo    string            `json:"repo"`
+		Skills  []AgentSkillFound `json:"skills"`
+	} `json:"preview"`
+}
+
+// AgentSkillImportRequest defines model for AgentSkillImportRequest.
+type AgentSkillImportRequest struct {
+	// DryRun Return what would be imported without writing anything.
+	DryRun *bool `json:"dry_run,omitempty"`
+
+	// Skills Import only these skill names; empty imports all found.
+	Skills *[]string `json:"skills,omitempty"`
+
+	// Url HTTPS link to a GitHub repository, a `tree`/`blob` folder or file in one, or a `raw.githubusercontent.com` file. A link to a `SKILL.md` means its folder.
+	Url string `json:"url"`
+}
+
+// AgentSkillImportResult defines model for AgentSkillImportResult.
+type AgentSkillImportResult struct {
+	Commit  string `json:"commit"`
+	License string `json:"license"`
+	Repo    string `json:"repo"`
+
+	// Results One entry per skill; per-skill failures are reported here.
+	Results []struct {
+		Created bool               `json:"created"`
+		Error   *string            `json:"error,omitempty"`
+		Name    *string            `json:"name,omitempty"`
+		Path    string             `json:"path"`
+		Version *AgentSkillVersion `json:"version,omitempty"`
+	} `json:"results"`
+}
+
+// AgentSkillList defines model for AgentSkillList.
+type AgentSkillList struct {
+	Data []AgentSkillSummary `json:"data"`
+}
+
+// AgentSkillSource defines model for AgentSkillSource.
+type AgentSkillSource struct {
+	Commit *string              `json:"commit,omitempty"`
+	Kind   AgentSkillSourceKind `json:"kind"`
+	Path   *string              `json:"path,omitempty"`
+	Ref    *string              `json:"ref,omitempty"`
+
+	// Repo `owner/repo` for GitHub imports.
+	Repo *string `json:"repo,omitempty"`
+}
+
+// AgentSkillSourceKind defines model for AgentSkillSource.Kind.
+type AgentSkillSourceKind string
+
+// AgentSkillSummary defines model for AgentSkillSummary.
+type AgentSkillSummary struct {
+	Description   string                        `json:"description"`
+	LatestStatus  AgentSkillSummaryLatestStatus `json:"latest_status"`
+	LatestVersion int                           `json:"latest_version"`
+	License       *string                       `json:"license,omitempty"`
+	Name          string                        `json:"name"`
+
+	// PublishedVersion Highest published version; omitted when none is published.
+	PublishedVersion *int             `json:"published_version,omitempty"`
+	Source           AgentSkillSource `json:"source"`
+
+	// Versions Number of versions.
+	Versions int `json:"versions"`
+}
+
+// AgentSkillSummaryLatestStatus defines model for AgentSkillSummary.LatestStatus.
+type AgentSkillSummaryLatestStatus string
+
+// AgentSkillUpstream defines model for AgentSkillUpstream.
+type AgentSkillUpstream struct {
+	// Files Differences from upstream, when not up to date and the path still exists.
+	Files   *[]AgentSkillFileDiff `json:"files,omitempty"`
+	License *string               `json:"license,omitempty"`
+
+	// RemovedUpstream True when the skill's path no longer exists upstream.
+	RemovedUpstream *bool            `json:"removed_upstream,omitempty"`
+	Source          AgentSkillSource `json:"source"`
+	UpToDate        bool             `json:"up_to_date"`
+	UpstreamCommit  string           `json:"upstream_commit"`
+	Version         int              `json:"version"`
+}
+
+// AgentSkillVersion defines model for AgentSkillVersion.
+type AgentSkillVersion struct {
+	CreatedAt   time.Time `json:"created_at"`
+	CreatedBy   *string   `json:"created_by,omitempty"`
+	Description string    `json:"description"`
+
+	// FileList Files other than `SKILL.md`, sorted. May be null when there are none.
+	FileList *[]string `json:"file_list,omitempty"`
+
+	// Files Path to text content, `SKILL.md` included. Only on single-version reads.
+	Files *map[string]string `json:"files,omitempty"`
+
+	// ForkedFrom The version this edit was based on.
+	ForkedFrom *int                    `json:"forked_from,omitempty"`
+	License    *string                 `json:"license,omitempty"`
+	Name       string                  `json:"name"`
+	Sha256     string                  `json:"sha256"`
+	Source     AgentSkillSource        `json:"source"`
+	Status     AgentSkillVersionStatus `json:"status"`
+	StatusAt   *time.Time              `json:"status_at,omitempty"`
+	StatusBy   *string                 `json:"status_by,omitempty"`
+	Version    int                     `json:"version"`
+}
+
+// AgentSkillVersionStatus defines model for AgentSkillVersion.Status.
+type AgentSkillVersionStatus string
+
+// AgentSkillVersionList defines model for AgentSkillVersionList.
+type AgentSkillVersionList struct {
+	Name string `json:"name"`
+
+	// Versions Newest first; `files` is omitted.
+	Versions []AgentSkillVersion `json:"versions"`
+}
+
+// AgentSkillWriteResult defines model for AgentSkillWriteResult.
+type AgentSkillWriteResult struct {
+	// Created False when the content matched the latest version, which is returned instead.
+	Created bool              `json:"created"`
+	Version AgentSkillVersion `json:"version"`
+}
+
+// AgentThinking Native model reasoning on the agent's answer-tier call only (never the
+// planner, triage or skill sub-tasks). `off` (the default) sends no
+// reasoning parameter, so a model that reasons by default keeps
+// reasoning; `none` asks the model not to reason. Per-call
+// `metadata.thinking` wins. On PUT/PATCH send `{}` (or `effort: ""`) to
+// clear; `null` keeps the current value.
+type AgentThinking struct {
+	// BudgetTokens Explicit thinking-token budget; 0 derives it from `effort`.
+	BudgetTokens *int                 `json:"budget_tokens,omitempty"`
+	Effort       *AgentThinkingEffort `json:"effort,omitempty"`
+}
+
+// AgentThinkingEffort defines model for AgentThinking.Effort.
+type AgentThinkingEffort string
+
+// AgentTriage Persona planner routing pin. `triage` keeps the per-turn
+// regex/LLM triage cascade, `always` runs the planner every turn,
+// `never` skips it. Empty clears the pin (inherit the server default).
+// Per-call `metadata.brain` still wins.
+type AgentTriage struct {
+	DefaultBrain *AgentTriageDefaultBrain `json:"default_brain,omitempty"`
+}
+
+// AgentTriageDefaultBrain defines model for AgentTriage.DefaultBrain.
+type AgentTriageDefaultBrain string
+
 // AgentType Whether this agent dispatches to other skill agents (persona) or
 // executes one skill directly (skill). Maps to nova-os internals;
 // partners only see the discriminator.
@@ -2132,28 +3475,110 @@ type AgentType string
 
 // AgentUpdate Partial update; only the fields supplied are changed.
 type AgentUpdate struct {
+	// AgentSkills Agent Skills attached to this agent, as `name` (latest published
+	// catalog version) or `name@N` (pinned version). No duplicate names.
+	// Every entry must resolve for the caller's organization at write
+	// time (a published `/v1/skills` version, or for unpinned names a
+	// server-side skills folder); otherwise 400 with `field:
+	// agent_skills`.
+	AgentSkills *[]string `json:"agent_skills,omitempty"`
+
 	// AgentType Whether this agent dispatches to other skill agents (persona) or
 	// executes one skill directly (skill). Maps to nova-os internals;
 	// partners only see the discriminator.
-	AgentType         *AgentType              `json:"agent_type,omitempty"`
-	Brain             *bool                   `json:"brain,omitempty"`
-	Capabilities      *[]string               `json:"capabilities,omitempty"`
-	Filesystem        *map[string]interface{} `json:"filesystem,omitempty"`
-	Guardrails        *map[string]interface{} `json:"guardrails,omitempty"`
-	KnowledgeBindings *[]string               `json:"knowledge_bindings,omitempty"`
-	MaxTurns          *int                    `json:"max_turns,omitempty"`
-	Model             *string                 `json:"model,omitempty"`
-	Name              *string                 `json:"name,omitempty"`
+	AgentType    *AgentType `json:"agent_type,omitempty"`
+	Brain        *bool      `json:"brain,omitempty"`
+	Capabilities *[]string  `json:"capabilities,omitempty"`
+
+	// ClearTriage When true, clears the agent's `triage` pin (same as `triage: null`).
+	ClearTriage *bool `json:"clear_triage,omitempty"`
+
+	// DirectTools Persona only. Tools offered on the persona's direct (non-planner)
+	// answer path. Names are validated against the live tool registry.
+	// Together with `tools`, this is the persona's declared tool scope;
+	// declaring neither keeps the whole catalog.
+	DirectTools *[]string `json:"direct_tools,omitempty"`
+
+	// EgressGuard Outbound search-query guard for this agent's turns. Guards only
+	// tighten: the server-wide, agent and per-call settings are combined,
+	// and `off` never removes a guard set elsewhere.
+	EgressGuard *AgentUpdateEgressGuard `json:"egress_guard,omitempty"`
+	Filesystem  *map[string]interface{} `json:"filesystem,omitempty"`
+
+	// Guardrails Per-agent opt-outs for the inbound guardrail chain. Each value is
+	// `enabled`, `disabled` or empty (inherit). On PUT/PATCH an omitted key
+	// keeps its value, a `null` key clears that override, and a top-level
+	// `guardrails: null` clears every override.
+	Guardrails        *AgentGuardrails `json:"guardrails,omitempty"`
+	KnowledgeBindings *[]string        `json:"knowledge_bindings,omitempty"`
+	MaxTurns          *int             `json:"max_turns,omitempty"`
+	Model             *string          `json:"model,omitempty"`
+	Name              *string          `json:"name,omitempty"`
+
+	// OnAmbiguousEntity What a persona does when the documents its answer relies on span
+	// several sources the question does not choose between: `state`
+	// names the document the answer is based on, `ask` returns a
+	// clarifying question instead of an answer, `off` does nothing.
+	// Per-call `metadata.on_ambiguous_entity` wins; empty inherits the
+	// server default.
+	OnAmbiguousEntity *AgentUpdateOnAmbiguousEntity `json:"on_ambiguous_entity,omitempty"`
 
 	// OutputType Structured-output contract for agent replies. When set, Nova OS
 	// validates every assistant reply against `schema` before return.
 	// Server-side since v0.1.4.
-	OutputType *OutputTypeContract    `json:"output_type,omitempty"`
-	Owner      *string                `json:"owner,omitempty"`
-	System     *string                `json:"system,omitempty"`
-	Tools      *[]string              `json:"tools,omitempty"`
-	Visibility *AgentUpdateVisibility `json:"visibility,omitempty"`
+	OutputType *OutputTypeContract `json:"output_type,omitempty"`
+	Owner      *string             `json:"owner,omitempty"`
+	System     *string             `json:"system,omitempty"`
+
+	// Thinking Native model reasoning on the agent's answer-tier call only (never the
+	// planner, triage or skill sub-tasks). `off` (the default) sends no
+	// reasoning parameter, so a model that reasons by default keeps
+	// reasoning; `none` asks the model not to reason. Per-call
+	// `metadata.thinking` wins. On PUT/PATCH send `{}` (or `effort: ""`) to
+	// clear; `null` keeps the current value.
+	Thinking *AgentThinking `json:"thinking,omitempty"`
+
+	// ToolChoice Forces (or forbids) a tool call on the first model call of the
+	// agent loop: `auto` (default), `none`, `required`, or a tool name.
+	// Per-call `metadata.tool_choice` wins. A named tool the request does
+	// not carry is dropped with a server-side warning.
+	ToolChoice *string `json:"tool_choice,omitempty"`
+
+	// ToolScope `none` declares an agent that needs no catalog tools. Rejected
+	// (400) together with a non-empty `tools` or `direct_tools`.
+	ToolScope *AgentUpdateToolScope `json:"tool_scope,omitempty"`
+	Tools     *[]string             `json:"tools,omitempty"`
+
+	// Triage Persona planner routing pin. `triage` keeps the per-turn
+	// regex/LLM triage cascade, `always` runs the planner every turn,
+	// `never` skips it. Empty clears the pin (inherit the server default).
+	// Per-call `metadata.brain` still wins.
+	Triage *AgentTriage `json:"triage,omitempty"`
+
+	// TurnBudgetTokens Per-agent token budget for each model call of the agent's turn
+	// (overrides the server-wide turn budget). `0` means unset. When
+	// the agent is the outermost agent of a turn, its value also governs
+	// the skill agents it dispatches.
+	TurnBudgetTokens *int                   `json:"turn_budget_tokens,omitempty"`
+	Visibility       *AgentUpdateVisibility `json:"visibility,omitempty"`
 }
+
+// AgentUpdateEgressGuard Outbound search-query guard for this agent's turns. Guards only
+// tighten: the server-wide, agent and per-call settings are combined,
+// and `off` never removes a guard set elsewhere.
+type AgentUpdateEgressGuard string
+
+// AgentUpdateOnAmbiguousEntity What a persona does when the documents its answer relies on span
+// several sources the question does not choose between: `state`
+// names the document the answer is based on, `ask` returns a
+// clarifying question instead of an answer, `off` does nothing.
+// Per-call `metadata.on_ambiguous_entity` wins; empty inherits the
+// server default.
+type AgentUpdateOnAmbiguousEntity string
+
+// AgentUpdateToolScope `none` declares an agent that needs no catalog tools. Rejected
+// (400) together with a non-empty `tools` or `direct_tools`.
+type AgentUpdateToolScope string
 
 // AgentUpdateVisibility defines model for AgentUpdate.Visibility.
 type AgentUpdateVisibility string
@@ -2401,25 +3826,95 @@ type ChatCompletionChoiceFinishReason string
 
 // ChatCompletionRequest OpenAI-compatible chat completion request.
 type ChatCompletionRequest struct {
-	// MaxCompletionTokens Newer OpenAI field for the output-token cap; preferred over max_tokens when both are set.
+	// MaxCompletionTokens Newer OpenAI field for the output-token cap; preferred over max_tokens when both are set. On the agent path it becomes the per-call answer cap (clamped to 32768) unless `metadata.max_tokens` is set.
 	MaxCompletionTokens *int `json:"max_completion_tokens,omitempty"`
 
 	// MaxTokens Output-token cap (folded into the per-call answer limit).
 	MaxTokens *int          `json:"max_tokens,omitempty"`
 	Messages  []ChatMessage `json:"messages"`
 
-	// Metadata Nova OS extension channel for per-call fields (e.g. a per-call model override).
-	Metadata *map[string]interface{} `json:"metadata,omitempty"`
+	// Metadata Nova OS extension channel for per-call fields (e.g. a per-call model override). The documented keys below are honoured on this surface the same way as on native chat.
+	Metadata *ChatCompletionRequest_Metadata `json:"metadata,omitempty"`
 
 	// Model Target model/agent id. When gateway mode is enabled, a value of the form `llm:<provider>/<model>` selects raw provider passthrough.
 	Model *string `json:"model,omitempty"`
 
+	// ReasoningEffort Native reasoning effort for the answer call (otherwise 400). `off` or empty sends no reasoning parameter (the model's default); `none` asks the model not to reason. On the agent path it becomes `metadata.thinking.effort` unless `metadata.thinking` is set.
+	ReasoningEffort *ChatCompletionRequestReasoningEffort `json:"reasoning_effort,omitempty"`
+
+	// ResponseFormat OpenAI-style response format. Must be an object with a non-empty `type` (otherwise 400); the value of `type` is not checked. Forwarded verbatim to OpenAI-compatible providers on the passthrough path; ignored on the agent path, where the agent's `output_type` decides the reply shape.
+	ResponseFormat *ChatCompletionResponseFormat `json:"response_format,omitempty"`
+
 	// Stream When true the response is an SSE stream terminated by `[DONE]`.
 	Stream *bool `json:"stream,omitempty"`
 
-	// Temperature Sampling temperature. Accepted for OpenAI-client compatibility; server-side routing controls the effective value on the agent path.
+	// Temperature Sampling temperature, 0-2 (otherwise 400). On the passthrough path it is sent to the provider; on the agent path it becomes the per-call answer temperature unless `metadata.temperature` is set.
 	Temperature *float32 `json:"temperature,omitempty"`
 }
+
+// ChatCompletionRequestMetadataBrain Per-call planning override.
+type ChatCompletionRequestMetadataBrain string
+
+// ChatCompletionRequestMetadataEgressGuard Adds the outbound query guard for this request. May only tighten: `off` never removes a guard set by the server or the agent. Any other value is a 400.
+type ChatCompletionRequestMetadataEgressGuard string
+
+// ChatCompletionRequestMetadataOnAmbiguousEntity Overrides the agent's handling of answers whose evidence spans several documents the question does not choose between. Invalid values are ignored.
+type ChatCompletionRequestMetadataOnAmbiguousEntity string
+
+// ChatCompletionRequestMetadataResearchDepth Per-call research depth. `fast` skips the planner; `deep` runs it; `auto` runs it single-shot, without multi-wave skills such as `deep_research`. `brain` wins when both are set. Unknown values are ignored.
+type ChatCompletionRequestMetadataResearchDepth string
+
+// ChatCompletionRequestMetadataThinkingEffort defines model for ChatCompletionRequest.Metadata.Thinking.Effort.
+type ChatCompletionRequestMetadataThinkingEffort string
+
+// ChatCompletionRequest_Metadata Nova OS extension channel for per-call fields (e.g. a per-call model override). The documented keys below are honoured on this surface the same way as on native chat.
+type ChatCompletionRequest_Metadata struct {
+	// AllowedSkills Narrows a persona's planner to these skills for this turn. A name the persona does not have is a 400; ignored on non-persona agents.
+	AllowedSkills *[]string `json:"allowed_skills,omitempty"`
+
+	// Brain Per-call planning override.
+	Brain *ChatCompletionRequestMetadataBrain `json:"brain,omitempty"`
+
+	// EgressGuard Adds the outbound query guard for this request. May only tighten: `off` never removes a guard set by the server or the agent. Any other value is a 400.
+	EgressGuard *ChatCompletionRequestMetadataEgressGuard `json:"egress_guard,omitempty"`
+
+	// MaxSearches Per-turn cap on outbound search calls across every tool of the turn. Absent or 0 means unlimited.
+	MaxSearches *int `json:"max_searches,omitempty"`
+
+	// MaxTokens Per-call answer output-token cap; wins over the top-level fields.
+	MaxTokens *int `json:"max_tokens,omitempty"`
+
+	// OnAmbiguousEntity Overrides the agent's handling of answers whose evidence spans several documents the question does not choose between. Invalid values are ignored.
+	OnAmbiguousEntity *ChatCompletionRequestMetadataOnAmbiguousEntity `json:"on_ambiguous_entity,omitempty"`
+
+	// ResearchDepth Per-call research depth. `fast` skips the planner; `deep` runs it; `auto` runs it single-shot, without multi-wave skills such as `deep_research`. `brain` wins when both are set. Unknown values are ignored.
+	ResearchDepth *ChatCompletionRequestMetadataResearchDepth `json:"research_depth,omitempty"`
+
+	// ResearchQuery The research question as its own field, when the message is an assembled prompt. Overrides the query used for outbound search.
+	ResearchQuery *string `json:"research_query,omitempty"`
+
+	// ResearchQueryOnly Fixed-query mode: every outbound search of the turn is exactly `research_query`, and fetches are limited to URLs those searches returned. Requires a non-empty, single-line `research_query` of at most 300 characters; otherwise 400.
+	ResearchQueryOnly *bool `json:"research_query_only,omitempty"`
+
+	// StreamEvents Per-call orchestration event streaming toggle.
+	StreamEvents *bool `json:"stream_events,omitempty"`
+
+	// Temperature Per-call answer temperature; wins over the top-level field.
+	Temperature *float32 `json:"temperature,omitempty"`
+
+	// Thinking Per-call native reasoning on the answer-tier call; overrides the agent's `thinking`. `off` sends no reasoning parameter, `none` asks the model not to reason. `budget_tokens` is clamped to 1024-32768. An invalid override is ignored.
+	Thinking *struct {
+		BudgetTokens *int                                         `json:"budget_tokens,omitempty"`
+		Effort       *ChatCompletionRequestMetadataThinkingEffort `json:"effort,omitempty"`
+	} `json:"thinking,omitempty"`
+
+	// ToolChoice Per-call tool choice for the first model call: `auto`, `none`, `required`, or a tool name. Overrides the agent's `tool_choice`. Invalid values are ignored.
+	ToolChoice           *string                `json:"tool_choice,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// ChatCompletionRequestReasoningEffort Native reasoning effort for the answer call (otherwise 400). `off` or empty sends no reasoning parameter (the model's default); `none` asks the model not to reason. On the agent path it becomes `metadata.thinking.effort` unless `metadata.thinking` is set.
+type ChatCompletionRequestReasoningEffort string
 
 // ChatCompletionResponse OpenAI-compatible chat completion response.
 type ChatCompletionResponse struct {
@@ -2433,6 +3928,9 @@ type ChatCompletionResponse struct {
 	// NovaGrounding Nova OS extension — per-turn grounded-vs-refusal outcome. Omitted on non-retrieval turns.
 	NovaGrounding *ChatCompletionResponseNovaGrounding `json:"nova_grounding,omitempty"`
 
+	// NovaUsage Aggregated token usage across all of the turn's model sub-calls, with a per-stage breakdown. Omitted on non-model/zero-usage turns. Excludes embedding calls.
+	NovaUsage *UsageBlock `json:"nova_usage,omitempty"`
+
 	// Object Always `chat.completion`.
 	Object *string `json:"object,omitempty"`
 
@@ -2445,6 +3943,13 @@ type ChatCompletionResponse struct {
 
 // ChatCompletionResponseNovaGrounding Nova OS extension — per-turn grounded-vs-refusal outcome. Omitted on non-retrieval turns.
 type ChatCompletionResponseNovaGrounding string
+
+// ChatCompletionResponseFormat OpenAI-style response format. Must be an object with a non-empty `type` (otherwise 400); the value of `type` is not checked. Forwarded verbatim to OpenAI-compatible providers on the passthrough path; ignored on the agent path, where the agent's `output_type` decides the reply shape.
+type ChatCompletionResponseFormat struct {
+	// Type e.g. `text`, `json_object`, `json_schema`.
+	Type                 string                 `json:"type"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
 
 // ChatCompletionUsage Per-response token usage.
 type ChatCompletionUsage struct {
@@ -2748,6 +4253,131 @@ type CustomToolResultRequest struct {
 	IsError   *bool  `json:"is_error,omitempty"`
 	Output    string `json:"output"`
 	ToolUseId string `json:"tool_use_id"`
+}
+
+// DecisionActivateRequest defines model for DecisionActivateRequest.
+type DecisionActivateRequest struct {
+	Version int `json:"version"`
+}
+
+// DecisionActivateResult defines model for DecisionActivateResult.
+type DecisionActivateResult struct {
+	ActiveVersion int    `json:"active_version"`
+	Name          string `json:"name"`
+}
+
+// DecisionModel defines model for DecisionModel.
+type DecisionModel struct {
+	Name string `json:"name"`
+
+	// Versions Newest first.
+	Versions []DecisionVersion `json:"versions"`
+}
+
+// DecisionNotBetterError defines model for DecisionNotBetterError.
+type DecisionNotBetterError struct {
+	Error   DecisionNotBetterErrorError `json:"error"`
+	Message string                      `json:"message"`
+
+	// Report Held-out evaluation of a trained version.
+	Report DecisionReport `json:"report"`
+}
+
+// DecisionNotBetterErrorError defines model for DecisionNotBetterError.Error.
+type DecisionNotBetterErrorError string
+
+// DecisionPredictRequest defines model for DecisionPredictRequest.
+type DecisionPredictRequest struct {
+	Texts []string `json:"texts"`
+
+	// Version Version to use; omitted means the active version.
+	Version *int `json:"version,omitempty"`
+}
+
+// DecisionPredictResult defines model for DecisionPredictResult.
+type DecisionPredictResult struct {
+	ModelVersion int    `json:"model_version"`
+	Name         string `json:"name"`
+
+	// Results In the order of `texts`.
+	Results []DecisionPrediction `json:"results"`
+}
+
+// DecisionPrediction defines model for DecisionPrediction.
+type DecisionPrediction struct {
+	// Confidence Calibrated probability of `label`. Compare with the version's `report.gate`.
+	Confidence   float32            `json:"confidence"`
+	Distribution map[string]float32 `json:"distribution"`
+	Label        string             `json:"label"`
+
+	// Ood Corpus-drift signals (present when the version carries them). Not a per-request out-of-distribution detector.
+	Ood *struct {
+		CentroidCos *float32 `json:"centroid_cos,omitempty"`
+		OovMass     *float32 `json:"oov_mass,omitempty"`
+	} `json:"ood,omitempty"`
+}
+
+// DecisionReport Held-out evaluation of a trained version.
+type DecisionReport struct {
+	Acc          *float32 `json:"acc,omitempty"`
+	AccAboveGate *float32 `json:"acc_above_gate,omitempty"`
+
+	// AccAboveGateLower 95% Wilson lower bound of the above-gate accuracy.
+	AccAboveGateLower *float32 `json:"acc_above_gate_lower,omitempty"`
+	AccBelowGate      *float32 `json:"acc_below_gate,omitempty"`
+
+	// ControlAboveGate Shuffled-label control, rows above the gate (report only).
+	ControlAboveGate    *int     `json:"control_above_gate,omitempty"`
+	ControlAccAboveGate *float32 `json:"control_acc_above_gate,omitempty"`
+
+	// Coverage Share of test rows at or above the gate.
+	Coverage *float32 `json:"coverage,omitempty"`
+
+	// Ece Expected calibration error.
+	Ece *float32 `json:"ece,omitempty"`
+
+	// Gate Confidence at or above which a prediction should be trusted.
+	Gate   *float32  `json:"gate,omitempty"`
+	Labels *[]string `json:"labels,omitempty"`
+
+	// MajorityShare Share of the most common label (the prior a model must beat).
+	MajorityShare  *float32            `json:"majority_share,omitempty"`
+	NAboveGate     *int                `json:"n_above_gate,omitempty"`
+	NCalibrate     *int                `json:"n_calibrate,omitempty"`
+	NPerLabel      *map[string]int     `json:"n_per_label,omitempty"`
+	NTest          *int                `json:"n_test,omitempty"`
+	NTrain         *int                `json:"n_train,omitempty"`
+	RecallPerLabel *map[string]float32 `json:"recall_per_label,omitempty"`
+
+	// Temperature Calibration temperature.
+	Temperature *float32 `json:"temperature,omitempty"`
+}
+
+// DecisionTrainRequest defines model for DecisionTrainRequest.
+type DecisionTrainRequest struct {
+	// Gate Confidence gate; 0 or absent uses the `gate` query parameter (default 0.7).
+	Gate *float32              `json:"gate,omitempty"`
+	Rows []DecisionTrainingRow `json:"rows"`
+}
+
+// DecisionTrainingRow defines model for DecisionTrainingRow.
+type DecisionTrainingRow struct {
+	Label string `json:"label"`
+	Text  string `json:"text"`
+}
+
+// DecisionVersion defines model for DecisionVersion.
+type DecisionVersion struct {
+	ActivatedAt *time.Time `json:"activated_at,omitempty"`
+	Active      bool       `json:"active"`
+	CreatedAt   time.Time  `json:"created_at"`
+	CreatedBy   *string    `json:"created_by,omitempty"`
+	Labels      []string   `json:"labels"`
+	Name        string     `json:"name"`
+
+	// Report Held-out evaluation of a trained version.
+	Report  DecisionReport `json:"report"`
+	Version int            `json:"version"`
 }
 
 // Deployment Minimal, derive-friendly capabilities read so a client (web/iOS) can
@@ -3193,6 +4823,16 @@ type FieldCaller struct {
 	Role string  `json:"role"`
 }
 
+// FieldError Error envelope `{"error": {"type", "message", "field"?}}`.
+type FieldError struct {
+	Error struct {
+		// Field The request field the error is about, when there is one.
+		Field   *string `json:"field,omitempty"`
+		Message string  `json:"message"`
+		Type    string  `json:"type"`
+	} `json:"error"`
+}
+
 // FieldEvaluateRequest defines model for FieldEvaluateRequest.
 type FieldEvaluateRequest struct {
 	// Caller The identity evaluated against a policy.
@@ -3308,6 +4948,12 @@ type FileObject struct {
 	// Status Processing status, e.g. `processed`.
 	Status        *string `json:"status,omitempty"`
 	StatusDetails *string `json:"status_details,omitempty"`
+}
+
+// FlatError Error envelope `{"error": "<code or text>", "message"?: "<text>"}`.
+type FlatError struct {
+	Error   string  `json:"error"`
+	Message *string `json:"message,omitempty"`
 }
 
 // GovernanceMode Where pre-execution policy is enforced. `desk_managed` is native, `brokered` uses a short-lived scoped capability, and `external` is audited but the outside service receives credentials.
@@ -3798,6 +5444,18 @@ type MessageRequest struct {
 	Tools    *[]ToolDefinition `json:"tools,omitempty"`
 }
 
+// MessageRequestMetadataEgressGuard Adds the outbound query guard for this request. May only tighten: `off` never removes a guard set by the server or the agent. Any other value is a 400.
+type MessageRequestMetadataEgressGuard string
+
+// MessageRequestMetadataOnAmbiguousEntity Overrides the agent's handling of answers whose evidence spans several documents the question does not choose between. Invalid values are ignored.
+type MessageRequestMetadataOnAmbiguousEntity string
+
+// MessageRequestMetadataResearchDepth Per-call research depth. `fast` skips the planner; `deep` runs it; `auto` runs it single-shot, without multi-wave skills such as `deep_research`. `brain` wins when both are set. Unknown values are ignored.
+type MessageRequestMetadataResearchDepth string
+
+// MessageRequestMetadataThinkingEffort defines model for MessageRequest.Metadata.Thinking.Effort.
+type MessageRequestMetadataThinkingEffort string
+
 // MessageRequest_Metadata defines model for MessageRequest.Metadata.
 type MessageRequest_Metadata struct {
 	// AgentId Target a specific Nova OS agent/persona for this turn; omit
@@ -3805,14 +5463,44 @@ type MessageRequest_Metadata struct {
 	// it without falling back to untyped additionalProperties.
 	AgentId *string `json:"agent_id,omitempty"`
 
+	// AllowedSkills Narrows a persona's planner to these skills for this turn. A name the persona does not have is a 400; ignored on non-persona agents.
+	AllowedSkills *[]string `json:"allowed_skills,omitempty"`
+
 	// Brain Per-call planner toggle (3-state — null inherits server default).
 	Brain *bool `json:"brain,omitempty"`
+
+	// EgressGuard Adds the outbound query guard for this request. May only tighten: `off` never removes a guard set by the server or the agent. Any other value is a 400.
+	EgressGuard *MessageRequestMetadataEgressGuard `json:"egress_guard,omitempty"`
+
+	// MaxSearches Per-turn cap on outbound search calls across every tool of the turn. Absent or 0 means unlimited.
+	MaxSearches *int `json:"max_searches,omitempty"`
+
+	// OnAmbiguousEntity Overrides the agent's handling of answers whose evidence spans several documents the question does not choose between. Invalid values are ignored.
+	OnAmbiguousEntity *MessageRequestMetadataOnAmbiguousEntity `json:"on_ambiguous_entity,omitempty"`
+
+	// ResearchDepth Per-call research depth. `fast` skips the planner; `deep` runs it; `auto` runs it single-shot, without multi-wave skills such as `deep_research`. `brain` wins when both are set. Unknown values are ignored.
+	ResearchDepth *MessageRequestMetadataResearchDepth `json:"research_depth,omitempty"`
+
+	// ResearchQuery The research question as its own field, when the message is an assembled prompt. Overrides the query used for outbound search.
+	ResearchQuery *string `json:"research_query,omitempty"`
+
+	// ResearchQueryOnly Fixed-query mode: every outbound search of the turn is exactly `research_query`, and fetches are limited to URLs those searches returned. Requires a non-empty, single-line `research_query` of at most 300 characters; otherwise 400.
+	ResearchQueryOnly *bool `json:"research_query_only,omitempty"`
 
 	// StreamEvents Per-call orchestration event streaming toggle.
 	StreamEvents *bool `json:"stream_events,omitempty"`
 
 	// StreamThinking Per-call planner-thinking event toggle.
-	StreamThinking       *bool                  `json:"stream_thinking,omitempty"`
+	StreamThinking *bool `json:"stream_thinking,omitempty"`
+
+	// Thinking Per-call native reasoning on the answer-tier call; overrides the agent's `thinking`. `off` sends no reasoning parameter, `none` asks the model not to reason. `budget_tokens` is clamped to 1024-32768. An invalid override is ignored.
+	Thinking *struct {
+		BudgetTokens *int                                  `json:"budget_tokens,omitempty"`
+		Effort       *MessageRequestMetadataThinkingEffort `json:"effort,omitempty"`
+	} `json:"thinking,omitempty"`
+
+	// ToolChoice Per-call tool choice for the first model call: `auto`, `none`, `required`, or a tool name. Overrides the agent's `tool_choice`. Invalid values are ignored.
+	ToolChoice           *string                `json:"tool_choice,omitempty"`
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
 
@@ -3883,6 +5571,83 @@ type ModelListEntry struct {
 	OwnedBy *string `json:"owned_by,omitempty"`
 }
 
+// ModelRecommendationReport defines model for ModelRecommendationReport.
+type ModelRecommendationReport struct {
+	Catalog struct {
+		AsOf           *string `json:"as_of,omitempty"`
+		CurrentRelease *string `json:"current_release,omitempty"`
+		Notice         *string `json:"notice,omitempty"`
+
+		// Path Empty over HTTP unless the built-in starter profiles are in use.
+		Path          *string `json:"path,omitempty"`
+		SchemaVersion *int    `json:"schema_version,omitempty"`
+		Tier          *string `json:"tier,omitempty"`
+	} `json:"catalog"`
+
+	// Environment The detected host (`os`, `arch`, `libraos_version`, `ram_gib`, `gpu`, `inference`, `embeddings`). Endpoint addresses are removed.
+	Environment  map[string]interface{}      `json:"environment"`
+	Results      []ModelRecommendationResult `json:"results"`
+	Task         *string                     `json:"task,omitempty"`
+	Verification struct {
+		Note     *string `json:"note,omitempty"`
+		Verified *bool   `json:"verified,omitempty"`
+	} `json:"verification"`
+	Warnings *[]string `json:"warnings,omitempty"`
+}
+
+// ModelRecommendationResult defines model for ModelRecommendationResult.
+type ModelRecommendationResult struct {
+	CellId        string                                 `json:"cell_id"`
+	Compatibility ModelRecommendationResultCompatibility `json:"compatibility"`
+	Dependencies  *[]string                              `json:"dependencies,omitempty"`
+	Evidence      struct {
+		Date        *string                                `json:"date,omitempty"`
+		Libraos     *string                                `json:"libraos,omitempty"`
+		Stale       *bool                                  `json:"stale,omitempty"`
+		StaleReason *string                                `json:"stale_reason,omitempty"`
+		Tier        *ModelRecommendationResultEvidenceTier `json:"tier,omitempty"`
+	} `json:"evidence"`
+
+	// Figures Catalog figures; present only on a `validated_match` from the scored catalog.
+	Figures       *map[string]interface{}            `json:"figures,omitempty"`
+	Hardware      string                             `json:"hardware"`
+	HardwareLabel *string                            `json:"hardware_label,omitempty"`
+	LicenceNotes  *[]string                          `json:"licence_notes,omitempty"`
+	MatchedBy     ModelRecommendationResultMatchedBy `json:"matched_by"`
+
+	// Measured Measured figures; present only on a `validated_match` from the scored catalog.
+	Measured   *map[string]interface{} `json:"measured,omitempty"`
+	Model      string                  `json:"model"`
+	Preference struct {
+		Badges         *[]string `json:"badges,omitempty"`
+		Recommendation *string   `json:"recommendation,omitempty"`
+	} `json:"preference"`
+	Reasons       []string  `json:"reasons"`
+	RedFlags      *[]string `json:"red_flags,omitempty"`
+	ServedLocally *bool     `json:"served_locally,omitempty"`
+	ServedName    *string   `json:"served_name,omitempty"`
+
+	// Serving Serving recipe (`engine`, `recipe`, `image`, `flags`).
+	Serving  *map[string]interface{} `json:"serving,omitempty"`
+	Settings *[]struct {
+		Key   *string `json:"key,omitempty"`
+		Value *string `json:"value,omitempty"`
+	} `json:"settings,omitempty"`
+	Status     *string `json:"status,omitempty"`
+	StatusText *string `json:"status_text,omitempty"`
+	Task       string  `json:"task"`
+	TaskLabel  *string `json:"task_label,omitempty"`
+}
+
+// ModelRecommendationResultCompatibility defines model for ModelRecommendationResult.Compatibility.
+type ModelRecommendationResultCompatibility string
+
+// ModelRecommendationResultEvidenceTier defines model for ModelRecommendationResult.Evidence.Tier.
+type ModelRecommendationResultEvidenceTier string
+
+// ModelRecommendationResultMatchedBy defines model for ModelRecommendationResult.MatchedBy.
+type ModelRecommendationResultMatchedBy string
+
 // ModelSlot defines model for ModelSlot.
 type ModelSlot struct {
 	// Fallback Ordered fallback chain. Activates on rate-limit / 5xx / vendor outage /
@@ -3910,22 +5675,64 @@ type MyGroupMembership struct {
 
 // NativeChatMetadata Opaque per-request metadata. Nova OS does not interpret arbitrary keys (they are threaded through tenant isolation and audit), but a few reserved keys control per-call behavior.
 type NativeChatMetadata struct {
+	// AllowedSkills Narrows a persona's planner to these skills for this turn. A name the persona does not have is a 400; ignored on non-persona agents.
+	AllowedSkills *[]string `json:"allowed_skills,omitempty"`
+
 	// Brain Per-call planning override. One of `always` or `never`; controls whether the multi-step planner runs for this turn.
 	Brain *NativeChatMetadataBrain `json:"brain,omitempty"`
 
+	// EgressGuard Adds the outbound query guard for this request. May only tighten: `off` never removes a guard set by the server or the agent. Any other value is a 400.
+	EgressGuard *NativeChatMetadataEgressGuard `json:"egress_guard,omitempty"`
+
+	// MaxSearches Per-turn cap on outbound search calls across every tool of the turn. Absent or 0 means unlimited.
+	MaxSearches *int `json:"max_searches,omitempty"`
+
 	// MaxTokens Per-call output-token cap for the answer, overriding the agent's configured limit. Must be > 0; clamped to 32768.
 	MaxTokens *int `json:"max_tokens,omitempty"`
+
+	// OnAmbiguousEntity Overrides the agent's handling of answers whose evidence spans several documents the question does not choose between. Invalid values are ignored.
+	OnAmbiguousEntity *NativeChatMetadataOnAmbiguousEntity `json:"on_ambiguous_entity,omitempty"`
+
+	// ResearchDepth Per-call research depth. `fast` skips the planner; `deep` runs it; `auto` runs it single-shot, without multi-wave skills such as `deep_research`. `brain` wins when both are set. Unknown values are ignored.
+	ResearchDepth *NativeChatMetadataResearchDepth `json:"research_depth,omitempty"`
+
+	// ResearchQuery The research question as its own field, when the message is an assembled prompt. Overrides the query used for outbound search.
+	ResearchQuery *string `json:"research_query,omitempty"`
+
+	// ResearchQueryOnly Fixed-query mode: every outbound search of the turn is exactly `research_query`, and fetches are limited to URLs those searches returned. Requires a non-empty, single-line `research_query` of at most 300 characters; otherwise 400.
+	ResearchQueryOnly *bool `json:"research_query_only,omitempty"`
 
 	// StreamEvents When true (and streaming), emit granular orchestration events (tool_use / tool_result / text / thinking) over SSE.
 	StreamEvents *bool `json:"stream_events,omitempty"`
 
 	// StreamThinking When true, include model reasoning as `thinking` SSE events. Independent of stream_events; default off.
-	StreamThinking       *bool                  `json:"stream_thinking,omitempty"`
+	StreamThinking *bool `json:"stream_thinking,omitempty"`
+
+	// Thinking Per-call native reasoning on the answer-tier call; overrides the agent's `thinking`. `off` sends no reasoning parameter, `none` asks the model not to reason. `budget_tokens` is clamped to 1024-32768. An invalid override is ignored.
+	Thinking *struct {
+		BudgetTokens *int                              `json:"budget_tokens,omitempty"`
+		Effort       *NativeChatMetadataThinkingEffort `json:"effort,omitempty"`
+	} `json:"thinking,omitempty"`
+
+	// ToolChoice Per-call tool choice for the first model call: `auto`, `none`, `required`, or a tool name. Overrides the agent's `tool_choice`. Invalid values are ignored.
+	ToolChoice           *string                `json:"tool_choice,omitempty"`
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
 
 // NativeChatMetadataBrain Per-call planning override. One of `always` or `never`; controls whether the multi-step planner runs for this turn.
 type NativeChatMetadataBrain string
+
+// NativeChatMetadataEgressGuard Adds the outbound query guard for this request. May only tighten: `off` never removes a guard set by the server or the agent. Any other value is a 400.
+type NativeChatMetadataEgressGuard string
+
+// NativeChatMetadataOnAmbiguousEntity Overrides the agent's handling of answers whose evidence spans several documents the question does not choose between. Invalid values are ignored.
+type NativeChatMetadataOnAmbiguousEntity string
+
+// NativeChatMetadataResearchDepth Per-call research depth. `fast` skips the planner; `deep` runs it; `auto` runs it single-shot, without multi-wave skills such as `deep_research`. `brain` wins when both are set. Unknown values are ignored.
+type NativeChatMetadataResearchDepth string
+
+// NativeChatMetadataThinkingEffort defines model for NativeChatMetadata.Thinking.Effort.
+type NativeChatMetadataThinkingEffort string
 
 // NativeChatRequest Native chat request. Supply either `message` (simple form) or `messages` (OpenAI array form).
 type NativeChatRequest struct {
@@ -3972,6 +5779,9 @@ type NativeChatResult struct {
 
 	// Response The assistant's answer text.
 	Response *string `json:"response,omitempty"`
+
+	// Retrieval Present only when the evidence the answer relied on spanned several documents the conversation did not choose between and the agent's ambiguous-entity handling is `state` or `ask`.
+	Retrieval *RetrievalAmbiguity `json:"retrieval,omitempty"`
 
 	// RetrievedChunks Source ids of knowledge chunks surfaced by this turn.
 	RetrievedChunks *[]string `json:"retrieved_chunks,omitempty"`
@@ -4280,6 +6090,17 @@ type RegistryAgentModelSource string
 // RegistryAgentSource `preset` ships with the release image; `custom` was created at runtime. A runtime file overriding a preset id reports `custom`, because the runtime file is what executes.
 type RegistryAgentSource string
 
+// RetrievalAmbiguity Present only when the evidence the answer relied on spanned several documents the conversation did not choose between and the agent's ambiguous-entity handling is `state` or `ask`.
+type RetrievalAmbiguity struct {
+	AmbiguityAction RetrievalAmbiguityAmbiguityAction `json:"ambiguity_action"`
+
+	// AmbiguousSources Source ids of the candidate documents.
+	AmbiguousSources []string `json:"ambiguous_sources"`
+}
+
+// RetrievalAmbiguityAmbiguityAction defines model for RetrievalAmbiguity.AmbiguityAction.
+type RetrievalAmbiguityAmbiguityAction string
+
 // ReviewerEvidence defines model for ReviewerEvidence.
 type ReviewerEvidence struct {
 	Batched    int     `json:"batched"`
@@ -4339,6 +6160,97 @@ type RouteHintRenderInline struct {
 
 // RouteHintRenderInlineKind defines model for RouteHintRenderInline.Kind.
 type RouteHintRenderInlineKind string
+
+// Schedule defines model for Schedule.
+type Schedule struct {
+	Agent               string    `json:"agent"`
+	AppId               *string   `json:"app_id,omitempty"`
+	ConsecutiveFailures int       `json:"consecutive_failures"`
+	CreatedAt           time.Time `json:"created_at"`
+	Cron                *string   `json:"cron,omitempty"`
+
+	// DeliverTo Where each run's answer is appended. Exactly one of the two.
+	DeliverTo ScheduleDelivery `json:"deliver_to"`
+	Enabled   bool             `json:"enabled"`
+	Every     *string          `json:"every,omitempty"`
+
+	// Id `sched_` followed by 24 hex characters.
+	Id        string  `json:"id"`
+	LastError *string `json:"last_error,omitempty"`
+
+	// LastJobId Async job id of the last run; empty until the first run.
+	LastJobId  string                  `json:"last_job_id"`
+	LastRunAt  *time.Time              `json:"last_run_at,omitempty"`
+	LastStatus ScheduleLastStatus      `json:"last_status"`
+	Metadata   *map[string]interface{} `json:"metadata,omitempty"`
+	MissedRuns int                     `json:"missed_runs"`
+
+	// NextRunAt Null when disabled.
+	NextRunAt *time.Time `json:"next_run_at,omitempty"`
+
+	// OrgId Null on schedules created before organizations were recorded.
+	OrgId       *string   `json:"org_id,omitempty"`
+	OwnerUserId string    `json:"owner_user_id"`
+	Prompt      string    `json:"prompt"`
+	TenantId    string    `json:"tenant_id"`
+	Timezone    string    `json:"timezone"`
+	UpdatedAt   time.Time `json:"updated_at"`
+}
+
+// ScheduleLastStatus defines model for Schedule.LastStatus.
+type ScheduleLastStatus string
+
+// ScheduleDelivery Where each run's answer is appended. Exactly one of the two.
+type ScheduleDelivery struct {
+	// ConversationId An existing conversation owned by the schedule's owner.
+	ConversationId *string `json:"conversation_id,omitempty"`
+
+	// NewConversation Create a dedicated conversation on the first run.
+	NewConversation *bool `json:"new_conversation,omitempty"`
+}
+
+// ScheduleLimitError defines model for ScheduleLimitError.
+type ScheduleLimitError struct {
+	Error   ScheduleLimitErrorError `json:"error"`
+	Limit   int                     `json:"limit"`
+	Message string                  `json:"message"`
+}
+
+// ScheduleLimitErrorError defines model for ScheduleLimitError.Error.
+type ScheduleLimitErrorError string
+
+// ScheduleList defines model for ScheduleList.
+type ScheduleList struct {
+	Schedules []Schedule `json:"schedules"`
+	Total     int        `json:"total"`
+}
+
+// ScheduleWrite Create body (`agent`, `prompt`, `deliver_to` and one of `cron` / `every` required) or PATCH body (every field optional; the merged schedule is re-validated).
+type ScheduleWrite struct {
+	// Agent Agent the run is submitted to; must be runnable by the caller and support streaming.
+	Agent *string `json:"agent,omitempty"`
+
+	// Cron Five-field cron expression or a descriptor such as `@daily`. No `TZ=` prefix and no `@every`. Setting it clears `every`.
+	Cron *string `json:"cron,omitempty"`
+
+	// DeliverTo Where each run's answer is appended. Exactly one of the two.
+	DeliverTo *ScheduleDelivery `json:"deliver_to,omitempty"`
+
+	// Enabled Default true. Re-enabling resets the failure count.
+	Enabled *bool `json:"enabled,omitempty"`
+
+	// Every Fixed interval as a duration (e.g. `30m`, `1h`), at least `1m`. Setting it clears `cron`.
+	Every *string `json:"every,omitempty"`
+
+	// Metadata Per-run chat metadata; replaced as a whole.
+	Metadata *map[string]interface{} `json:"metadata,omitempty"`
+
+	// Prompt The message each run sends.
+	Prompt *string `json:"prompt,omitempty"`
+
+	// Timezone IANA time zone name. Default `UTC`.
+	Timezone *string `json:"timezone,omitempty"`
+}
 
 // ScimEmail defines model for ScimEmail.
 type ScimEmail struct {
@@ -4736,17 +6648,115 @@ type TranscriptionSegment struct {
 	Text  *string  `json:"text,omitempty"`
 }
 
+// UsageAgentSkill defines model for UsageAgentSkill.
+type UsageAgentSkill struct {
+	Sha256  *string `json:"sha256,omitempty"`
+	Skill   *string `json:"skill,omitempty"`
+	Source  *string `json:"source,omitempty"`
+	Version *int    `json:"version,omitempty"`
+}
+
+// UsageAgentSkills Agent Skills attached to and loaded by this turn.
+type UsageAgentSkills struct {
+	Attached *[]UsageAgentSkill `json:"attached,omitempty"`
+	Inlined  *bool              `json:"inlined,omitempty"`
+
+	// Loaded Skills loaded during the turn, in order.
+	Loaded     *[]string `json:"loaded,omitempty"`
+	Unresolved *[]string `json:"unresolved,omitempty"`
+}
+
 // UsageBlock Aggregated token usage across all of the turn's model sub-calls, with a per-stage breakdown. Omitted on non-model/zero-usage turns. Excludes embedding calls.
 type UsageBlock struct {
-	ByStage          *[]UsageStage `json:"by_stage,omitempty"`
-	CompletionTokens *int          `json:"completion_tokens,omitempty"`
-	PromptTokens     *int          `json:"prompt_tokens,omitempty"`
-	TotalTokens      *int          `json:"total_tokens,omitempty"`
+	// AgentSkills Agent Skills attached to and loaded by this turn.
+	AgentSkills      *UsageAgentSkills     `json:"agent_skills,omitempty"`
+	ByStage          *[]UsageStage         `json:"by_stage,omitempty"`
+	CacheReadTokens  *int                  `json:"cache_read_tokens,omitempty"`
+	CacheWriteTokens *int                  `json:"cache_write_tokens,omitempty"`
+	CompletionTokens *int                  `json:"completion_tokens,omitempty"`
+	ContextBudget    *[]UsageContextBudget `json:"context_budget,omitempty"`
+	Phases           *[]UsagePhase         `json:"phases,omitempty"`
+	PromptTokens     *int                  `json:"prompt_tokens,omitempty"`
+	Timeline         *[]UsageSpan          `json:"timeline,omitempty"`
+
+	// ToolCalls Tool calls this turn, by tool name.
+	ToolCalls   *map[string]int `json:"tool_calls,omitempty"`
+	TotalTokens *int            `json:"total_tokens,omitempty"`
+
+	// WorkingSet The conversation working set (documents attached in chat) carried by this turn.
+	WorkingSet *UsageWorkingSet `json:"working_set,omitempty"`
+}
+
+// UsageContextBudget Context window and turn budget applied to the model calls of one model in this turn.
+type UsageContextBudget struct {
+	// Budget Effective budget (the tighter of window and turn budget).
+	Budget *int    `json:"budget,omitempty"`
+	Calls  *int    `json:"calls,omitempty"`
+	Model  *string `json:"model,omitempty"`
+
+	// Trimmed Calls whose conversation was trimmed to fit.
+	Trimmed *int `json:"trimmed,omitempty"`
+
+	// TurnBudget Per-turn token budget; omitted when none applies.
+	TurnBudget       *int                                `json:"turn_budget,omitempty"`
+	TurnBudgetSource *UsageContextBudgetTurnBudgetSource `json:"turn_budget_source,omitempty"`
+
+	// Window Context window in tokens; omitted when unbounded.
+	Window       *int                            `json:"window,omitempty"`
+	WindowSource *UsageContextBudgetWindowSource `json:"window_source,omitempty"`
+}
+
+// UsageContextBudgetTurnBudgetSource defines model for UsageContextBudget.TurnBudgetSource.
+type UsageContextBudgetTurnBudgetSource string
+
+// UsageContextBudgetWindowSource defines model for UsageContextBudget.WindowSource.
+type UsageContextBudgetWindowSource string
+
+// UsagePhase Wall time of one phase of the turn. Phases are interval unions, so parallel tasks count once. A final `turn` row is always present.
+type UsagePhase struct {
+	Count      *int `json:"count,omitempty"`
+	DurationMs *int `json:"duration_ms,omitempty"`
+
+	// Phase One of `triage`, `planner`, `skills`, `tools`, `synthesis`, `direct`, `llm`, `turn`.
+	Phase *string `json:"phase,omitempty"`
+}
+
+// UsageSpan One span of the turn timeline, relative to the turn start.
+type UsageSpan struct {
+	Capability   *string `json:"capability,omitempty"`
+	DurationMs   *int    `json:"duration_ms,omitempty"`
+	FirstTokenMs *int    `json:"first_token_ms,omitempty"`
+
+	// Kind One of `triage`, `planner`, `task`, `aspect`, `tool`, `llm`, `synthesis`, `direct`, `phase`.
+	Kind *string `json:"kind,omitempty"`
+
+	// Level DAG level of a planner task.
+	Level   *int    `json:"level,omitempty"`
+	Model   *string `json:"model,omitempty"`
+	Name    *string `json:"name,omitempty"`
+	Phase   *string `json:"phase,omitempty"`
+	Skill   *string `json:"skill,omitempty"`
+	Stage   *string `json:"stage,omitempty"`
+	StartMs *int    `json:"start_ms,omitempty"`
+	Status  *string `json:"status,omitempty"`
+	TaskId  *string `json:"task_id,omitempty"`
+	Tool    *string `json:"tool,omitempty"`
 }
 
 // UsageStage Token usage for one stage/sub-call of a turn.
 type UsageStage struct {
+	CacheReadTokens  *int `json:"cache_read_tokens,omitempty"`
+	CacheWriteTokens *int `json:"cache_write_tokens,omitempty"`
 	CompletionTokens *int `json:"completion_tokens,omitempty"`
+
+	// DurationMs Summed model wall time for this stage's calls.
+	DurationMs *int `json:"duration_ms,omitempty"`
+
+	// FirstTokenMs Time to first token of the stage's first streamed call.
+	FirstTokenMs *int `json:"first_token_ms,omitempty"`
+
+	// LlmCalls Number of model calls in this stage.
+	LlmCalls *int `json:"llm_calls,omitempty"`
 
 	// Model The model used for the sub-call.
 	Model        *string `json:"model,omitempty"`
@@ -4754,7 +6764,34 @@ type UsageStage struct {
 
 	// Stage The stage/agent that made the sub-call.
 	Stage *string `json:"stage,omitempty"`
+
+	// ToolCalls Tool calls made by this stage.
+	ToolCalls *int `json:"tool_calls,omitempty"`
+
+	// ToolMs Summed tool wall time for this stage.
+	ToolMs *int `json:"tool_ms,omitempty"`
 }
+
+// UsageWorkingSet The conversation working set (documents attached in chat) carried by this turn.
+type UsageWorkingSet struct {
+	Chars *int `json:"chars,omitempty"`
+	Docs  *int `json:"docs,omitempty"`
+
+	// MaxTokens Absolute token ceiling for full mode; omitted when none.
+	MaxTokens *int `json:"max_tokens,omitempty"`
+
+	// Mode `full` injects the documents' text; `manifest` lists them and the model reads them with `read_document`.
+	Mode *UsageWorkingSetMode `json:"mode,omitempty"`
+
+	// ShareLimitTokens Token limit from the share of the context window.
+	ShareLimitTokens *int `json:"share_limit_tokens,omitempty"`
+
+	// WebGate `locked`, or `unlocked:<via>` when web retrieval was unlocked on a working-set turn.
+	WebGate *string `json:"web_gate,omitempty"`
+}
+
+// UsageWorkingSetMode `full` injects the documents' text; `manifest` lists them and the model reads them with `read_document`.
+type UsageWorkingSetMode string
 
 // User defines model for User.
 type User struct {
@@ -5127,6 +7164,12 @@ type UpdateConversationMetadataJSONBody struct {
 	Metadata *map[string]interface{} `json:"metadata,omitempty"`
 }
 
+// TrainDecisionModelParams defines parameters for TrainDecisionModel.
+type TrainDecisionModelParams struct {
+	// Gate Confidence gate in (1/labels, 1]. Default 0.7; a non-zero `gate` in a JSON body wins.
+	Gate *float32 `form:"gate,omitempty" json:"gate,omitempty"`
+}
+
 // UploadFileMultipartBody defines parameters for UploadFile.
 type UploadFileMultipartBody struct {
 	// File The file to upload.
@@ -5436,6 +7479,34 @@ type GetMemoryParams struct {
 // GetMemoryParamsScope defines parameters for GetMemory.
 type GetMemoryParamsScope string
 
+// GetModelRecommendationsParams defines parameters for GetModelRecommendations.
+type GetModelRecommendationsParams struct {
+	// Task Restrict to one catalog task. Unknown tasks are a 400.
+	Task *string `form:"task,omitempty" json:"task,omitempty"`
+
+	// Hardware Exact-match filter on `hardware`.
+	Hardware *string `form:"hardware,omitempty" json:"hardware,omitempty"`
+
+	// Compatibility Exact-match filter on `compatibility`.
+	Compatibility *GetModelRecommendationsParamsCompatibility `form:"compatibility,omitempty" json:"compatibility,omitempty"`
+}
+
+// GetModelRecommendationsParamsCompatibility defines parameters for GetModelRecommendations.
+type GetModelRecommendationsParamsCompatibility string
+
+// GetModelRecommendationsMarkdownParams defines parameters for GetModelRecommendationsMarkdown.
+type GetModelRecommendationsMarkdownParams struct {
+	Task          *string `form:"task,omitempty" json:"task,omitempty"`
+	Hardware      *string `form:"hardware,omitempty" json:"hardware,omitempty"`
+	Compatibility *string `form:"compatibility,omitempty" json:"compatibility,omitempty"`
+}
+
+// ListSchedulesParams defines parameters for ListSchedules.
+type ListSchedulesParams struct {
+	// Owner Admin only — restrict to this owner user id. Ignored for non-admins.
+	Owner *string `form:"owner,omitempty" json:"owner,omitempty"`
+}
+
 // PutSettingJSONBody defines parameters for PutSetting.
 type PutSettingJSONBody struct {
 	// Value New value (type varies per key).
@@ -5461,6 +7532,22 @@ type RealtimeVoiceParams struct {
 
 	// Upgrade Must be `websocket` for the WebSocket handshake.
 	Upgrade string `json:"Upgrade"`
+}
+
+// CreateAgentSkillMultipartBody defines parameters for CreateAgentSkill.
+type CreateAgentSkillMultipartBody struct {
+	File openapi_types.File `json:"file"`
+}
+
+// DiffAgentSkillVersionsParams defines parameters for DiffAgentSkillVersions.
+type DiffAgentSkillVersionsParams struct {
+	From int `form:"from" json:"from"`
+	To   int `form:"to" json:"to"`
+}
+
+// CheckAgentSkillUpstreamParams defines parameters for CheckAgentSkillUpstream.
+type CheckAgentSkillUpstreamParams struct {
+	Version int `form:"version" json:"version"`
 }
 
 // NativeChatJSONRequestBody defines body for NativeChat for application/json ContentType.
@@ -5558,6 +7645,15 @@ type RenameConversationJSONRequestBody RenameConversationJSONBody
 
 // UpdateConversationMetadataJSONRequestBody defines body for UpdateConversationMetadata for application/json ContentType.
 type UpdateConversationMetadataJSONRequestBody UpdateConversationMetadataJSONBody
+
+// ActivateDecisionModelJSONRequestBody defines body for ActivateDecisionModel for application/json ContentType.
+type ActivateDecisionModelJSONRequestBody = DecisionActivateRequest
+
+// PredictDecisionModelJSONRequestBody defines body for PredictDecisionModel for application/json ContentType.
+type PredictDecisionModelJSONRequestBody = DecisionPredictRequest
+
+// TrainDecisionModelJSONRequestBody defines body for TrainDecisionModel for application/json ContentType.
+type TrainDecisionModelJSONRequestBody = DecisionTrainRequest
 
 // UploadFileMultipartRequestBody defines body for UploadFile for multipart/form-data ContentType.
 type UploadFileMultipartRequestBody UploadFileMultipartBody
@@ -5673,6 +7769,12 @@ type IngestKnowledgeJSONRequestBody = KnowledgeIngestRequest
 // SearchKnowledgeJSONRequestBody defines body for SearchKnowledge for application/json ContentType.
 type SearchKnowledgeJSONRequestBody = KnowledgeSearchRequest
 
+// CreateScheduleJSONRequestBody defines body for CreateSchedule for application/json ContentType.
+type CreateScheduleJSONRequestBody = ScheduleWrite
+
+// UpdateScheduleJSONRequestBody defines body for UpdateSchedule for application/json ContentType.
+type UpdateScheduleJSONRequestBody = ScheduleWrite
+
 // CreateManagedSessionJSONRequestBody defines body for CreateManagedSession for application/json ContentType.
 type CreateManagedSessionJSONRequestBody = SessionCreate
 
@@ -5690,6 +7792,332 @@ type CountTokensJSONRequestBody = CountTokensRequest
 
 // SearchJSONRequestBody defines body for Search for application/json ContentType.
 type SearchJSONRequestBody = WebSearchRequest
+
+// CreateAgentSkillJSONRequestBody defines body for CreateAgentSkill for application/json ContentType.
+type CreateAgentSkillJSONRequestBody = AgentSkillFiles
+
+// CreateAgentSkillMultipartRequestBody defines body for CreateAgentSkill for multipart/form-data ContentType.
+type CreateAgentSkillMultipartRequestBody CreateAgentSkillMultipartBody
+
+// ImportAgentSkillsJSONRequestBody defines body for ImportAgentSkills for application/json ContentType.
+type ImportAgentSkillsJSONRequestBody = AgentSkillImportRequest
+
+// EditAgentSkillJSONRequestBody defines body for EditAgentSkill for application/json ContentType.
+type EditAgentSkillJSONRequestBody = AgentSkillEdit
+
+// Getter for additional properties for ChatCompletionRequest_Metadata. Returns the specified
+// element and whether it was found
+func (a ChatCompletionRequest_Metadata) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for ChatCompletionRequest_Metadata
+func (a *ChatCompletionRequest_Metadata) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for ChatCompletionRequest_Metadata to handle AdditionalProperties
+func (a *ChatCompletionRequest_Metadata) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["allowed_skills"]; found {
+		err = json.Unmarshal(raw, &a.AllowedSkills)
+		if err != nil {
+			return fmt.Errorf("error reading 'allowed_skills': %w", err)
+		}
+		delete(object, "allowed_skills")
+	}
+
+	if raw, found := object["brain"]; found {
+		err = json.Unmarshal(raw, &a.Brain)
+		if err != nil {
+			return fmt.Errorf("error reading 'brain': %w", err)
+		}
+		delete(object, "brain")
+	}
+
+	if raw, found := object["egress_guard"]; found {
+		err = json.Unmarshal(raw, &a.EgressGuard)
+		if err != nil {
+			return fmt.Errorf("error reading 'egress_guard': %w", err)
+		}
+		delete(object, "egress_guard")
+	}
+
+	if raw, found := object["max_searches"]; found {
+		err = json.Unmarshal(raw, &a.MaxSearches)
+		if err != nil {
+			return fmt.Errorf("error reading 'max_searches': %w", err)
+		}
+		delete(object, "max_searches")
+	}
+
+	if raw, found := object["max_tokens"]; found {
+		err = json.Unmarshal(raw, &a.MaxTokens)
+		if err != nil {
+			return fmt.Errorf("error reading 'max_tokens': %w", err)
+		}
+		delete(object, "max_tokens")
+	}
+
+	if raw, found := object["on_ambiguous_entity"]; found {
+		err = json.Unmarshal(raw, &a.OnAmbiguousEntity)
+		if err != nil {
+			return fmt.Errorf("error reading 'on_ambiguous_entity': %w", err)
+		}
+		delete(object, "on_ambiguous_entity")
+	}
+
+	if raw, found := object["research_depth"]; found {
+		err = json.Unmarshal(raw, &a.ResearchDepth)
+		if err != nil {
+			return fmt.Errorf("error reading 'research_depth': %w", err)
+		}
+		delete(object, "research_depth")
+	}
+
+	if raw, found := object["research_query"]; found {
+		err = json.Unmarshal(raw, &a.ResearchQuery)
+		if err != nil {
+			return fmt.Errorf("error reading 'research_query': %w", err)
+		}
+		delete(object, "research_query")
+	}
+
+	if raw, found := object["research_query_only"]; found {
+		err = json.Unmarshal(raw, &a.ResearchQueryOnly)
+		if err != nil {
+			return fmt.Errorf("error reading 'research_query_only': %w", err)
+		}
+		delete(object, "research_query_only")
+	}
+
+	if raw, found := object["stream_events"]; found {
+		err = json.Unmarshal(raw, &a.StreamEvents)
+		if err != nil {
+			return fmt.Errorf("error reading 'stream_events': %w", err)
+		}
+		delete(object, "stream_events")
+	}
+
+	if raw, found := object["temperature"]; found {
+		err = json.Unmarshal(raw, &a.Temperature)
+		if err != nil {
+			return fmt.Errorf("error reading 'temperature': %w", err)
+		}
+		delete(object, "temperature")
+	}
+
+	if raw, found := object["thinking"]; found {
+		err = json.Unmarshal(raw, &a.Thinking)
+		if err != nil {
+			return fmt.Errorf("error reading 'thinking': %w", err)
+		}
+		delete(object, "thinking")
+	}
+
+	if raw, found := object["tool_choice"]; found {
+		err = json.Unmarshal(raw, &a.ToolChoice)
+		if err != nil {
+			return fmt.Errorf("error reading 'tool_choice': %w", err)
+		}
+		delete(object, "tool_choice")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for ChatCompletionRequest_Metadata to handle AdditionalProperties
+func (a ChatCompletionRequest_Metadata) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.AllowedSkills != nil {
+		object["allowed_skills"], err = json.Marshal(a.AllowedSkills)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'allowed_skills': %w", err)
+		}
+	}
+
+	if a.Brain != nil {
+		object["brain"], err = json.Marshal(a.Brain)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'brain': %w", err)
+		}
+	}
+
+	if a.EgressGuard != nil {
+		object["egress_guard"], err = json.Marshal(a.EgressGuard)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'egress_guard': %w", err)
+		}
+	}
+
+	if a.MaxSearches != nil {
+		object["max_searches"], err = json.Marshal(a.MaxSearches)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'max_searches': %w", err)
+		}
+	}
+
+	if a.MaxTokens != nil {
+		object["max_tokens"], err = json.Marshal(a.MaxTokens)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'max_tokens': %w", err)
+		}
+	}
+
+	if a.OnAmbiguousEntity != nil {
+		object["on_ambiguous_entity"], err = json.Marshal(a.OnAmbiguousEntity)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'on_ambiguous_entity': %w", err)
+		}
+	}
+
+	if a.ResearchDepth != nil {
+		object["research_depth"], err = json.Marshal(a.ResearchDepth)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'research_depth': %w", err)
+		}
+	}
+
+	if a.ResearchQuery != nil {
+		object["research_query"], err = json.Marshal(a.ResearchQuery)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'research_query': %w", err)
+		}
+	}
+
+	if a.ResearchQueryOnly != nil {
+		object["research_query_only"], err = json.Marshal(a.ResearchQueryOnly)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'research_query_only': %w", err)
+		}
+	}
+
+	if a.StreamEvents != nil {
+		object["stream_events"], err = json.Marshal(a.StreamEvents)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'stream_events': %w", err)
+		}
+	}
+
+	if a.Temperature != nil {
+		object["temperature"], err = json.Marshal(a.Temperature)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'temperature': %w", err)
+		}
+	}
+
+	if a.Thinking != nil {
+		object["thinking"], err = json.Marshal(a.Thinking)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'thinking': %w", err)
+		}
+	}
+
+	if a.ToolChoice != nil {
+		object["tool_choice"], err = json.Marshal(a.ToolChoice)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'tool_choice': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for ChatCompletionResponseFormat. Returns the specified
+// element and whether it was found
+func (a ChatCompletionResponseFormat) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for ChatCompletionResponseFormat
+func (a *ChatCompletionResponseFormat) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for ChatCompletionResponseFormat to handle AdditionalProperties
+func (a *ChatCompletionResponseFormat) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["type"]; found {
+		err = json.Unmarshal(raw, &a.Type)
+		if err != nil {
+			return fmt.Errorf("error reading 'type': %w", err)
+		}
+		delete(object, "type")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for ChatCompletionResponseFormat to handle AdditionalProperties
+func (a ChatCompletionResponseFormat) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	object["type"], err = json.Marshal(a.Type)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'type': %w", err)
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
 
 // Getter for additional properties for ImageGenerationRequest. Returns the specified
 // element and whether it was found
@@ -5848,12 +8276,68 @@ func (a *MessageRequest_Metadata) UnmarshalJSON(b []byte) error {
 		delete(object, "agent_id")
 	}
 
+	if raw, found := object["allowed_skills"]; found {
+		err = json.Unmarshal(raw, &a.AllowedSkills)
+		if err != nil {
+			return fmt.Errorf("error reading 'allowed_skills': %w", err)
+		}
+		delete(object, "allowed_skills")
+	}
+
 	if raw, found := object["brain"]; found {
 		err = json.Unmarshal(raw, &a.Brain)
 		if err != nil {
 			return fmt.Errorf("error reading 'brain': %w", err)
 		}
 		delete(object, "brain")
+	}
+
+	if raw, found := object["egress_guard"]; found {
+		err = json.Unmarshal(raw, &a.EgressGuard)
+		if err != nil {
+			return fmt.Errorf("error reading 'egress_guard': %w", err)
+		}
+		delete(object, "egress_guard")
+	}
+
+	if raw, found := object["max_searches"]; found {
+		err = json.Unmarshal(raw, &a.MaxSearches)
+		if err != nil {
+			return fmt.Errorf("error reading 'max_searches': %w", err)
+		}
+		delete(object, "max_searches")
+	}
+
+	if raw, found := object["on_ambiguous_entity"]; found {
+		err = json.Unmarshal(raw, &a.OnAmbiguousEntity)
+		if err != nil {
+			return fmt.Errorf("error reading 'on_ambiguous_entity': %w", err)
+		}
+		delete(object, "on_ambiguous_entity")
+	}
+
+	if raw, found := object["research_depth"]; found {
+		err = json.Unmarshal(raw, &a.ResearchDepth)
+		if err != nil {
+			return fmt.Errorf("error reading 'research_depth': %w", err)
+		}
+		delete(object, "research_depth")
+	}
+
+	if raw, found := object["research_query"]; found {
+		err = json.Unmarshal(raw, &a.ResearchQuery)
+		if err != nil {
+			return fmt.Errorf("error reading 'research_query': %w", err)
+		}
+		delete(object, "research_query")
+	}
+
+	if raw, found := object["research_query_only"]; found {
+		err = json.Unmarshal(raw, &a.ResearchQueryOnly)
+		if err != nil {
+			return fmt.Errorf("error reading 'research_query_only': %w", err)
+		}
+		delete(object, "research_query_only")
 	}
 
 	if raw, found := object["stream_events"]; found {
@@ -5870,6 +8354,22 @@ func (a *MessageRequest_Metadata) UnmarshalJSON(b []byte) error {
 			return fmt.Errorf("error reading 'stream_thinking': %w", err)
 		}
 		delete(object, "stream_thinking")
+	}
+
+	if raw, found := object["thinking"]; found {
+		err = json.Unmarshal(raw, &a.Thinking)
+		if err != nil {
+			return fmt.Errorf("error reading 'thinking': %w", err)
+		}
+		delete(object, "thinking")
+	}
+
+	if raw, found := object["tool_choice"]; found {
+		err = json.Unmarshal(raw, &a.ToolChoice)
+		if err != nil {
+			return fmt.Errorf("error reading 'tool_choice': %w", err)
+		}
+		delete(object, "tool_choice")
 	}
 
 	if len(object) != 0 {
@@ -5898,10 +8398,59 @@ func (a MessageRequest_Metadata) MarshalJSON() ([]byte, error) {
 		}
 	}
 
+	if a.AllowedSkills != nil {
+		object["allowed_skills"], err = json.Marshal(a.AllowedSkills)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'allowed_skills': %w", err)
+		}
+	}
+
 	if a.Brain != nil {
 		object["brain"], err = json.Marshal(a.Brain)
 		if err != nil {
 			return nil, fmt.Errorf("error marshaling 'brain': %w", err)
+		}
+	}
+
+	if a.EgressGuard != nil {
+		object["egress_guard"], err = json.Marshal(a.EgressGuard)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'egress_guard': %w", err)
+		}
+	}
+
+	if a.MaxSearches != nil {
+		object["max_searches"], err = json.Marshal(a.MaxSearches)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'max_searches': %w", err)
+		}
+	}
+
+	if a.OnAmbiguousEntity != nil {
+		object["on_ambiguous_entity"], err = json.Marshal(a.OnAmbiguousEntity)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'on_ambiguous_entity': %w", err)
+		}
+	}
+
+	if a.ResearchDepth != nil {
+		object["research_depth"], err = json.Marshal(a.ResearchDepth)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'research_depth': %w", err)
+		}
+	}
+
+	if a.ResearchQuery != nil {
+		object["research_query"], err = json.Marshal(a.ResearchQuery)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'research_query': %w", err)
+		}
+	}
+
+	if a.ResearchQueryOnly != nil {
+		object["research_query_only"], err = json.Marshal(a.ResearchQueryOnly)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'research_query_only': %w", err)
 		}
 	}
 
@@ -5916,6 +8465,20 @@ func (a MessageRequest_Metadata) MarshalJSON() ([]byte, error) {
 		object["stream_thinking"], err = json.Marshal(a.StreamThinking)
 		if err != nil {
 			return nil, fmt.Errorf("error marshaling 'stream_thinking': %w", err)
+		}
+	}
+
+	if a.Thinking != nil {
+		object["thinking"], err = json.Marshal(a.Thinking)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'thinking': %w", err)
+		}
+	}
+
+	if a.ToolChoice != nil {
+		object["tool_choice"], err = json.Marshal(a.ToolChoice)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'tool_choice': %w", err)
 		}
 	}
 
@@ -5953,6 +8516,14 @@ func (a *NativeChatMetadata) UnmarshalJSON(b []byte) error {
 		return err
 	}
 
+	if raw, found := object["allowed_skills"]; found {
+		err = json.Unmarshal(raw, &a.AllowedSkills)
+		if err != nil {
+			return fmt.Errorf("error reading 'allowed_skills': %w", err)
+		}
+		delete(object, "allowed_skills")
+	}
+
 	if raw, found := object["brain"]; found {
 		err = json.Unmarshal(raw, &a.Brain)
 		if err != nil {
@@ -5961,12 +8532,60 @@ func (a *NativeChatMetadata) UnmarshalJSON(b []byte) error {
 		delete(object, "brain")
 	}
 
+	if raw, found := object["egress_guard"]; found {
+		err = json.Unmarshal(raw, &a.EgressGuard)
+		if err != nil {
+			return fmt.Errorf("error reading 'egress_guard': %w", err)
+		}
+		delete(object, "egress_guard")
+	}
+
+	if raw, found := object["max_searches"]; found {
+		err = json.Unmarshal(raw, &a.MaxSearches)
+		if err != nil {
+			return fmt.Errorf("error reading 'max_searches': %w", err)
+		}
+		delete(object, "max_searches")
+	}
+
 	if raw, found := object["max_tokens"]; found {
 		err = json.Unmarshal(raw, &a.MaxTokens)
 		if err != nil {
 			return fmt.Errorf("error reading 'max_tokens': %w", err)
 		}
 		delete(object, "max_tokens")
+	}
+
+	if raw, found := object["on_ambiguous_entity"]; found {
+		err = json.Unmarshal(raw, &a.OnAmbiguousEntity)
+		if err != nil {
+			return fmt.Errorf("error reading 'on_ambiguous_entity': %w", err)
+		}
+		delete(object, "on_ambiguous_entity")
+	}
+
+	if raw, found := object["research_depth"]; found {
+		err = json.Unmarshal(raw, &a.ResearchDepth)
+		if err != nil {
+			return fmt.Errorf("error reading 'research_depth': %w", err)
+		}
+		delete(object, "research_depth")
+	}
+
+	if raw, found := object["research_query"]; found {
+		err = json.Unmarshal(raw, &a.ResearchQuery)
+		if err != nil {
+			return fmt.Errorf("error reading 'research_query': %w", err)
+		}
+		delete(object, "research_query")
+	}
+
+	if raw, found := object["research_query_only"]; found {
+		err = json.Unmarshal(raw, &a.ResearchQueryOnly)
+		if err != nil {
+			return fmt.Errorf("error reading 'research_query_only': %w", err)
+		}
+		delete(object, "research_query_only")
 	}
 
 	if raw, found := object["stream_events"]; found {
@@ -5983,6 +8602,22 @@ func (a *NativeChatMetadata) UnmarshalJSON(b []byte) error {
 			return fmt.Errorf("error reading 'stream_thinking': %w", err)
 		}
 		delete(object, "stream_thinking")
+	}
+
+	if raw, found := object["thinking"]; found {
+		err = json.Unmarshal(raw, &a.Thinking)
+		if err != nil {
+			return fmt.Errorf("error reading 'thinking': %w", err)
+		}
+		delete(object, "thinking")
+	}
+
+	if raw, found := object["tool_choice"]; found {
+		err = json.Unmarshal(raw, &a.ToolChoice)
+		if err != nil {
+			return fmt.Errorf("error reading 'tool_choice': %w", err)
+		}
+		delete(object, "tool_choice")
 	}
 
 	if len(object) != 0 {
@@ -6004,6 +8639,13 @@ func (a NativeChatMetadata) MarshalJSON() ([]byte, error) {
 	var err error
 	object := make(map[string]json.RawMessage)
 
+	if a.AllowedSkills != nil {
+		object["allowed_skills"], err = json.Marshal(a.AllowedSkills)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'allowed_skills': %w", err)
+		}
+	}
+
 	if a.Brain != nil {
 		object["brain"], err = json.Marshal(a.Brain)
 		if err != nil {
@@ -6011,10 +8653,52 @@ func (a NativeChatMetadata) MarshalJSON() ([]byte, error) {
 		}
 	}
 
+	if a.EgressGuard != nil {
+		object["egress_guard"], err = json.Marshal(a.EgressGuard)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'egress_guard': %w", err)
+		}
+	}
+
+	if a.MaxSearches != nil {
+		object["max_searches"], err = json.Marshal(a.MaxSearches)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'max_searches': %w", err)
+		}
+	}
+
 	if a.MaxTokens != nil {
 		object["max_tokens"], err = json.Marshal(a.MaxTokens)
 		if err != nil {
 			return nil, fmt.Errorf("error marshaling 'max_tokens': %w", err)
+		}
+	}
+
+	if a.OnAmbiguousEntity != nil {
+		object["on_ambiguous_entity"], err = json.Marshal(a.OnAmbiguousEntity)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'on_ambiguous_entity': %w", err)
+		}
+	}
+
+	if a.ResearchDepth != nil {
+		object["research_depth"], err = json.Marshal(a.ResearchDepth)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'research_depth': %w", err)
+		}
+	}
+
+	if a.ResearchQuery != nil {
+		object["research_query"], err = json.Marshal(a.ResearchQuery)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'research_query': %w", err)
+		}
+	}
+
+	if a.ResearchQueryOnly != nil {
+		object["research_query_only"], err = json.Marshal(a.ResearchQueryOnly)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'research_query_only': %w", err)
 		}
 	}
 
@@ -6029,6 +8713,20 @@ func (a NativeChatMetadata) MarshalJSON() ([]byte, error) {
 		object["stream_thinking"], err = json.Marshal(a.StreamThinking)
 		if err != nil {
 			return nil, fmt.Errorf("error marshaling 'stream_thinking': %w", err)
+		}
+	}
+
+	if a.Thinking != nil {
+		object["thinking"], err = json.Marshal(a.Thinking)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'thinking': %w", err)
+		}
+	}
+
+	if a.ToolChoice != nil {
+		object["tool_choice"], err = json.Marshal(a.ToolChoice)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'tool_choice': %w", err)
 		}
 	}
 
@@ -7160,6 +9858,24 @@ type ClientInterface interface {
 
 	UpdateConversationMetadata(ctx context.Context, id string, body UpdateConversationMetadataJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetDecisionModel request
+	GetDecisionModel(ctx context.Context, name string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ActivateDecisionModelWithBody request with any body
+	ActivateDecisionModelWithBody(ctx context.Context, name string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	ActivateDecisionModel(ctx context.Context, name string, body ActivateDecisionModelJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// PredictDecisionModelWithBody request with any body
+	PredictDecisionModelWithBody(ctx context.Context, name string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	PredictDecisionModel(ctx context.Context, name string, body PredictDecisionModelJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// TrainDecisionModelWithBody request with any body
+	TrainDecisionModelWithBody(ctx context.Context, name string, params *TrainDecisionModelParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	TrainDecisionModel(ctx context.Context, name string, params *TrainDecisionModelParams, body TrainDecisionModelJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// UploadFileWithBody request with any body
 	UploadFileWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -7497,6 +10213,34 @@ type ClientInterface interface {
 	// GetMemory request
 	GetMemory(ctx context.Context, params *GetMemoryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetModelRecommendations request
+	GetModelRecommendations(ctx context.Context, params *GetModelRecommendationsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetModelRecommendationsMarkdown request
+	GetModelRecommendationsMarkdown(ctx context.Context, params *GetModelRecommendationsMarkdownParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetModelRecommendation request
+	GetModelRecommendation(ctx context.Context, profileId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListSchedules request
+	ListSchedules(ctx context.Context, params *ListSchedulesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateScheduleWithBody request with any body
+	CreateScheduleWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateSchedule(ctx context.Context, body CreateScheduleJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteSchedule request
+	DeleteSchedule(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetSchedule request
+	GetSchedule(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateScheduleWithBody request with any body
+	UpdateScheduleWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UpdateSchedule(ctx context.Context, id string, body UpdateScheduleJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// CreateManagedSessionWithBody request with any body
 	CreateManagedSessionWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -7550,6 +10294,42 @@ type ClientInterface interface {
 	SearchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	Search(ctx context.Context, body SearchJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListAgentSkills request
+	ListAgentSkills(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateAgentSkillWithBody request with any body
+	CreateAgentSkillWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateAgentSkill(ctx context.Context, body CreateAgentSkillJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ImportAgentSkillsWithBody request with any body
+	ImportAgentSkillsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	ImportAgentSkills(ctx context.Context, body ImportAgentSkillsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetAgentSkill request
+	GetAgentSkill(ctx context.Context, name string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// EditAgentSkillWithBody request with any body
+	EditAgentSkillWithBody(ctx context.Context, name string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	EditAgentSkill(ctx context.Context, name string, body EditAgentSkillJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DiffAgentSkillVersions request
+	DiffAgentSkillVersions(ctx context.Context, name string, params *DiffAgentSkillVersionsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CheckAgentSkillUpstream request
+	CheckAgentSkillUpstream(ctx context.Context, name string, params *CheckAgentSkillUpstreamParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetAgentSkillVersion request
+	GetAgentSkillVersion(ctx context.Context, name string, version int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ArchiveAgentSkillVersion request
+	ArchiveAgentSkillVersion(ctx context.Context, name string, version int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// PublishAgentSkillVersion request
+	PublishAgentSkillVersion(ctx context.Context, name string, version int, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 func (c *Client) OauthDiscovery(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -8826,6 +11606,90 @@ func (c *Client) UpdateConversationMetadataWithBody(ctx context.Context, id stri
 
 func (c *Client) UpdateConversationMetadata(ctx context.Context, id string, body UpdateConversationMetadataJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateConversationMetadataRequest(c.Server, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetDecisionModel(ctx context.Context, name string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetDecisionModelRequest(c.Server, name)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ActivateDecisionModelWithBody(ctx context.Context, name string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewActivateDecisionModelRequestWithBody(c.Server, name, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ActivateDecisionModel(ctx context.Context, name string, body ActivateDecisionModelJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewActivateDecisionModelRequest(c.Server, name, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) PredictDecisionModelWithBody(ctx context.Context, name string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPredictDecisionModelRequestWithBody(c.Server, name, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) PredictDecisionModel(ctx context.Context, name string, body PredictDecisionModelJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPredictDecisionModelRequest(c.Server, name, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) TrainDecisionModelWithBody(ctx context.Context, name string, params *TrainDecisionModelParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewTrainDecisionModelRequestWithBody(c.Server, name, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) TrainDecisionModel(ctx context.Context, name string, params *TrainDecisionModelParams, body TrainDecisionModelJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewTrainDecisionModelRequest(c.Server, name, params, body)
 	if err != nil {
 		return nil, err
 	}
@@ -10312,6 +13176,126 @@ func (c *Client) GetMemory(ctx context.Context, params *GetMemoryParams, reqEdit
 	return c.Client.Do(req)
 }
 
+func (c *Client) GetModelRecommendations(ctx context.Context, params *GetModelRecommendationsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetModelRecommendationsRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetModelRecommendationsMarkdown(ctx context.Context, params *GetModelRecommendationsMarkdownParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetModelRecommendationsMarkdownRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetModelRecommendation(ctx context.Context, profileId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetModelRecommendationRequest(c.Server, profileId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListSchedules(ctx context.Context, params *ListSchedulesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListSchedulesRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateScheduleWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateScheduleRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateSchedule(ctx context.Context, body CreateScheduleJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateScheduleRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteSchedule(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteScheduleRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetSchedule(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetScheduleRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateScheduleWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateScheduleRequestWithBody(c.Server, id, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateSchedule(ctx context.Context, id string, body UpdateScheduleJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateScheduleRequest(c.Server, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) CreateManagedSessionWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewCreateManagedSessionRequestWithBody(c.Server, contentType, body)
 	if err != nil {
@@ -10542,6 +13526,162 @@ func (c *Client) SearchWithBody(ctx context.Context, contentType string, body io
 
 func (c *Client) Search(ctx context.Context, body SearchJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewSearchRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListAgentSkills(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListAgentSkillsRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateAgentSkillWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateAgentSkillRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateAgentSkill(ctx context.Context, body CreateAgentSkillJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateAgentSkillRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ImportAgentSkillsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewImportAgentSkillsRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ImportAgentSkills(ctx context.Context, body ImportAgentSkillsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewImportAgentSkillsRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetAgentSkill(ctx context.Context, name string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetAgentSkillRequest(c.Server, name)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) EditAgentSkillWithBody(ctx context.Context, name string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewEditAgentSkillRequestWithBody(c.Server, name, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) EditAgentSkill(ctx context.Context, name string, body EditAgentSkillJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewEditAgentSkillRequest(c.Server, name, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DiffAgentSkillVersions(ctx context.Context, name string, params *DiffAgentSkillVersionsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDiffAgentSkillVersionsRequest(c.Server, name, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CheckAgentSkillUpstream(ctx context.Context, name string, params *CheckAgentSkillUpstreamParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCheckAgentSkillUpstreamRequest(c.Server, name, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetAgentSkillVersion(ctx context.Context, name string, version int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetAgentSkillVersionRequest(c.Server, name, version)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ArchiveAgentSkillVersion(ctx context.Context, name string, version int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewArchiveAgentSkillVersionRequest(c.Server, name, version)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) PublishAgentSkillVersion(ctx context.Context, name string, version int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPublishAgentSkillVersionRequest(c.Server, name, version)
 	if err != nil {
 		return nil, err
 	}
@@ -13800,6 +16940,203 @@ func NewUpdateConversationMetadataRequestWithBody(server string, id string, cont
 	}
 
 	req, err := http.NewRequest("PATCH", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewGetDecisionModelRequest generates requests for GetDecisionModel
+func NewGetDecisionModelRequest(server string, name string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "name", name, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/decision/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewActivateDecisionModelRequest calls the generic ActivateDecisionModel builder with application/json body
+func NewActivateDecisionModelRequest(server string, name string, body ActivateDecisionModelJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewActivateDecisionModelRequestWithBody(server, name, "application/json", bodyReader)
+}
+
+// NewActivateDecisionModelRequestWithBody generates requests for ActivateDecisionModel with any type of body
+func NewActivateDecisionModelRequestWithBody(server string, name string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "name", name, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/decision/%s/activate", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewPredictDecisionModelRequest calls the generic PredictDecisionModel builder with application/json body
+func NewPredictDecisionModelRequest(server string, name string, body PredictDecisionModelJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewPredictDecisionModelRequestWithBody(server, name, "application/json", bodyReader)
+}
+
+// NewPredictDecisionModelRequestWithBody generates requests for PredictDecisionModel with any type of body
+func NewPredictDecisionModelRequestWithBody(server string, name string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "name", name, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/decision/%s/predict", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewTrainDecisionModelRequest calls the generic TrainDecisionModel builder with application/json body
+func NewTrainDecisionModelRequest(server string, name string, params *TrainDecisionModelParams, body TrainDecisionModelJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewTrainDecisionModelRequestWithBody(server, name, params, "application/json", bodyReader)
+}
+
+// NewTrainDecisionModelRequestWithBody generates requests for TrainDecisionModel with any type of body
+func NewTrainDecisionModelRequestWithBody(server string, name string, params *TrainDecisionModelParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "name", name, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/decision/%s/train", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.Gate != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "gate", *params.Gate, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "number", Format: ""}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
@@ -17924,6 +21261,406 @@ func NewGetMemoryRequest(server string, params *GetMemoryParams) (*http.Request,
 	return req, nil
 }
 
+// NewGetModelRecommendationsRequest generates requests for GetModelRecommendations
+func NewGetModelRecommendationsRequest(server string, params *GetModelRecommendationsParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/managed/models/recommendations")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.Task != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "task", *params.Task, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.Hardware != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "hardware", *params.Hardware, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.Compatibility != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "compatibility", *params.Compatibility, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetModelRecommendationsMarkdownRequest generates requests for GetModelRecommendationsMarkdown
+func NewGetModelRecommendationsMarkdownRequest(server string, params *GetModelRecommendationsMarkdownParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/managed/models/recommendations.md")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.Task != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "task", *params.Task, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.Hardware != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "hardware", *params.Hardware, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.Compatibility != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "compatibility", *params.Compatibility, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetModelRecommendationRequest generates requests for GetModelRecommendation
+func NewGetModelRecommendationRequest(server string, profileId string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "profile_id", profileId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/managed/models/recommendations/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListSchedulesRequest generates requests for ListSchedules
+func NewListSchedulesRequest(server string, params *ListSchedulesParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/managed/schedules")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.Owner != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "owner", *params.Owner, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateScheduleRequest calls the generic CreateSchedule builder with application/json body
+func NewCreateScheduleRequest(server string, body CreateScheduleJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateScheduleRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewCreateScheduleRequestWithBody generates requests for CreateSchedule with any type of body
+func NewCreateScheduleRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/managed/schedules")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteScheduleRequest generates requests for DeleteSchedule
+func NewDeleteScheduleRequest(server string, id string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/managed/schedules/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetScheduleRequest generates requests for GetSchedule
+func NewGetScheduleRequest(server string, id string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/managed/schedules/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUpdateScheduleRequest calls the generic UpdateSchedule builder with application/json body
+func NewUpdateScheduleRequest(server string, id string, body UpdateScheduleJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateScheduleRequestWithBody(server, id, "application/json", bodyReader)
+}
+
+// NewUpdateScheduleRequestWithBody generates requests for UpdateSchedule with any type of body
+func NewUpdateScheduleRequestWithBody(server string, id string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/managed/schedules/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PATCH", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
 // NewCreateManagedSessionRequest calls the generic CreateManagedSession builder with application/json body
 func NewCreateManagedSessionRequest(server string, body CreateManagedSessionJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
@@ -18474,6 +22211,433 @@ func NewSearchRequestWithBody(server string, contentType string, body io.Reader)
 	return req, nil
 }
 
+// NewListAgentSkillsRequest generates requests for ListAgentSkills
+func NewListAgentSkillsRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/skills")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateAgentSkillRequest calls the generic CreateAgentSkill builder with application/json body
+func NewCreateAgentSkillRequest(server string, body CreateAgentSkillJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateAgentSkillRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewCreateAgentSkillRequestWithBody generates requests for CreateAgentSkill with any type of body
+func NewCreateAgentSkillRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/skills")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewImportAgentSkillsRequest calls the generic ImportAgentSkills builder with application/json body
+func NewImportAgentSkillsRequest(server string, body ImportAgentSkillsJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewImportAgentSkillsRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewImportAgentSkillsRequestWithBody generates requests for ImportAgentSkills with any type of body
+func NewImportAgentSkillsRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/skills/import")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewGetAgentSkillRequest generates requests for GetAgentSkill
+func NewGetAgentSkillRequest(server string, name string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "name", name, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/skills/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewEditAgentSkillRequest calls the generic EditAgentSkill builder with application/json body
+func NewEditAgentSkillRequest(server string, name string, body EditAgentSkillJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewEditAgentSkillRequestWithBody(server, name, "application/json", bodyReader)
+}
+
+// NewEditAgentSkillRequestWithBody generates requests for EditAgentSkill with any type of body
+func NewEditAgentSkillRequestWithBody(server string, name string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "name", name, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/skills/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PUT", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDiffAgentSkillVersionsRequest generates requests for DiffAgentSkillVersions
+func NewDiffAgentSkillVersionsRequest(server string, name string, params *DiffAgentSkillVersionsParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "name", name, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/skills/%s/diff", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "from", params.From, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "to", params.To, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCheckAgentSkillUpstreamRequest generates requests for CheckAgentSkillUpstream
+func NewCheckAgentSkillUpstreamRequest(server string, name string, params *CheckAgentSkillUpstreamParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "name", name, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/skills/%s/upstream", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "version", params.Version, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetAgentSkillVersionRequest generates requests for GetAgentSkillVersion
+func NewGetAgentSkillVersionRequest(server string, name string, version int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "name", name, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "version", version, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/skills/%s/versions/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewArchiveAgentSkillVersionRequest generates requests for ArchiveAgentSkillVersion
+func NewArchiveAgentSkillVersionRequest(server string, name string, version int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "name", name, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "version", version, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/skills/%s/versions/%s/archive", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewPublishAgentSkillVersionRequest generates requests for PublishAgentSkillVersion
+func NewPublishAgentSkillVersionRequest(server string, name string, version int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "name", name, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "version", version, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/skills/%s/versions/%s/publish", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
@@ -18807,6 +22971,24 @@ type ClientWithResponsesInterface interface {
 	UpdateConversationMetadataWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateConversationMetadataResponse, error)
 
 	UpdateConversationMetadataWithResponse(ctx context.Context, id string, body UpdateConversationMetadataJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateConversationMetadataResponse, error)
+
+	// GetDecisionModelWithResponse request
+	GetDecisionModelWithResponse(ctx context.Context, name string, reqEditors ...RequestEditorFn) (*GetDecisionModelResponse, error)
+
+	// ActivateDecisionModelWithBodyWithResponse request with any body
+	ActivateDecisionModelWithBodyWithResponse(ctx context.Context, name string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ActivateDecisionModelResponse, error)
+
+	ActivateDecisionModelWithResponse(ctx context.Context, name string, body ActivateDecisionModelJSONRequestBody, reqEditors ...RequestEditorFn) (*ActivateDecisionModelResponse, error)
+
+	// PredictDecisionModelWithBodyWithResponse request with any body
+	PredictDecisionModelWithBodyWithResponse(ctx context.Context, name string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PredictDecisionModelResponse, error)
+
+	PredictDecisionModelWithResponse(ctx context.Context, name string, body PredictDecisionModelJSONRequestBody, reqEditors ...RequestEditorFn) (*PredictDecisionModelResponse, error)
+
+	// TrainDecisionModelWithBodyWithResponse request with any body
+	TrainDecisionModelWithBodyWithResponse(ctx context.Context, name string, params *TrainDecisionModelParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*TrainDecisionModelResponse, error)
+
+	TrainDecisionModelWithResponse(ctx context.Context, name string, params *TrainDecisionModelParams, body TrainDecisionModelJSONRequestBody, reqEditors ...RequestEditorFn) (*TrainDecisionModelResponse, error)
 
 	// UploadFileWithBodyWithResponse request with any body
 	UploadFileWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UploadFileResponse, error)
@@ -19145,6 +23327,34 @@ type ClientWithResponsesInterface interface {
 	// GetMemoryWithResponse request
 	GetMemoryWithResponse(ctx context.Context, params *GetMemoryParams, reqEditors ...RequestEditorFn) (*GetMemoryResponse, error)
 
+	// GetModelRecommendationsWithResponse request
+	GetModelRecommendationsWithResponse(ctx context.Context, params *GetModelRecommendationsParams, reqEditors ...RequestEditorFn) (*GetModelRecommendationsResponse, error)
+
+	// GetModelRecommendationsMarkdownWithResponse request
+	GetModelRecommendationsMarkdownWithResponse(ctx context.Context, params *GetModelRecommendationsMarkdownParams, reqEditors ...RequestEditorFn) (*GetModelRecommendationsMarkdownResponse, error)
+
+	// GetModelRecommendationWithResponse request
+	GetModelRecommendationWithResponse(ctx context.Context, profileId string, reqEditors ...RequestEditorFn) (*GetModelRecommendationResponse, error)
+
+	// ListSchedulesWithResponse request
+	ListSchedulesWithResponse(ctx context.Context, params *ListSchedulesParams, reqEditors ...RequestEditorFn) (*ListSchedulesResponse, error)
+
+	// CreateScheduleWithBodyWithResponse request with any body
+	CreateScheduleWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateScheduleResponse, error)
+
+	CreateScheduleWithResponse(ctx context.Context, body CreateScheduleJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateScheduleResponse, error)
+
+	// DeleteScheduleWithResponse request
+	DeleteScheduleWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*DeleteScheduleResponse, error)
+
+	// GetScheduleWithResponse request
+	GetScheduleWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*GetScheduleResponse, error)
+
+	// UpdateScheduleWithBodyWithResponse request with any body
+	UpdateScheduleWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateScheduleResponse, error)
+
+	UpdateScheduleWithResponse(ctx context.Context, id string, body UpdateScheduleJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateScheduleResponse, error)
+
 	// CreateManagedSessionWithBodyWithResponse request with any body
 	CreateManagedSessionWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateManagedSessionResponse, error)
 
@@ -19198,6 +23408,42 @@ type ClientWithResponsesInterface interface {
 	SearchWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*SearchResponse, error)
 
 	SearchWithResponse(ctx context.Context, body SearchJSONRequestBody, reqEditors ...RequestEditorFn) (*SearchResponse, error)
+
+	// ListAgentSkillsWithResponse request
+	ListAgentSkillsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListAgentSkillsResponse, error)
+
+	// CreateAgentSkillWithBodyWithResponse request with any body
+	CreateAgentSkillWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateAgentSkillResponse, error)
+
+	CreateAgentSkillWithResponse(ctx context.Context, body CreateAgentSkillJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateAgentSkillResponse, error)
+
+	// ImportAgentSkillsWithBodyWithResponse request with any body
+	ImportAgentSkillsWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ImportAgentSkillsResponse, error)
+
+	ImportAgentSkillsWithResponse(ctx context.Context, body ImportAgentSkillsJSONRequestBody, reqEditors ...RequestEditorFn) (*ImportAgentSkillsResponse, error)
+
+	// GetAgentSkillWithResponse request
+	GetAgentSkillWithResponse(ctx context.Context, name string, reqEditors ...RequestEditorFn) (*GetAgentSkillResponse, error)
+
+	// EditAgentSkillWithBodyWithResponse request with any body
+	EditAgentSkillWithBodyWithResponse(ctx context.Context, name string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*EditAgentSkillResponse, error)
+
+	EditAgentSkillWithResponse(ctx context.Context, name string, body EditAgentSkillJSONRequestBody, reqEditors ...RequestEditorFn) (*EditAgentSkillResponse, error)
+
+	// DiffAgentSkillVersionsWithResponse request
+	DiffAgentSkillVersionsWithResponse(ctx context.Context, name string, params *DiffAgentSkillVersionsParams, reqEditors ...RequestEditorFn) (*DiffAgentSkillVersionsResponse, error)
+
+	// CheckAgentSkillUpstreamWithResponse request
+	CheckAgentSkillUpstreamWithResponse(ctx context.Context, name string, params *CheckAgentSkillUpstreamParams, reqEditors ...RequestEditorFn) (*CheckAgentSkillUpstreamResponse, error)
+
+	// GetAgentSkillVersionWithResponse request
+	GetAgentSkillVersionWithResponse(ctx context.Context, name string, version int, reqEditors ...RequestEditorFn) (*GetAgentSkillVersionResponse, error)
+
+	// ArchiveAgentSkillVersionWithResponse request
+	ArchiveAgentSkillVersionWithResponse(ctx context.Context, name string, version int, reqEditors ...RequestEditorFn) (*ArchiveAgentSkillVersionResponse, error)
+
+	// PublishAgentSkillVersionWithResponse request
+	PublishAgentSkillVersionWithResponse(ctx context.Context, name string, version int, reqEditors ...RequestEditorFn) (*PublishAgentSkillVersionResponse, error)
 }
 
 type OauthDiscoveryResponse struct {
@@ -21082,6 +25328,111 @@ func (r UpdateConversationMetadataResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r UpdateConversationMetadataResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetDecisionModelResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *DecisionModel
+	JSON400      *FlatError
+	JSON401      *Unauthorized
+	JSON403      *FlatError
+	JSON404      *FlatError
+}
+
+// Status returns HTTPResponse.Status
+func (r GetDecisionModelResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetDecisionModelResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ActivateDecisionModelResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *DecisionActivateResult
+	JSON400      *FlatError
+	JSON401      *Unauthorized
+	JSON403      *FlatError
+	JSON404      *FlatError
+}
+
+// Status returns HTTPResponse.Status
+func (r ActivateDecisionModelResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ActivateDecisionModelResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type PredictDecisionModelResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *DecisionPredictResult
+	JSON400      *FlatError
+	JSON401      *Unauthorized
+	JSON403      *FlatError
+	JSON404      *FlatError
+}
+
+// Status returns HTTPResponse.Status
+func (r PredictDecisionModelResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r PredictDecisionModelResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type TrainDecisionModelResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *DecisionVersion
+	JSON400      *FlatError
+	JSON401      *Unauthorized
+	JSON403      *FlatError
+	JSON422      *DecisionNotBetterError
+	JSON429      *FlatError
+}
+
+// Status returns HTTPResponse.Status
+func (r TrainDecisionModelResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r TrainDecisionModelResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -23459,6 +27810,210 @@ func (r GetMemoryResponse) StatusCode() int {
 	return 0
 }
 
+type GetModelRecommendationsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *ModelRecommendationReport
+	JSON400      *FlatError
+	JSON401      *FlatError
+	JSON403      *FlatError
+	JSON503      *FlatError
+}
+
+// Status returns HTTPResponse.Status
+func (r GetModelRecommendationsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetModelRecommendationsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetModelRecommendationsMarkdownResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON400      *FlatError
+	JSON401      *FlatError
+	JSON403      *FlatError
+	JSON503      *FlatError
+}
+
+// Status returns HTTPResponse.Status
+func (r GetModelRecommendationsMarkdownResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetModelRecommendationsMarkdownResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetModelRecommendationResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *ModelRecommendationResult
+	JSON400      *FlatError
+	JSON401      *FlatError
+	JSON403      *FlatError
+	JSON404      *FlatError
+	JSON503      *FlatError
+}
+
+// Status returns HTTPResponse.Status
+func (r GetModelRecommendationResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetModelRecommendationResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListSchedulesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *ScheduleList
+	JSON401      *Unauthorized
+	JSON403      *FlatError
+}
+
+// Status returns HTTPResponse.Status
+func (r ListSchedulesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListSchedulesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateScheduleResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *Schedule
+	JSON400      *FlatError
+	JSON401      *Unauthorized
+	JSON403      *FlatError
+	JSON404      *FlatError
+	JSON409      *ScheduleLimitError
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateScheduleResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateScheduleResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteScheduleResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON401      *Unauthorized
+	JSON403      *FlatError
+	JSON404      *FlatError
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteScheduleResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteScheduleResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetScheduleResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Schedule
+	JSON401      *Unauthorized
+	JSON403      *FlatError
+	JSON404      *FlatError
+}
+
+// Status returns HTTPResponse.Status
+func (r GetScheduleResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetScheduleResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type UpdateScheduleResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Schedule
+	JSON400      *FlatError
+	JSON401      *Unauthorized
+	JSON403      *FlatError
+	JSON404      *FlatError
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateScheduleResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateScheduleResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type CreateManagedSessionResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -23791,6 +28346,268 @@ func (r SearchResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r SearchResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListAgentSkillsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *AgentSkillList
+	JSON401      *Unauthorized
+}
+
+// Status returns HTTPResponse.Status
+func (r ListAgentSkillsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListAgentSkillsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateAgentSkillResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *AgentSkillWriteResult
+	JSON201      *AgentSkillWriteResult
+	JSON401      *Unauthorized
+	JSON403      *FlatError
+	JSON422      *FieldError
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateAgentSkillResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateAgentSkillResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ImportAgentSkillsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		union json.RawMessage
+	}
+	JSON400 *FieldError
+	JSON401 *Unauthorized
+	JSON403 *FlatError
+	JSON422 *FieldError
+	JSON502 *FieldError
+}
+
+// Status returns HTTPResponse.Status
+func (r ImportAgentSkillsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ImportAgentSkillsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetAgentSkillResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *AgentSkillVersionList
+	JSON401      *Unauthorized
+	JSON404      *FieldError
+}
+
+// Status returns HTTPResponse.Status
+func (r GetAgentSkillResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetAgentSkillResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type EditAgentSkillResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *AgentSkillWriteResult
+	JSON201      *AgentSkillWriteResult
+	JSON400      *FieldError
+	JSON401      *Unauthorized
+	JSON403      *FlatError
+	JSON404      *FieldError
+	JSON422      *FieldError
+}
+
+// Status returns HTTPResponse.Status
+func (r EditAgentSkillResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r EditAgentSkillResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DiffAgentSkillVersionsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *AgentSkillDiff
+	JSON400      *FieldError
+	JSON401      *Unauthorized
+	JSON404      *FieldError
+}
+
+// Status returns HTTPResponse.Status
+func (r DiffAgentSkillVersionsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DiffAgentSkillVersionsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CheckAgentSkillUpstreamResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *AgentSkillUpstream
+	JSON400      *FieldError
+	JSON401      *Unauthorized
+	JSON403      *FlatError
+	JSON404      *FieldError
+	JSON422      *FieldError
+	JSON502      *FieldError
+}
+
+// Status returns HTTPResponse.Status
+func (r CheckAgentSkillUpstreamResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CheckAgentSkillUpstreamResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetAgentSkillVersionResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *AgentSkillVersion
+	JSON400      *FieldError
+	JSON401      *Unauthorized
+	JSON404      *FieldError
+}
+
+// Status returns HTTPResponse.Status
+func (r GetAgentSkillVersionResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetAgentSkillVersionResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ArchiveAgentSkillVersionResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *AgentSkillVersion
+	JSON400      *FieldError
+	JSON401      *Unauthorized
+	JSON403      *FlatError
+	JSON404      *FieldError
+	JSON409      *FieldError
+}
+
+// Status returns HTTPResponse.Status
+func (r ArchiveAgentSkillVersionResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ArchiveAgentSkillVersionResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type PublishAgentSkillVersionResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *AgentSkillVersion
+	JSON400      *FieldError
+	JSON401      *Unauthorized
+	JSON403      *FlatError
+	JSON404      *FieldError
+	JSON409      *FieldError
+}
+
+// Status returns HTTPResponse.Status
+func (r PublishAgentSkillVersionResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r PublishAgentSkillVersionResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -24728,6 +29545,66 @@ func (c *ClientWithResponses) UpdateConversationMetadataWithResponse(ctx context
 		return nil, err
 	}
 	return ParseUpdateConversationMetadataResponse(rsp)
+}
+
+// GetDecisionModelWithResponse request returning *GetDecisionModelResponse
+func (c *ClientWithResponses) GetDecisionModelWithResponse(ctx context.Context, name string, reqEditors ...RequestEditorFn) (*GetDecisionModelResponse, error) {
+	rsp, err := c.GetDecisionModel(ctx, name, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetDecisionModelResponse(rsp)
+}
+
+// ActivateDecisionModelWithBodyWithResponse request with arbitrary body returning *ActivateDecisionModelResponse
+func (c *ClientWithResponses) ActivateDecisionModelWithBodyWithResponse(ctx context.Context, name string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ActivateDecisionModelResponse, error) {
+	rsp, err := c.ActivateDecisionModelWithBody(ctx, name, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseActivateDecisionModelResponse(rsp)
+}
+
+func (c *ClientWithResponses) ActivateDecisionModelWithResponse(ctx context.Context, name string, body ActivateDecisionModelJSONRequestBody, reqEditors ...RequestEditorFn) (*ActivateDecisionModelResponse, error) {
+	rsp, err := c.ActivateDecisionModel(ctx, name, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseActivateDecisionModelResponse(rsp)
+}
+
+// PredictDecisionModelWithBodyWithResponse request with arbitrary body returning *PredictDecisionModelResponse
+func (c *ClientWithResponses) PredictDecisionModelWithBodyWithResponse(ctx context.Context, name string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PredictDecisionModelResponse, error) {
+	rsp, err := c.PredictDecisionModelWithBody(ctx, name, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePredictDecisionModelResponse(rsp)
+}
+
+func (c *ClientWithResponses) PredictDecisionModelWithResponse(ctx context.Context, name string, body PredictDecisionModelJSONRequestBody, reqEditors ...RequestEditorFn) (*PredictDecisionModelResponse, error) {
+	rsp, err := c.PredictDecisionModel(ctx, name, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePredictDecisionModelResponse(rsp)
+}
+
+// TrainDecisionModelWithBodyWithResponse request with arbitrary body returning *TrainDecisionModelResponse
+func (c *ClientWithResponses) TrainDecisionModelWithBodyWithResponse(ctx context.Context, name string, params *TrainDecisionModelParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*TrainDecisionModelResponse, error) {
+	rsp, err := c.TrainDecisionModelWithBody(ctx, name, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseTrainDecisionModelResponse(rsp)
+}
+
+func (c *ClientWithResponses) TrainDecisionModelWithResponse(ctx context.Context, name string, params *TrainDecisionModelParams, body TrainDecisionModelJSONRequestBody, reqEditors ...RequestEditorFn) (*TrainDecisionModelResponse, error) {
+	rsp, err := c.TrainDecisionModel(ctx, name, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseTrainDecisionModelResponse(rsp)
 }
 
 // UploadFileWithBodyWithResponse request with arbitrary body returning *UploadFileResponse
@@ -25805,6 +30682,94 @@ func (c *ClientWithResponses) GetMemoryWithResponse(ctx context.Context, params 
 	return ParseGetMemoryResponse(rsp)
 }
 
+// GetModelRecommendationsWithResponse request returning *GetModelRecommendationsResponse
+func (c *ClientWithResponses) GetModelRecommendationsWithResponse(ctx context.Context, params *GetModelRecommendationsParams, reqEditors ...RequestEditorFn) (*GetModelRecommendationsResponse, error) {
+	rsp, err := c.GetModelRecommendations(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetModelRecommendationsResponse(rsp)
+}
+
+// GetModelRecommendationsMarkdownWithResponse request returning *GetModelRecommendationsMarkdownResponse
+func (c *ClientWithResponses) GetModelRecommendationsMarkdownWithResponse(ctx context.Context, params *GetModelRecommendationsMarkdownParams, reqEditors ...RequestEditorFn) (*GetModelRecommendationsMarkdownResponse, error) {
+	rsp, err := c.GetModelRecommendationsMarkdown(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetModelRecommendationsMarkdownResponse(rsp)
+}
+
+// GetModelRecommendationWithResponse request returning *GetModelRecommendationResponse
+func (c *ClientWithResponses) GetModelRecommendationWithResponse(ctx context.Context, profileId string, reqEditors ...RequestEditorFn) (*GetModelRecommendationResponse, error) {
+	rsp, err := c.GetModelRecommendation(ctx, profileId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetModelRecommendationResponse(rsp)
+}
+
+// ListSchedulesWithResponse request returning *ListSchedulesResponse
+func (c *ClientWithResponses) ListSchedulesWithResponse(ctx context.Context, params *ListSchedulesParams, reqEditors ...RequestEditorFn) (*ListSchedulesResponse, error) {
+	rsp, err := c.ListSchedules(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListSchedulesResponse(rsp)
+}
+
+// CreateScheduleWithBodyWithResponse request with arbitrary body returning *CreateScheduleResponse
+func (c *ClientWithResponses) CreateScheduleWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateScheduleResponse, error) {
+	rsp, err := c.CreateScheduleWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateScheduleResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateScheduleWithResponse(ctx context.Context, body CreateScheduleJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateScheduleResponse, error) {
+	rsp, err := c.CreateSchedule(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateScheduleResponse(rsp)
+}
+
+// DeleteScheduleWithResponse request returning *DeleteScheduleResponse
+func (c *ClientWithResponses) DeleteScheduleWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*DeleteScheduleResponse, error) {
+	rsp, err := c.DeleteSchedule(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteScheduleResponse(rsp)
+}
+
+// GetScheduleWithResponse request returning *GetScheduleResponse
+func (c *ClientWithResponses) GetScheduleWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*GetScheduleResponse, error) {
+	rsp, err := c.GetSchedule(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetScheduleResponse(rsp)
+}
+
+// UpdateScheduleWithBodyWithResponse request with arbitrary body returning *UpdateScheduleResponse
+func (c *ClientWithResponses) UpdateScheduleWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateScheduleResponse, error) {
+	rsp, err := c.UpdateScheduleWithBody(ctx, id, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateScheduleResponse(rsp)
+}
+
+func (c *ClientWithResponses) UpdateScheduleWithResponse(ctx context.Context, id string, body UpdateScheduleJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateScheduleResponse, error) {
+	rsp, err := c.UpdateSchedule(ctx, id, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateScheduleResponse(rsp)
+}
+
 // CreateManagedSessionWithBodyWithResponse request with arbitrary body returning *CreateManagedSessionResponse
 func (c *ClientWithResponses) CreateManagedSessionWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateManagedSessionResponse, error) {
 	rsp, err := c.CreateManagedSessionWithBody(ctx, contentType, body, reqEditors...)
@@ -25977,6 +30942,120 @@ func (c *ClientWithResponses) SearchWithResponse(ctx context.Context, body Searc
 		return nil, err
 	}
 	return ParseSearchResponse(rsp)
+}
+
+// ListAgentSkillsWithResponse request returning *ListAgentSkillsResponse
+func (c *ClientWithResponses) ListAgentSkillsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListAgentSkillsResponse, error) {
+	rsp, err := c.ListAgentSkills(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListAgentSkillsResponse(rsp)
+}
+
+// CreateAgentSkillWithBodyWithResponse request with arbitrary body returning *CreateAgentSkillResponse
+func (c *ClientWithResponses) CreateAgentSkillWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateAgentSkillResponse, error) {
+	rsp, err := c.CreateAgentSkillWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateAgentSkillResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateAgentSkillWithResponse(ctx context.Context, body CreateAgentSkillJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateAgentSkillResponse, error) {
+	rsp, err := c.CreateAgentSkill(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateAgentSkillResponse(rsp)
+}
+
+// ImportAgentSkillsWithBodyWithResponse request with arbitrary body returning *ImportAgentSkillsResponse
+func (c *ClientWithResponses) ImportAgentSkillsWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ImportAgentSkillsResponse, error) {
+	rsp, err := c.ImportAgentSkillsWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseImportAgentSkillsResponse(rsp)
+}
+
+func (c *ClientWithResponses) ImportAgentSkillsWithResponse(ctx context.Context, body ImportAgentSkillsJSONRequestBody, reqEditors ...RequestEditorFn) (*ImportAgentSkillsResponse, error) {
+	rsp, err := c.ImportAgentSkills(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseImportAgentSkillsResponse(rsp)
+}
+
+// GetAgentSkillWithResponse request returning *GetAgentSkillResponse
+func (c *ClientWithResponses) GetAgentSkillWithResponse(ctx context.Context, name string, reqEditors ...RequestEditorFn) (*GetAgentSkillResponse, error) {
+	rsp, err := c.GetAgentSkill(ctx, name, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetAgentSkillResponse(rsp)
+}
+
+// EditAgentSkillWithBodyWithResponse request with arbitrary body returning *EditAgentSkillResponse
+func (c *ClientWithResponses) EditAgentSkillWithBodyWithResponse(ctx context.Context, name string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*EditAgentSkillResponse, error) {
+	rsp, err := c.EditAgentSkillWithBody(ctx, name, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseEditAgentSkillResponse(rsp)
+}
+
+func (c *ClientWithResponses) EditAgentSkillWithResponse(ctx context.Context, name string, body EditAgentSkillJSONRequestBody, reqEditors ...RequestEditorFn) (*EditAgentSkillResponse, error) {
+	rsp, err := c.EditAgentSkill(ctx, name, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseEditAgentSkillResponse(rsp)
+}
+
+// DiffAgentSkillVersionsWithResponse request returning *DiffAgentSkillVersionsResponse
+func (c *ClientWithResponses) DiffAgentSkillVersionsWithResponse(ctx context.Context, name string, params *DiffAgentSkillVersionsParams, reqEditors ...RequestEditorFn) (*DiffAgentSkillVersionsResponse, error) {
+	rsp, err := c.DiffAgentSkillVersions(ctx, name, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDiffAgentSkillVersionsResponse(rsp)
+}
+
+// CheckAgentSkillUpstreamWithResponse request returning *CheckAgentSkillUpstreamResponse
+func (c *ClientWithResponses) CheckAgentSkillUpstreamWithResponse(ctx context.Context, name string, params *CheckAgentSkillUpstreamParams, reqEditors ...RequestEditorFn) (*CheckAgentSkillUpstreamResponse, error) {
+	rsp, err := c.CheckAgentSkillUpstream(ctx, name, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCheckAgentSkillUpstreamResponse(rsp)
+}
+
+// GetAgentSkillVersionWithResponse request returning *GetAgentSkillVersionResponse
+func (c *ClientWithResponses) GetAgentSkillVersionWithResponse(ctx context.Context, name string, version int, reqEditors ...RequestEditorFn) (*GetAgentSkillVersionResponse, error) {
+	rsp, err := c.GetAgentSkillVersion(ctx, name, version, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetAgentSkillVersionResponse(rsp)
+}
+
+// ArchiveAgentSkillVersionWithResponse request returning *ArchiveAgentSkillVersionResponse
+func (c *ClientWithResponses) ArchiveAgentSkillVersionWithResponse(ctx context.Context, name string, version int, reqEditors ...RequestEditorFn) (*ArchiveAgentSkillVersionResponse, error) {
+	rsp, err := c.ArchiveAgentSkillVersion(ctx, name, version, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseArchiveAgentSkillVersionResponse(rsp)
+}
+
+// PublishAgentSkillVersionWithResponse request returning *PublishAgentSkillVersionResponse
+func (c *ClientWithResponses) PublishAgentSkillVersionWithResponse(ctx context.Context, name string, version int, reqEditors ...RequestEditorFn) (*PublishAgentSkillVersionResponse, error) {
+	rsp, err := c.PublishAgentSkillVersion(ctx, name, version, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePublishAgentSkillVersionResponse(rsp)
 }
 
 // ParseOauthDiscoveryResponse parses an HTTP response from a OauthDiscoveryWithResponse call
@@ -29184,6 +34263,229 @@ func ParseUpdateConversationMetadataResponse(rsp *http.Response) (*UpdateConvers
 			return nil, err
 		}
 		response.JSON413 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetDecisionModelResponse parses an HTTP response from a GetDecisionModelWithResponse call
+func ParseGetDecisionModelResponse(rsp *http.Response) (*GetDecisionModelResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetDecisionModelResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest DecisionModel
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseActivateDecisionModelResponse parses an HTTP response from a ActivateDecisionModelWithResponse call
+func ParseActivateDecisionModelResponse(rsp *http.Response) (*ActivateDecisionModelResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ActivateDecisionModelResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest DecisionActivateResult
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParsePredictDecisionModelResponse parses an HTTP response from a PredictDecisionModelWithResponse call
+func ParsePredictDecisionModelResponse(rsp *http.Response) (*PredictDecisionModelResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &PredictDecisionModelResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest DecisionPredictResult
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseTrainDecisionModelResponse parses an HTTP response from a TrainDecisionModelWithResponse call
+func ParseTrainDecisionModelResponse(rsp *http.Response) (*TrainDecisionModelResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &TrainDecisionModelResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest DecisionVersion
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest DecisionNotBetterError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON429 = &dest
 
 	}
 
@@ -33757,6 +39059,410 @@ func ParseGetMemoryResponse(rsp *http.Response) (*GetMemoryResponse, error) {
 	return response, nil
 }
 
+// ParseGetModelRecommendationsResponse parses an HTTP response from a GetModelRecommendationsWithResponse call
+func ParseGetModelRecommendationsResponse(rsp *http.Response) (*GetModelRecommendationsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetModelRecommendationsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ModelRecommendationReport
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 503:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON503 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetModelRecommendationsMarkdownResponse parses an HTTP response from a GetModelRecommendationsMarkdownWithResponse call
+func ParseGetModelRecommendationsMarkdownResponse(rsp *http.Response) (*GetModelRecommendationsMarkdownResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetModelRecommendationsMarkdownResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 503:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON503 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetModelRecommendationResponse parses an HTTP response from a GetModelRecommendationWithResponse call
+func ParseGetModelRecommendationResponse(rsp *http.Response) (*GetModelRecommendationResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetModelRecommendationResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ModelRecommendationResult
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 503:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON503 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListSchedulesResponse parses an HTTP response from a ListSchedulesWithResponse call
+func ParseListSchedulesResponse(rsp *http.Response) (*ListSchedulesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListSchedulesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ScheduleList
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateScheduleResponse parses an HTTP response from a CreateScheduleWithResponse call
+func ParseCreateScheduleResponse(rsp *http.Response) (*CreateScheduleResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateScheduleResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest Schedule
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest ScheduleLimitError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteScheduleResponse parses an HTTP response from a DeleteScheduleWithResponse call
+func ParseDeleteScheduleResponse(rsp *http.Response) (*DeleteScheduleResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteScheduleResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetScheduleResponse parses an HTTP response from a GetScheduleWithResponse call
+func ParseGetScheduleResponse(rsp *http.Response) (*GetScheduleResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetScheduleResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Schedule
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateScheduleResponse parses an HTTP response from a UpdateScheduleWithResponse call
+func ParseUpdateScheduleResponse(rsp *http.Response) (*UpdateScheduleResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateScheduleResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Schedule
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseCreateManagedSessionResponse parses an HTTP response from a CreateManagedSessionWithResponse call
 func ParseCreateManagedSessionResponse(rsp *http.Response) (*CreateManagedSessionResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -34328,6 +40034,548 @@ func ParseSearchResponse(rsp *http.Response) (*SearchResponse, error) {
 			return nil, err
 		}
 		response.JSON503 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListAgentSkillsResponse parses an HTTP response from a ListAgentSkillsWithResponse call
+func ParseListAgentSkillsResponse(rsp *http.Response) (*ListAgentSkillsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListAgentSkillsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest AgentSkillList
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateAgentSkillResponse parses an HTTP response from a CreateAgentSkillWithResponse call
+func ParseCreateAgentSkillResponse(rsp *http.Response) (*CreateAgentSkillResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateAgentSkillResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest AgentSkillWriteResult
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest AgentSkillWriteResult
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseImportAgentSkillsResponse parses an HTTP response from a ImportAgentSkillsWithResponse call
+func ParseImportAgentSkillsResponse(rsp *http.Response) (*ImportAgentSkillsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ImportAgentSkillsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			union json.RawMessage
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 502:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON502 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetAgentSkillResponse parses an HTTP response from a GetAgentSkillWithResponse call
+func ParseGetAgentSkillResponse(rsp *http.Response) (*GetAgentSkillResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetAgentSkillResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest AgentSkillVersionList
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseEditAgentSkillResponse parses an HTTP response from a EditAgentSkillWithResponse call
+func ParseEditAgentSkillResponse(rsp *http.Response) (*EditAgentSkillResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &EditAgentSkillResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest AgentSkillWriteResult
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest AgentSkillWriteResult
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDiffAgentSkillVersionsResponse parses an HTTP response from a DiffAgentSkillVersionsWithResponse call
+func ParseDiffAgentSkillVersionsResponse(rsp *http.Response) (*DiffAgentSkillVersionsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DiffAgentSkillVersionsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest AgentSkillDiff
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCheckAgentSkillUpstreamResponse parses an HTTP response from a CheckAgentSkillUpstreamWithResponse call
+func ParseCheckAgentSkillUpstreamResponse(rsp *http.Response) (*CheckAgentSkillUpstreamResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CheckAgentSkillUpstreamResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest AgentSkillUpstream
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 502:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON502 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetAgentSkillVersionResponse parses an HTTP response from a GetAgentSkillVersionWithResponse call
+func ParseGetAgentSkillVersionResponse(rsp *http.Response) (*GetAgentSkillVersionResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetAgentSkillVersionResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest AgentSkillVersion
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseArchiveAgentSkillVersionResponse parses an HTTP response from a ArchiveAgentSkillVersionWithResponse call
+func ParseArchiveAgentSkillVersionResponse(rsp *http.Response) (*ArchiveAgentSkillVersionResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ArchiveAgentSkillVersionResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest AgentSkillVersion
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParsePublishAgentSkillVersionResponse parses an HTTP response from a PublishAgentSkillVersionWithResponse call
+func ParsePublishAgentSkillVersionResponse(rsp *http.Response) (*PublishAgentSkillVersionResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &PublishAgentSkillVersionResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest AgentSkillVersion
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
 
 	}
 

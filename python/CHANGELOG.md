@@ -30,6 +30,25 @@ All notable changes to `libraos-sdk` (Python) will be documented in this file.
   retention" and "not measured" are different claims, and conflating them would drag any corpus
   average toward zero.
 
+- **OpenAPI spec `1.0.0-alpha.8`** — the partner spec catches up with the server through the
+  v0.2.1 weeklies; `libraos._generated` (and the Go and TypeScript clients) are regenerated from it.
+  No hand-written wrappers were added; call the new endpoints through `libraos._generated`.
+  - New endpoints: the Agent Skills catalog (`/v1/skills*`), scheduled runs
+    (`/v1/managed/schedules*`), decision probes (`/v1/decision/{name}` + `train` / `activate` /
+    `predict`) and model recommendations (`/v1/managed/models/recommendations*`). Each one's
+    auth and feature-flag gating is in its operation description.
+  - `/v1/agents`: `thinking` (effort now includes `none`), `tool_choice`, `direct_tools`,
+    `tool_scope`, `triage`, `turn_budget_tokens`, `agent_skills`, `on_ambiguous_entity`,
+    `egress_guard`, a typed `guardrails` object, and `clear_triage` on update.
+  - `/v1/chat/completions`: `reasoning_effort` and `response_format`, a 0–2 range on
+    `temperature`, typed `metadata` keys, and `nova_usage` on the response.
+  - Chat `metadata` on all three chat surfaces: `research_query`, `research_query_only`,
+    `max_searches`, `egress_guard`, `allowed_skills`, `research_depth`, `on_ambiguous_entity`,
+    `thinking`, `tool_choice`.
+  - The `usage` block: per-stage timing, `phases`, `timeline`, `context_budget`, `working_set`,
+    `tool_calls`, `agent_skills`, and cache token counts. Native chat gains the `retrieval`
+    ambiguity block. The `grounding` enum gains `unsupported_figures`.
+
 ### Upgrade note
 
 - **`drift_alert` is a new `TurnEvent.kind`, emitted by default.** A clean run's stream is unchanged

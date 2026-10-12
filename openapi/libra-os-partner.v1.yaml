@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: LibraOS Partner API
-  version: 1.0.0-alpha.7
+  version: 1.0.0-alpha.8
   description: |
     Partner integration API for LibraOS. Mirrors Anthropic Managed Agents
     1:1 for the compat surface (Section 1.1 of the design); extends with
@@ -91,6 +91,12 @@ tags:
     description: Direct single-tool invocation.
   - name: Ops
     description: Feature status, infra health, and logs.
+  - name: AgentSkills
+    description: Versioned Agent Skills catalog that agents attach through `agent_skills`.
+  - name: Schedules
+    description: Per-user scheduled agent runs delivered to a conversation.
+  - name: Decision
+    description: Named, calibrated decision probes (train, activate, predict).
 
 components:
   securitySchemes:
@@ -359,8 +365,73 @@ components:
           items:
             type: string
         guardrails:
-          type: object
-          additionalProperties: true
+          $ref: '#/components/schemas/AgentGuardrails'
+        thinking:
+          $ref: '#/components/schemas/AgentThinking'
+        tool_choice:
+          type: string
+          pattern: '^[A-Za-z0-9_.-]*$'
+          description: |
+            Forces (or forbids) a tool call on the first model call of the
+            agent loop: `auto` (default), `none`, `required`, or a tool name.
+            Per-call `metadata.tool_choice` wins. A named tool the request does
+            not carry is dropped with a server-side warning.
+        direct_tools:
+          type: array
+          items:
+            type: string
+          description: |
+            Persona only. Tools offered on the persona's direct (non-planner)
+            answer path. Names are validated against the live tool registry.
+            Together with `tools`, this is the persona's declared tool scope;
+            declaring neither keeps the whole catalog.
+        tool_scope:
+          type: string
+          enum: ["", none]
+          description: |
+            `none` declares an agent that needs no catalog tools. Rejected
+            (400) together with a non-empty `tools` or `direct_tools`.
+        triage:
+          $ref: '#/components/schemas/AgentTriage'
+        turn_budget_tokens:
+          type: integer
+          minimum: 0
+          maximum: 10000000
+          description: |
+            Per-agent token budget for each model call of the agent's turn
+            (overrides the server-wide turn budget). `0` means unset. When
+            the agent is the outermost agent of a turn, its value also governs
+            the skill agents it dispatches.
+        agent_skills:
+          type: array
+          maxItems: 32
+          items:
+            type: string
+            pattern: '^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?(?:@[1-9][0-9]{0,8})?$'
+          description: |
+            Agent Skills attached to this agent, as `name` (latest published
+            catalog version) or `name@N` (pinned version). No duplicate names.
+            Every entry must resolve for the caller's organization at write
+            time (a published `/v1/skills` version, or for unpinned names a
+            server-side skills folder); otherwise 400 with `field:
+            agent_skills`.
+        on_ambiguous_entity:
+          type: string
+          enum: ["", state, ask, "off"]
+          description: |
+            What a persona does when the documents its answer relies on span
+            several sources the question does not choose between: `state`
+            names the document the answer is based on, `ask` returns a
+            clarifying question instead of an answer, `off` does nothing.
+            Per-call `metadata.on_ambiguous_entity` wins; empty inherits the
+            server default.
+        egress_guard:
+          type: string
+          enum: ["", "off", callback, detector]
+          description: |
+            Outbound search-query guard for this agent's turns. Guards only
+            tighten: the server-wide, agent and per-call settings are combined,
+            and `off` never removes a guard set elsewhere.
         filesystem:
           type: object
           additionalProperties: true
@@ -422,8 +493,73 @@ components:
           items:
             type: string
         guardrails:
-          type: object
-          additionalProperties: true
+          $ref: '#/components/schemas/AgentGuardrails'
+        thinking:
+          $ref: '#/components/schemas/AgentThinking'
+        tool_choice:
+          type: string
+          pattern: '^[A-Za-z0-9_.-]*$'
+          description: |
+            Forces (or forbids) a tool call on the first model call of the
+            agent loop: `auto` (default), `none`, `required`, or a tool name.
+            Per-call `metadata.tool_choice` wins. A named tool the request does
+            not carry is dropped with a server-side warning.
+        direct_tools:
+          type: array
+          items:
+            type: string
+          description: |
+            Persona only. Tools offered on the persona's direct (non-planner)
+            answer path. Names are validated against the live tool registry.
+            Together with `tools`, this is the persona's declared tool scope;
+            declaring neither keeps the whole catalog.
+        tool_scope:
+          type: string
+          enum: ["", none]
+          description: |
+            `none` declares an agent that needs no catalog tools. Rejected
+            (400) together with a non-empty `tools` or `direct_tools`.
+        triage:
+          $ref: '#/components/schemas/AgentTriage'
+        turn_budget_tokens:
+          type: integer
+          minimum: 0
+          maximum: 10000000
+          description: |
+            Per-agent token budget for each model call of the agent's turn
+            (overrides the server-wide turn budget). `0` means unset. When
+            the agent is the outermost agent of a turn, its value also governs
+            the skill agents it dispatches.
+        agent_skills:
+          type: array
+          maxItems: 32
+          items:
+            type: string
+            pattern: '^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?(?:@[1-9][0-9]{0,8})?$'
+          description: |
+            Agent Skills attached to this agent, as `name` (latest published
+            catalog version) or `name@N` (pinned version). No duplicate names.
+            Every entry must resolve for the caller's organization at write
+            time (a published `/v1/skills` version, or for unpinned names a
+            server-side skills folder); otherwise 400 with `field:
+            agent_skills`.
+        on_ambiguous_entity:
+          type: string
+          enum: ["", state, ask, "off"]
+          description: |
+            What a persona does when the documents its answer relies on span
+            several sources the question does not choose between: `state`
+            names the document the answer is based on, `ask` returns a
+            clarifying question instead of an answer, `off` does nothing.
+            Per-call `metadata.on_ambiguous_entity` wins; empty inherits the
+            server default.
+        egress_guard:
+          type: string
+          enum: ["", "off", callback, detector]
+          description: |
+            Outbound search-query guard for this agent's turns. Guards only
+            tighten: the server-wide, agent and per-call settings are combined,
+            and `off` never removes a guard set elsewhere.
 
     AgentUpdate:
       type: object
@@ -464,8 +600,122 @@ components:
           items:
             type: string
         guardrails:
-          type: object
-          additionalProperties: true
+          $ref: '#/components/schemas/AgentGuardrails'
+        thinking:
+          $ref: '#/components/schemas/AgentThinking'
+        tool_choice:
+          type: string
+          pattern: '^[A-Za-z0-9_.-]*$'
+          description: |
+            Forces (or forbids) a tool call on the first model call of the
+            agent loop: `auto` (default), `none`, `required`, or a tool name.
+            Per-call `metadata.tool_choice` wins. A named tool the request does
+            not carry is dropped with a server-side warning.
+        direct_tools:
+          type: array
+          items:
+            type: string
+          description: |
+            Persona only. Tools offered on the persona's direct (non-planner)
+            answer path. Names are validated against the live tool registry.
+            Together with `tools`, this is the persona's declared tool scope;
+            declaring neither keeps the whole catalog.
+        tool_scope:
+          type: string
+          enum: ["", none]
+          description: |
+            `none` declares an agent that needs no catalog tools. Rejected
+            (400) together with a non-empty `tools` or `direct_tools`.
+        triage:
+          $ref: '#/components/schemas/AgentTriage'
+        turn_budget_tokens:
+          type: integer
+          minimum: 0
+          maximum: 10000000
+          description: |
+            Per-agent token budget for each model call of the agent's turn
+            (overrides the server-wide turn budget). `0` means unset. When
+            the agent is the outermost agent of a turn, its value also governs
+            the skill agents it dispatches.
+        agent_skills:
+          type: array
+          maxItems: 32
+          items:
+            type: string
+            pattern: '^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?(?:@[1-9][0-9]{0,8})?$'
+          description: |
+            Agent Skills attached to this agent, as `name` (latest published
+            catalog version) or `name@N` (pinned version). No duplicate names.
+            Every entry must resolve for the caller's organization at write
+            time (a published `/v1/skills` version, or for unpinned names a
+            server-side skills folder); otherwise 400 with `field:
+            agent_skills`.
+        on_ambiguous_entity:
+          type: string
+          enum: ["", state, ask, "off"]
+          description: |
+            What a persona does when the documents its answer relies on span
+            several sources the question does not choose between: `state`
+            names the document the answer is based on, `ask` returns a
+            clarifying question instead of an answer, `off` does nothing.
+            Per-call `metadata.on_ambiguous_entity` wins; empty inherits the
+            server default.
+        egress_guard:
+          type: string
+          enum: ["", "off", callback, detector]
+          description: |
+            Outbound search-query guard for this agent's turns. Guards only
+            tighten: the server-wide, agent and per-call settings are combined,
+            and `off` never removes a guard set elsewhere.
+        clear_triage:
+          type: boolean
+          description: 'When true, clears the agent''s `triage` pin (same as `triage: null`).'
+
+    AgentThinking:
+      type: object
+      description: |
+        Native model reasoning on the agent's answer-tier call only (never the
+        planner, triage or skill sub-tasks). `off` (the default) sends no
+        reasoning parameter, so a model that reasons by default keeps
+        reasoning; `none` asks the model not to reason. Per-call
+        `metadata.thinking` wins. On PUT/PATCH send `{}` (or `effort: ""`) to
+        clear; `null` keeps the current value.
+      properties:
+        effort:
+          type: string
+          enum: ["", "off", none, low, medium, high, xhigh]
+        budget_tokens:
+          type: integer
+          minimum: 0
+          maximum: 32768
+          description: Explicit thinking-token budget; 0 derives it from `effort`.
+
+    AgentTriage:
+      type: object
+      description: |
+        Persona planner routing pin. `triage` keeps the per-turn
+        regex/LLM triage cascade, `always` runs the planner every turn,
+        `never` skips it. Empty clears the pin (inherit the server default).
+        Per-call `metadata.brain` still wins.
+      properties:
+        default_brain:
+          type: string
+          enum: ["", triage, always, never]
+
+    AgentGuardrails:
+      type: object
+      description: |
+        Per-agent opt-outs for the inbound guardrail chain. Each value is
+        `enabled`, `disabled` or empty (inherit). On PUT/PATCH an omitted key
+        keeps its value, a `null` key clears that override, and a top-level
+        `guardrails: null` clears every override.
+      properties:
+        pii_redactor:
+          type: string
+          enum: ["", enabled, disabled]
+        date_normalizer:
+          type: string
+          enum: ["", enabled, disabled]
 
     AgentList:
       type: object
@@ -777,6 +1027,70 @@ components:
             stream_thinking:
               type: boolean
               description: Per-call planner-thinking event toggle.
+            research_query:
+              type: string
+              description: >
+                The research question as its own field, when the message is an
+                assembled prompt. Overrides the query used for outbound search.
+            research_query_only:
+              type: boolean
+              description: >
+                Fixed-query mode: every outbound search of the turn is exactly
+                `research_query`, and fetches are limited to URLs those searches
+                returned. Requires a non-empty, single-line `research_query` of at
+                most 300 characters; otherwise 400.
+            max_searches:
+              type: integer
+              description: >
+                Per-turn cap on outbound search calls across every tool of the
+                turn. Absent or 0 means unlimited.
+            egress_guard:
+              type: string
+              enum: ["", "off", callback, detector]
+              description: >
+                Adds the outbound query guard for this request. May only tighten:
+                `off` never removes a guard set by the server or the agent.
+                Any other value is a 400.
+            allowed_skills:
+              type: array
+              items: { type: string }
+              description: >
+                Narrows a persona's planner to these skills for this turn. A name
+                the persona does not have is a 400; ignored on non-persona agents.
+            research_depth:
+              type: string
+              enum: [fast, auto, deep]
+              description: >
+                Per-call research depth. `fast` skips the planner; `deep` runs it;
+                `auto` runs it single-shot, without multi-wave skills such as
+                `deep_research`. `brain` wins when both are set. Unknown values are
+                ignored.
+            on_ambiguous_entity:
+              type: string
+              enum: [state, ask, "off"]
+              description: >
+                Overrides the agent's handling of answers whose evidence spans
+                several documents the question does not choose between. Invalid
+                values are ignored.
+            thinking:
+              type: object
+              description: >
+                Per-call native reasoning on the answer-tier call; overrides the
+                agent's `thinking`. `off` sends no reasoning parameter, `none` asks
+                the model not to reason. `budget_tokens` is clamped to
+                1024-32768. An invalid override is ignored.
+              properties:
+                effort:
+                  type: string
+                  enum: ["", "off", none, low, medium, high, xhigh]
+                budget_tokens:
+                  type: integer
+            tool_choice:
+              type: string
+              description: >
+                Per-call tool choice for the first model call: `auto`, `none`,
+                `required`, or a tool name. Overrides the agent's `tool_choice`.
+                Invalid values are ignored.
           additionalProperties: true
 
     MessageResponse:
@@ -1488,6 +1802,70 @@ components:
             Per-call planning override. One of `always` or `never`; controls
             whether the multi-step planner runs for this turn.
           enum: [always, never]
+        research_query:
+          type: string
+          description: >
+            The research question as its own field, when the message is an
+            assembled prompt. Overrides the query used for outbound search.
+        research_query_only:
+          type: boolean
+          description: >
+            Fixed-query mode: every outbound search of the turn is exactly
+            `research_query`, and fetches are limited to URLs those searches
+            returned. Requires a non-empty, single-line `research_query` of at
+            most 300 characters; otherwise 400.
+        max_searches:
+          type: integer
+          description: >
+            Per-turn cap on outbound search calls across every tool of the
+            turn. Absent or 0 means unlimited.
+        egress_guard:
+          type: string
+          enum: ["", "off", callback, detector]
+          description: >
+            Adds the outbound query guard for this request. May only tighten:
+            `off` never removes a guard set by the server or the agent.
+            Any other value is a 400.
+        allowed_skills:
+          type: array
+          items: { type: string }
+          description: >
+            Narrows a persona's planner to these skills for this turn. A name
+            the persona does not have is a 400; ignored on non-persona agents.
+        research_depth:
+          type: string
+          enum: [fast, auto, deep]
+          description: >
+            Per-call research depth. `fast` skips the planner; `deep` runs it;
+            `auto` runs it single-shot, without multi-wave skills such as
+            `deep_research`. `brain` wins when both are set. Unknown values are
+            ignored.
+        on_ambiguous_entity:
+          type: string
+          enum: [state, ask, "off"]
+          description: >
+            Overrides the agent's handling of answers whose evidence spans
+            several documents the question does not choose between. Invalid
+            values are ignored.
+        thinking:
+          type: object
+          description: >
+            Per-call native reasoning on the answer-tier call; overrides the
+            agent's `thinking`. `off` sends no reasoning parameter, `none` asks
+            the model not to reason. `budget_tokens` is clamped to
+            1024-32768. An invalid override is ignored.
+          properties:
+            effort:
+              type: string
+              enum: ["", "off", none, low, medium, high, xhigh]
+            budget_tokens:
+              type: integer
+        tool_choice:
+          type: string
+          description: >
+            Per-call tool choice for the first model call: `auto`, `none`,
+            `required`, or a tool name. Overrides the agent's `tool_choice`.
+            Invalid values are ignored.
 
     NativeChatRequest:
       type: object
@@ -1539,6 +1917,135 @@ components:
           description: The model used for the sub-call.
         prompt_tokens: { type: integer }
         completion_tokens: { type: integer }
+        cache_read_tokens: { type: integer }
+        cache_write_tokens: { type: integer }
+        duration_ms:
+          type: integer
+          description: Summed model wall time for this stage's calls.
+        llm_calls:
+          type: integer
+          description: Number of model calls in this stage.
+        first_token_ms:
+          type: integer
+          description: Time to first token of the stage's first streamed call.
+        tool_calls:
+          type: integer
+          description: Tool calls made by this stage.
+        tool_ms:
+          type: integer
+          description: Summed tool wall time for this stage.
+
+    UsagePhase:
+      type: object
+      description: >
+        Wall time of one phase of the turn. Phases are interval unions, so
+        parallel tasks count once. A final `turn` row is always present.
+      properties:
+        phase:
+          type: string
+          description: One of `triage`, `planner`, `skills`, `tools`, `synthesis`, `direct`, `llm`, `turn`.
+        duration_ms: { type: integer }
+        count: { type: integer }
+
+    UsageSpan:
+      type: object
+      description: One span of the turn timeline, relative to the turn start.
+      properties:
+        kind:
+          type: string
+          description: One of `triage`, `planner`, `task`, `aspect`, `tool`, `llm`, `synthesis`, `direct`, `phase`.
+        name: { type: string }
+        start_ms: { type: integer }
+        duration_ms: { type: integer }
+        first_token_ms: { type: integer }
+        phase: { type: string }
+        stage: { type: string }
+        model: { type: string }
+        task_id: { type: string }
+        capability: { type: string }
+        skill: { type: string }
+        level:
+          type: integer
+          description: DAG level of a planner task.
+        tool: { type: string }
+        status: { type: string }
+
+    UsageContextBudget:
+      type: object
+      description: >
+        Context window and turn budget applied to the model calls of one model
+        in this turn.
+      properties:
+        model: { type: string }
+        window:
+          type: integer
+          description: Context window in tokens; omitted when unbounded.
+        window_source:
+          type: string
+          enum: [catalog, env, none]
+        turn_budget:
+          type: integer
+          description: Per-turn token budget; omitted when none applies.
+        turn_budget_source:
+          type: string
+          enum: [agent, env, none]
+        budget:
+          type: integer
+          description: Effective budget (the tighter of window and turn budget).
+        calls: { type: integer }
+        trimmed:
+          type: integer
+          description: Calls whose conversation was trimmed to fit.
+
+    UsageWorkingSet:
+      type: object
+      description: >
+        The conversation working set (documents attached in chat) carried by
+        this turn.
+      properties:
+        mode:
+          type: string
+          enum: [full, manifest]
+          description: >
+            `full` injects the documents' text; `manifest` lists them and the
+            model reads them with `read_document`.
+        docs: { type: integer }
+        chars: { type: integer }
+        share_limit_tokens:
+          type: integer
+          description: Token limit from the share of the context window.
+        max_tokens:
+          type: integer
+          description: Absolute token ceiling for full mode; omitted when none.
+        web_gate:
+          type: string
+          description: >
+            `locked`, or `unlocked:<via>` when web retrieval was unlocked on a
+            working-set turn.
+
+    UsageAgentSkill:
+      type: object
+      properties:
+        skill: { type: string }
+        version: { type: integer }
+        sha256: { type: string }
+        source: { type: string }
+
+    UsageAgentSkills:
+      type: object
+      description: Agent Skills attached to and loaded by this turn.
+      properties:
+        attached:
+          type: array
+          items: { $ref: '#/components/schemas/UsageAgentSkill' }
+        loaded:
+          type: array
+          items: { type: string }
+          description: Skills loaded during the turn, in order.
+        inlined: { type: boolean }
+        unresolved:
+          type: array
+          items: { type: string }
 
     UsageBlock:
       type: object
@@ -1550,9 +2057,28 @@ components:
         prompt_tokens: { type: integer }
         completion_tokens: { type: integer }
         total_tokens: { type: integer }
+        cache_read_tokens: { type: integer }
+        cache_write_tokens: { type: integer }
         by_stage:
           type: array
           items: { $ref: '#/components/schemas/UsageStage' }
+        tool_calls:
+          type: object
+          description: Tool calls this turn, by tool name.
+          additionalProperties: { type: integer }
+        phases:
+          type: array
+          items: { $ref: '#/components/schemas/UsagePhase' }
+        timeline:
+          type: array
+          items: { $ref: '#/components/schemas/UsageSpan' }
+        context_budget:
+          type: array
+          items: { $ref: '#/components/schemas/UsageContextBudget' }
+        working_set:
+          $ref: '#/components/schemas/UsageWorkingSet'
+        agent_skills:
+          $ref: '#/components/schemas/UsageAgentSkills'
 
     NativeChatResult:
       type: object
@@ -1578,7 +2104,7 @@ components:
           type: string
           description: >
             Per-turn grounded-vs-refusal outcome. Omitted on non-retrieval turns.
-          enum: [grounded, ungrounded_refusal, ungrounded_no_chunks, degraded, unsupported_claim, degraded_retrieval, unopened_sources]
+          enum: [grounded, ungrounded_refusal, ungrounded_no_chunks, degraded, unsupported_claim, degraded_retrieval, unopened_sources, unsupported_figures]
         retrieved_chunks:
           type: array
           description: Source ids of knowledge chunks surfaced by this turn.
@@ -1587,8 +2113,26 @@ components:
           type: array
           description: Unique tool names dispatched this turn (include_metadata only).
           items: { type: string }
+        retrieval:
+          $ref: '#/components/schemas/RetrievalAmbiguity'
         usage:
           $ref: '#/components/schemas/UsageBlock'
+
+    RetrievalAmbiguity:
+      type: object
+      description: >
+        Present only when the evidence the answer relied on spanned several
+        documents the conversation did not choose between and the agent's
+        ambiguous-entity handling is `state` or `ask`.
+      required: [ambiguous_sources, ambiguity_action]
+      properties:
+        ambiguous_sources:
+          type: array
+          items: { type: string }
+          description: Source ids of the candidate documents.
+        ambiguity_action:
+          type: string
+          enum: [state, ask]
 
     NativeJobAccepted:
       type: object
@@ -1667,18 +2211,127 @@ components:
           type: integer
           description: >
             Newer OpenAI field for the output-token cap; preferred over
-            max_tokens when both are set.
+            max_tokens when both are set. On the agent path it becomes the
+            per-call answer cap (clamped to 32768) unless `metadata.max_tokens`
+            is set.
         temperature:
           type: number
+          minimum: 0
+          maximum: 2
           description: >
-            Sampling temperature. Accepted for OpenAI-client compatibility;
-            server-side routing controls the effective value on the agent path.
+            Sampling temperature, 0-2 (otherwise 400). On the passthrough path
+            it is sent to the provider; on the agent path it becomes the
+            per-call answer temperature unless `metadata.temperature` is set.
+        reasoning_effort:
+          type: string
+          enum: ["", "off", none, low, medium, high, xhigh]
+          description: >
+            Native reasoning effort for the answer call (otherwise 400). `off`
+            or empty sends no reasoning parameter (the model's default);
+            `none` asks the model not to reason. On the agent path it becomes
+            `metadata.thinking.effort` unless `metadata.thinking` is set.
+        response_format:
+          $ref: '#/components/schemas/ChatCompletionResponseFormat'
         metadata:
           type: object
           description: >
             Nova OS extension channel for per-call fields (e.g. a per-call model
-            override).
+            override). The documented keys below are honoured on this surface
+            the same way as on native chat.
+          properties:
+            max_tokens:
+              type: integer
+              description: Per-call answer output-token cap; wins over the top-level fields.
+            temperature:
+              type: number
+              description: Per-call answer temperature; wins over the top-level field.
+            brain:
+              type: string
+              enum: [always, never]
+              description: Per-call planning override.
+            stream_events:
+              type: boolean
+              description: Per-call orchestration event streaming toggle.
+            research_query:
+              type: string
+              description: >
+                The research question as its own field, when the message is an
+                assembled prompt. Overrides the query used for outbound search.
+            research_query_only:
+              type: boolean
+              description: >
+                Fixed-query mode: every outbound search of the turn is exactly
+                `research_query`, and fetches are limited to URLs those searches
+                returned. Requires a non-empty, single-line `research_query` of at
+                most 300 characters; otherwise 400.
+            max_searches:
+              type: integer
+              description: >
+                Per-turn cap on outbound search calls across every tool of the
+                turn. Absent or 0 means unlimited.
+            egress_guard:
+              type: string
+              enum: ["", "off", callback, detector]
+              description: >
+                Adds the outbound query guard for this request. May only tighten:
+                `off` never removes a guard set by the server or the agent.
+                Any other value is a 400.
+            allowed_skills:
+              type: array
+              items: { type: string }
+              description: >
+                Narrows a persona's planner to these skills for this turn. A name
+                the persona does not have is a 400; ignored on non-persona agents.
+            research_depth:
+              type: string
+              enum: [fast, auto, deep]
+              description: >
+                Per-call research depth. `fast` skips the planner; `deep` runs it;
+                `auto` runs it single-shot, without multi-wave skills such as
+                `deep_research`. `brain` wins when both are set. Unknown values are
+                ignored.
+            on_ambiguous_entity:
+              type: string
+              enum: [state, ask, "off"]
+              description: >
+                Overrides the agent's handling of answers whose evidence spans
+                several documents the question does not choose between. Invalid
+                values are ignored.
+            thinking:
+              type: object
+              description: >
+                Per-call native reasoning on the answer-tier call; overrides the
+                agent's `thinking`. `off` sends no reasoning parameter, `none` asks
+                the model not to reason. `budget_tokens` is clamped to
+                1024-32768. An invalid override is ignored.
+              properties:
+                effort:
+                  type: string
+                  enum: ["", "off", none, low, medium, high, xhigh]
+                budget_tokens:
+                  type: integer
+            tool_choice:
+              type: string
+              description: >
+                Per-call tool choice for the first model call: `auto`, `none`,
+                `required`, or a tool name. Overrides the agent's `tool_choice`.
+                Invalid values are ignored.
           additionalProperties: true
+
+    ChatCompletionResponseFormat:
+      type: object
+      description: >
+        OpenAI-style response format. Must be an object with a non-empty
+        `type` (otherwise 400); the value of `type` is not checked. Forwarded
+        verbatim to OpenAI-compatible providers on the passthrough path;
+        ignored on the agent path, where the agent's `output_type` decides the
+        reply shape.
+      required: [type]
+      properties:
+        type:
+          type: string
+          description: e.g. `text`, `json_object`, `json_schema`.
+      additionalProperties: true
 
     ChatCompletionChoice:
       type: object
@@ -1720,13 +2373,15 @@ components:
           description: >
             Nova OS extension — per-turn grounded-vs-refusal outcome. Omitted on
             non-retrieval turns.
-          enum: [grounded, ungrounded_refusal, ungrounded_no_chunks, degraded, unsupported_claim, degraded_retrieval, unopened_sources]
+          enum: [grounded, ungrounded_refusal, ungrounded_no_chunks, degraded, unsupported_claim, degraded_retrieval, unopened_sources, unsupported_figures]
         persisted_state:
           type: object
           description: >
             Merged persisted field state, present only for agents that declare a
             persist-fields schema.
           additionalProperties: true
+        nova_usage:
+          $ref: '#/components/schemas/UsageBlock'
 
     ModelListEntry:
       type: object
@@ -3712,6 +4367,619 @@ components:
         source: { type: string, enum: [server, requests] }
         total_in_buffer: { type: integer }
       required: [logs, source, total_in_buffer]
+    # ── Shared error envelopes for the surfaces below ────────────────
+    FlatError:
+      type: object
+      description: 'Error envelope `{"error": "<code or text>", "message"?: "<text>"}`.'
+      required: [error]
+      properties:
+        error: { type: string }
+        message: { type: string }
+
+    FieldError:
+      type: object
+      description: 'Error envelope `{"error": {"type", "message", "field"?}}`.'
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [type, message]
+          properties:
+            type: { type: string }
+            message: { type: string }
+            field:
+              type: string
+              description: The request field the error is about, when there is one.
+
+    # ── Agent Skills catalog (/v1/skills) ────────────────────────────
+    AgentSkillSource:
+      type: object
+      required: [kind]
+      properties:
+        kind:
+          type: string
+          enum: [upload, github, edit]
+        repo:
+          type: string
+          description: '`owner/repo` for GitHub imports.'
+        ref: { type: string }
+        commit: { type: string }
+        path: { type: string }
+
+    AgentSkillVersion:
+      type: object
+      required: [name, version, description, sha256, source, status, created_at]
+      properties:
+        name: { type: string }
+        version: { type: integer }
+        description: { type: string }
+        sha256: { type: string }
+        source: { $ref: '#/components/schemas/AgentSkillSource' }
+        license: { type: string }
+        forked_from:
+          type: integer
+          description: The version this edit was based on.
+        status:
+          type: string
+          enum: [draft, published, archived]
+        created_by: { type: string }
+        created_at: { type: string, format: date-time }
+        status_by: { type: string }
+        status_at: { type: string, format: date-time }
+        file_list:
+          type: array
+          items: { type: string }
+          description: Files other than `SKILL.md`, sorted. May be null when there are none.
+        files:
+          type: object
+          additionalProperties: { type: string }
+          description: Path to text content, `SKILL.md` included. Only on single-version reads.
+
+    AgentSkillSummary:
+      type: object
+      required: [name, description, latest_version, latest_status, versions, source]
+      properties:
+        name: { type: string }
+        description: { type: string }
+        latest_version: { type: integer }
+        latest_status:
+          type: string
+          enum: [draft, published, archived]
+        published_version:
+          type: integer
+          description: Highest published version; omitted when none is published.
+        versions:
+          type: integer
+          description: Number of versions.
+        source: { $ref: '#/components/schemas/AgentSkillSource' }
+        license: { type: string }
+
+    AgentSkillList:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/AgentSkillSummary' }
+
+    AgentSkillVersionList:
+      type: object
+      required: [name, versions]
+      properties:
+        name: { type: string }
+        versions:
+          type: array
+          description: Newest first; `files` is omitted.
+          items: { $ref: '#/components/schemas/AgentSkillVersion' }
+
+    AgentSkillFiles:
+      type: object
+      required: [files]
+      properties:
+        files:
+          type: object
+          additionalProperties: { type: string }
+          description: >
+            Path to text content. Must include `SKILL.md` with `name` and
+            `description` frontmatter; at most 200 other files and 4 MiB in
+            total, clean relative paths, UTF-8 text.
+
+    AgentSkillEdit:
+      type: object
+      required: [files]
+      properties:
+        files:
+          type: object
+          additionalProperties: { type: string }
+          description: The full file set; `SKILL.md` frontmatter `name` must equal the path name.
+        base_version:
+          type: integer
+          description: >
+            Version this edit is based on. The new version keeps its source
+            and licence and records `forked_from`.
+
+    AgentSkillWriteResult:
+      type: object
+      required: [version, created]
+      properties:
+        version: { $ref: '#/components/schemas/AgentSkillVersion' }
+        created:
+          type: boolean
+          description: False when the content matched the latest version, which is returned instead.
+
+    AgentSkillImportRequest:
+      type: object
+      required: [url]
+      properties:
+        url:
+          type: string
+          description: >
+            HTTPS link to a GitHub repository, a `tree`/`blob` folder or file
+            in one, or a `raw.githubusercontent.com` file. A link to a
+            `SKILL.md` means its folder.
+        skills:
+          type: array
+          items: { type: string }
+          description: Import only these skill names; empty imports all found.
+        dry_run:
+          type: boolean
+          description: Return what would be imported without writing anything.
+
+    AgentSkillFound:
+      type: object
+      required: [name, path]
+      properties:
+        name: { type: string }
+        path: { type: string }
+        error: { type: string }
+
+    AgentSkillImportPreview:
+      type: object
+      required: [preview]
+      properties:
+        preview:
+          type: object
+          required: [repo, ref, commit, license, skills]
+          properties:
+            repo: { type: string }
+            ref: { type: string }
+            commit: { type: string }
+            license: { type: string }
+            skills:
+              type: array
+              items: { $ref: '#/components/schemas/AgentSkillFound' }
+
+    AgentSkillImportResult:
+      type: object
+      required: [repo, commit, license, results]
+      properties:
+        repo: { type: string }
+        commit: { type: string }
+        license: { type: string }
+        results:
+          type: array
+          description: One entry per skill; per-skill failures are reported here.
+          items:
+            type: object
+            required: [path, created]
+            properties:
+              name: { type: string }
+              path: { type: string }
+              version: { $ref: '#/components/schemas/AgentSkillVersion' }
+              created: { type: boolean }
+              error: { type: string }
+
+    AgentSkillFileDiff:
+      type: object
+      required: [path, change]
+      properties:
+        path: { type: string }
+        change:
+          type: string
+          enum: [added, removed, modified]
+        diff:
+          type: string
+          description: Unified diff; omitted for very large files.
+
+    AgentSkillDiff:
+      type: object
+      required: [from, to, files]
+      properties:
+        from: { type: integer }
+        to: { type: integer }
+        files:
+          type: array
+          description: Changed files only; empty when the versions are identical.
+          items: { $ref: '#/components/schemas/AgentSkillFileDiff' }
+
+    AgentSkillUpstream:
+      type: object
+      required: [version, source, upstream_commit, up_to_date]
+      properties:
+        version: { type: integer }
+        source: { $ref: '#/components/schemas/AgentSkillSource' }
+        upstream_commit: { type: string }
+        up_to_date: { type: boolean }
+        files:
+          type: array
+          description: Differences from upstream, when not up to date and the path still exists.
+          items: { $ref: '#/components/schemas/AgentSkillFileDiff' }
+        license: { type: string }
+        removed_upstream:
+          type: boolean
+          description: True when the skill's path no longer exists upstream.
+
+    # ── Scheduled runs (/v1/managed/schedules) ───────────────────────
+    ScheduleDelivery:
+      type: object
+      description: Where each run's answer is appended. Exactly one of the two.
+      properties:
+        conversation_id:
+          type: string
+          description: An existing conversation owned by the schedule's owner.
+        new_conversation:
+          type: boolean
+          description: Create a dedicated conversation on the first run.
+
+    ScheduleWrite:
+      type: object
+      description: >
+        Create body (`agent`, `prompt`, `deliver_to` and one of `cron` /
+        `every` required) or PATCH body (every field optional; the merged
+        schedule is re-validated).
+      properties:
+        agent:
+          type: string
+          description: Agent the run is submitted to; must be runnable by the caller and support streaming.
+        prompt:
+          type: string
+          description: The message each run sends.
+        metadata:
+          type: object
+          additionalProperties: true
+          description: Per-run chat metadata; replaced as a whole.
+        cron:
+          type: string
+          description: >
+            Five-field cron expression or a descriptor such as `@daily`. No
+            `TZ=` prefix and no `@every`. Setting it clears `every`.
+        every:
+          type: string
+          description: Fixed interval as a duration (e.g. `30m`, `1h`), at least `1m`. Setting it clears `cron`.
+        timezone:
+          type: string
+          description: IANA time zone name. Default `UTC`.
+        deliver_to: { $ref: '#/components/schemas/ScheduleDelivery' }
+        enabled:
+          type: boolean
+          description: Default true. Re-enabling resets the failure count.
+
+    Schedule:
+      type: object
+      required: [id, tenant_id, owner_user_id, agent, prompt, timezone, deliver_to, enabled, last_job_id, last_status, missed_runs, consecutive_failures, created_at, updated_at]
+      properties:
+        id:
+          type: string
+          description: '`sched_` followed by 24 hex characters.'
+        tenant_id: { type: string }
+        owner_user_id: { type: string }
+        org_id:
+          type: string
+          nullable: true
+          description: Null on schedules created before organizations were recorded.
+        app_id: { type: string }
+        agent: { type: string }
+        prompt: { type: string }
+        metadata:
+          type: object
+          additionalProperties: true
+        cron: { type: string }
+        every: { type: string }
+        timezone: { type: string }
+        deliver_to: { $ref: '#/components/schemas/ScheduleDelivery' }
+        enabled: { type: boolean }
+        next_run_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Null when disabled.
+        last_run_at:
+          type: string
+          format: date-time
+          nullable: true
+        last_job_id:
+          type: string
+          description: Async job id of the last run; empty until the first run.
+        last_status:
+          type: string
+          enum: ["", claimed, submitted, delivering, delivered, failed, cancelled, skipped, owner_inactive, paused_failures, org_unrecorded]
+        last_error: { type: string }
+        missed_runs: { type: integer }
+        consecutive_failures: { type: integer }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+
+    ScheduleList:
+      type: object
+      required: [schedules, total]
+      properties:
+        schedules:
+          type: array
+          items: { $ref: '#/components/schemas/Schedule' }
+        total: { type: integer }
+
+    ScheduleLimitError:
+      type: object
+      required: [error, limit, message]
+      properties:
+        error:
+          type: string
+          enum: [schedule_limit_reached]
+        limit: { type: integer }
+        message: { type: string }
+
+    # ── Decision probes (/v1/decision/{name}) ────────────────────────
+    DecisionReport:
+      type: object
+      description: Held-out evaluation of a trained version.
+      properties:
+        labels:
+          type: array
+          items: { type: string }
+        n_train: { type: integer }
+        n_calibrate: { type: integer }
+        n_test: { type: integer }
+        n_per_label:
+          type: object
+          additionalProperties: { type: integer }
+        gate:
+          type: number
+          description: Confidence at or above which a prediction should be trusted.
+        temperature:
+          type: number
+          description: Calibration temperature.
+        acc: { type: number }
+        ece:
+          type: number
+          description: Expected calibration error.
+        coverage:
+          type: number
+          description: Share of test rows at or above the gate.
+        acc_above_gate: { type: number }
+        acc_below_gate: { type: number }
+        n_above_gate: { type: integer }
+        recall_per_label:
+          type: object
+          additionalProperties: { type: number }
+        majority_share:
+          type: number
+          description: Share of the most common label (the prior a model must beat).
+        acc_above_gate_lower:
+          type: number
+          description: 95% Wilson lower bound of the above-gate accuracy.
+        control_above_gate:
+          type: integer
+          description: Shuffled-label control, rows above the gate (report only).
+        control_acc_above_gate: { type: number }
+
+    DecisionVersion:
+      type: object
+      required: [name, version, labels, report, active, created_at]
+      properties:
+        name: { type: string }
+        version: { type: integer }
+        labels:
+          type: array
+          items: { type: string }
+        report: { $ref: '#/components/schemas/DecisionReport' }
+        active: { type: boolean }
+        created_by: { type: string }
+        created_at: { type: string, format: date-time }
+        activated_at: { type: string, format: date-time }
+
+    DecisionModel:
+      type: object
+      required: [name, versions]
+      properties:
+        name: { type: string }
+        versions:
+          type: array
+          description: Newest first.
+          items: { $ref: '#/components/schemas/DecisionVersion' }
+
+    DecisionTrainingRow:
+      type: object
+      required: [text, label]
+      properties:
+        text: { type: string }
+        label: { type: string }
+
+    DecisionTrainRequest:
+      type: object
+      required: [rows]
+      properties:
+        rows:
+          type: array
+          maxItems: 100000
+          items: { $ref: '#/components/schemas/DecisionTrainingRow' }
+        gate:
+          type: number
+          description: Confidence gate; 0 or absent uses the `gate` query parameter (default 0.7).
+
+    DecisionNotBetterError:
+      type: object
+      required: [error, message, report]
+      properties:
+        error:
+          type: string
+          enum: [confidence_not_better_than_prior]
+        message: { type: string }
+        report: { $ref: '#/components/schemas/DecisionReport' }
+
+    DecisionActivateRequest:
+      type: object
+      required: [version]
+      properties:
+        version:
+          type: integer
+          minimum: 1
+
+    DecisionActivateResult:
+      type: object
+      required: [name, active_version]
+      properties:
+        name: { type: string }
+        active_version: { type: integer }
+
+    DecisionPredictRequest:
+      type: object
+      required: [texts]
+      properties:
+        texts:
+          type: array
+          minItems: 1
+          maxItems: 1000
+          items: { type: string }
+        version:
+          type: integer
+          minimum: 1
+          description: Version to use; omitted means the active version.
+
+    DecisionPrediction:
+      type: object
+      required: [label, confidence, distribution]
+      properties:
+        label: { type: string }
+        confidence:
+          type: number
+          description: Calibrated probability of `label`. Compare with the version's `report.gate`.
+        distribution:
+          type: object
+          additionalProperties: { type: number }
+        ood:
+          type: object
+          description: >
+            Corpus-drift signals (present when the version carries them). Not a
+            per-request out-of-distribution detector.
+          properties:
+            oov_mass: { type: number }
+            centroid_cos: { type: number }
+
+    DecisionPredictResult:
+      type: object
+      required: [name, model_version, results]
+      properties:
+        name: { type: string }
+        model_version: { type: integer }
+        results:
+          type: array
+          description: In the order of `texts`.
+          items: { $ref: '#/components/schemas/DecisionPrediction' }
+
+    # ── Model recommendations ────────────────────────────────────────
+    ModelRecommendationResult:
+      type: object
+      required: [cell_id, model, hardware, task, compatibility, reasons, evidence, preference, matched_by]
+      properties:
+        cell_id: { type: string }
+        model: { type: string }
+        served_name: { type: string }
+        hardware: { type: string }
+        hardware_label: { type: string }
+        task: { type: string }
+        task_label: { type: string }
+        compatibility:
+          type: string
+          enum: [validated_match, potentially_compatible, incompatible]
+        reasons:
+          type: array
+          items: { type: string }
+        evidence:
+          type: object
+          properties:
+            tier:
+              type: string
+              enum: [verified, indicative, none]
+            stale: { type: boolean }
+            stale_reason: { type: string }
+            date: { type: string }
+            libraos: { type: string }
+        preference:
+          type: object
+          properties:
+            badges:
+              type: array
+              items: { type: string }
+            recommendation: { type: string }
+        matched_by:
+          type: string
+          enum: [requirements, hardware_table]
+        status: { type: string }
+        status_text: { type: string }
+        dependencies:
+          type: array
+          items: { type: string }
+        settings:
+          type: array
+          items:
+            type: object
+            properties:
+              key: { type: string }
+              value: { type: string }
+        red_flags:
+          type: array
+          items: { type: string }
+        licence_notes:
+          type: array
+          items: { type: string }
+        served_locally: { type: boolean }
+        measured:
+          type: object
+          additionalProperties: true
+          description: Measured figures; present only on a `validated_match` from the scored catalog.
+        figures:
+          type: object
+          additionalProperties: true
+          description: Catalog figures; present only on a `validated_match` from the scored catalog.
+        serving:
+          type: object
+          additionalProperties: true
+          description: Serving recipe (`engine`, `recipe`, `image`, `flags`).
+
+    ModelRecommendationReport:
+      type: object
+      required: [catalog, verification, environment, results]
+      properties:
+        catalog:
+          type: object
+          properties:
+            path:
+              type: string
+              description: Empty over HTTP unless the built-in starter profiles are in use.
+            tier: { type: string }
+            schema_version: { type: integer }
+            as_of: { type: string }
+            current_release: { type: string }
+            notice: { type: string }
+        verification:
+          type: object
+          properties:
+            verified: { type: boolean }
+            note: { type: string }
+        environment:
+          type: object
+          additionalProperties: true
+          description: >
+            The detected host (`os`, `arch`, `libraos_version`, `ram_gib`,
+            `gpu`, `inference`, `embeddings`). Endpoint addresses are removed.
+        task: { type: string }
+        warnings:
+          type: array
+          items: { type: string }
+        results:
+          type: array
+          items: { $ref: '#/components/schemas/ModelRecommendationResult' }
+
   responses:
     BadRequest:
       description: Request validation failed.
@@ -4949,7 +6217,11 @@ paths:
                   `finish_reason` chunk, then `data: [DONE]`. Includes
                   `: nova-heartbeat` keep-alive comments.
         '400':
-          description: Invalid request body.
+          description: >
+            Invalid request body; `temperature` outside 0-2; an unknown
+            `reasoning_effort`; a `response_format` that is not an object with a
+            `type`; or an invalid `metadata.allowed_skills`,
+            `metadata.egress_guard` or `metadata.research_query_only`.
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Error' }
@@ -8922,3 +10194,884 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Error' }
+  /v1/skills:
+    get:
+      operationId: listAgentSkills
+      summary: List Agent Skills in the catalog
+      description: >-
+        Any authenticated caller; scoped to the caller's organization. Agents
+        attach skills by name through `agent_skills`. The catalog is
+        registered only on deployments with PostgreSQL; otherwise every
+        `/v1/skills` route answers 404.
+      tags: [AgentSkills]
+      responses:
+        '200':
+          description: One summary per skill.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AgentSkillList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      operationId: createAgentSkill
+      summary: Upload a skill version
+      description: >-
+        Admin-only. Body is either JSON `{files}` or multipart with a `file`
+        field holding a `SKILL.md` (a filename ending `.md`) or a zip (at most
+        8 MiB, 200 files; a single shared top-level folder is stripped). The
+        skill name comes from the `SKILL.md` frontmatter. A new version always
+        starts as `draft`. Content identical to the latest non-archived
+        version returns that version with 200 and `created: false`. Request
+        body limit 10 MB (413).
+      tags: [AgentSkills]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AgentSkillFiles' }
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Identical to the latest version; that version is returned.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AgentSkillWriteResult' }
+        '201':
+          description: New draft version created.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AgentSkillWriteResult' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403':
+          description: Not an admin.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '413':
+          description: Body larger than 10 MB.
+        '422':
+          description: >-
+            Unreadable upload or invalid skill content (`type: invalid_skill`,
+            `field: files`), e.g. missing `SKILL.md`, bad frontmatter name or
+            description, too many files, unsafe paths, non-UTF-8 content.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+  /v1/skills/import:
+    post:
+      operationId: importAgentSkills
+      summary: Import skills from GitHub
+      description: >-
+        Admin-only. Fetches every skill (folder with a `SKILL.md`) under a
+        GitHub link, at most 50, and stores each as a new draft version
+        recording the repository, ref and commit. A repository without a
+        licence file is refused. `dry_run: true` returns a preview instead.
+      tags: [AgentSkills]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AgentSkillImportRequest' }
+      responses:
+        '200':
+          description: Import results, or the preview when `dry_run` is true.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/AgentSkillImportResult'
+                  - $ref: '#/components/schemas/AgentSkillImportPreview'
+        '400':
+          description: Invalid JSON body.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403':
+          description: Not an admin.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '422':
+          description: >-
+            `unsupported_link` (not a GitHub link) or `import_refused` (no
+            licence file, or no `SKILL.md` at the link); `field: url`.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+        '502':
+          description: >-
+            `fetch_failed`: GitHub could not be read, the ref did not resolve,
+            or the link holds more than 50 skills.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+  /v1/skills/{name}:
+    parameters:
+      - name: name
+        in: path
+        required: true
+        schema: { type: string }
+    get:
+      operationId: getAgentSkill
+      summary: List a skill's versions
+      description: Any authenticated caller; organization-scoped.
+      tags: [AgentSkills]
+      responses:
+        '200':
+          description: Versions, newest first, without file contents.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AgentSkillVersionList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404':
+          description: Unknown skill.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+    put:
+      operationId: editAgentSkill
+      summary: Save an edited skill as a new draft version
+      description: >-
+        Admin-only. Never overwrites a version: the files become a new draft
+        (`source.kind: edit`). The `SKILL.md` frontmatter name must stay the
+        path name. Identical content returns the latest version with 200.
+      tags: [AgentSkills]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AgentSkillEdit' }
+      responses:
+        '200':
+          description: Identical to the latest version; that version is returned.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AgentSkillWriteResult' }
+        '201':
+          description: New draft version created.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AgentSkillWriteResult' }
+        '400':
+          description: Invalid JSON body.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403':
+          description: Not an admin.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '404':
+          description: Unknown skill or `base_version`.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+        '413':
+          description: Body larger than 10 MB.
+        '422':
+          description: 'Invalid skill content (`invalid_skill`, `field: files`).'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+  /v1/skills/{name}/versions/{version}:
+    parameters:
+      - name: name
+        in: path
+        required: true
+        schema: { type: string }
+      - name: version
+        in: path
+        required: true
+        schema: { type: integer, minimum: 1 }
+    get:
+      operationId: getAgentSkillVersion
+      summary: Fetch one skill version with its files
+      description: Any authenticated caller; organization-scoped.
+      tags: [AgentSkills]
+      responses:
+        '200':
+          description: The version, including `files`.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AgentSkillVersion' }
+        '400':
+          description: '`version` is not a positive integer.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404':
+          description: Unknown skill or version.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+  /v1/skills/{name}/versions/{version}/publish:
+    parameters:
+      - name: name
+        in: path
+        required: true
+        schema: { type: string }
+      - name: version
+        in: path
+        required: true
+        schema: { type: integer, minimum: 1 }
+    post:
+      operationId: publishAgentSkillVersion
+      summary: Publish a draft version
+      description: >-
+        Admin-only. Allowed only from `draft`. Unpinned `agent_skills`
+        references resolve to the highest published version.
+      tags: [AgentSkills]
+      responses:
+        '200':
+          description: The updated version.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AgentSkillVersion' }
+        '400':
+          description: '`version` is not a positive integer.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403':
+          description: Not an admin.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '404':
+          description: Unknown skill or version.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+        '409':
+          description: 'Status change not allowed (`invalid_status`, `field: status`).'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+  /v1/skills/{name}/versions/{version}/archive:
+    parameters:
+      - name: name
+        in: path
+        required: true
+        schema: { type: string }
+      - name: version
+        in: path
+        required: true
+        schema: { type: integer, minimum: 1 }
+    post:
+      operationId: archiveAgentSkillVersion
+      summary: Archive a version
+      description: Admin-only. Allowed from `draft` or `published`; archived is final.
+      tags: [AgentSkills]
+      responses:
+        '200':
+          description: The updated version.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AgentSkillVersion' }
+        '400':
+          description: '`version` is not a positive integer.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403':
+          description: Not an admin.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '404':
+          description: Unknown skill or version.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+        '409':
+          description: 'Status change not allowed (`invalid_status`, `field: status`).'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+  /v1/skills/{name}/diff:
+    parameters:
+      - name: name
+        in: path
+        required: true
+        schema: { type: string }
+    get:
+      operationId: diffAgentSkillVersions
+      summary: Diff two versions of a skill
+      description: Any authenticated caller; organization-scoped.
+      tags: [AgentSkills]
+      parameters:
+        - name: from
+          in: query
+          required: true
+          schema: { type: integer, minimum: 1 }
+        - name: to
+          in: query
+          required: true
+          schema: { type: integer, minimum: 1 }
+      responses:
+        '200':
+          description: Changed files.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AgentSkillDiff' }
+        '400':
+          description: '`from` or `to` is not a version number.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404':
+          description: Unknown skill or version.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+  /v1/skills/{name}/upstream:
+    parameters:
+      - name: name
+        in: path
+        required: true
+        schema: { type: string }
+    get:
+      operationId: checkAgentSkillUpstream
+      summary: Compare an imported version with its GitHub upstream
+      description: Admin-only. Only for versions imported from GitHub.
+      tags: [AgentSkills]
+      parameters:
+        - name: version
+          in: query
+          required: true
+          schema: { type: integer, minimum: 1 }
+      responses:
+        '200':
+          description: >-
+            Upstream status. When up to date only `version`, `source`,
+            `upstream_commit` and `up_to_date` are present.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AgentSkillUpstream' }
+        '400':
+          description: '`version` is not a version number.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403':
+          description: Not an admin.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '404':
+          description: Unknown skill or version.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+        '422':
+          description: The version was not imported from GitHub (`no_upstream`).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+        '502':
+          description: GitHub could not be read (`fetch_failed`).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+  /v1/managed/schedules:
+    get:
+      operationId: listSchedules
+      summary: List scheduled runs
+      description: >-
+        Users see their own schedules; admins see every schedule and may
+        filter by `owner`. Requires a user session (API keys get 403).
+        Registered only when `LIBRA_OS_SCHEDULES_ENABLED` is on and PostgreSQL
+        is configured; otherwise the route answers 404.
+      tags: [Schedules]
+      parameters:
+        - name: owner
+          in: query
+          description: Admin only — restrict to this owner user id. Ignored for non-admins.
+          schema: { type: string }
+      responses:
+        '200':
+          description: Schedules, newest first. Not paginated.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ScheduleList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403':
+          description: Called with an API key instead of a user session.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+    post:
+      operationId: createSchedule
+      summary: Create a scheduled run
+      description: >-
+        Runs `prompt` against `agent` on a cron expression or fixed interval,
+        as the caller, through the async job path, and appends each finished
+        answer to the `deliver_to` conversation. The interval must not be
+        below the deployment minimum (`LIBRA_OS_SCHEDULES_MIN_INTERVAL`,
+        default 15m). A schedule is auto-paused (`last_status:
+        paused_failures`) after `LIBRA_OS_SCHEDULES_MAX_FAILURES` (default 3)
+        consecutive failed runs. Requires a user session (API keys get 403).
+      tags: [Schedules]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ScheduleWrite' }
+      responses:
+        '201':
+          description: The created schedule.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Schedule' }
+        '400':
+          description: >-
+            Invalid body: missing `agent`/`prompt`/`deliver_to`, not exactly
+            one of `cron`/`every`, bad cron or time zone, interval below the
+            minimum, or an agent that cannot run as a job.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403':
+          description: API-key caller, or the agent is not available to the calling app.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '404':
+          description: Unknown agent, or a `deliver_to.conversation_id` the caller does not own.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '409':
+          description: The caller already has the maximum number of schedules (`LIBRA_OS_SCHEDULES_MAX_PER_USER`, default 20).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ScheduleLimitError' }
+  /v1/managed/schedules/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string }
+    get:
+      operationId: getSchedule
+      summary: Fetch a scheduled run
+      description: Owner or admin. Another user's schedule reads as 404.
+      tags: [Schedules]
+      responses:
+        '200':
+          description: The schedule.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Schedule' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403':
+          description: Called with an API key instead of a user session.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '404':
+          description: Unknown schedule, or not the caller's.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+    patch:
+      operationId: updateSchedule
+      summary: Update a scheduled run
+      description: >-
+        Owner or admin. Every field is optional; the merged schedule is
+        validated as on create. Pause with `{"enabled": false}`; re-enabling
+        resets the failure count. `next_run_at` is recomputed when the timing
+        changes or the schedule is re-enabled.
+      tags: [Schedules]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ScheduleWrite' }
+      responses:
+        '200':
+          description: The updated schedule.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Schedule' }
+        '400':
+          description: Invalid body or merged schedule.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403':
+          description: API-key caller, or the agent is not available to the calling app.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '404':
+          description: Unknown schedule (or not the caller's), unknown agent, or unknown conversation.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+    delete:
+      operationId: deleteSchedule
+      summary: Delete a scheduled run
+      description: Owner or admin.
+      tags: [Schedules]
+      responses:
+        '204':
+          description: Deleted.
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403':
+          description: Called with an API key instead of a user session.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '404':
+          description: Unknown schedule, or not the caller's.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+  /v1/decision/{name}:
+    parameters:
+      - name: name
+        in: path
+        required: true
+        description: Model name, kebab-case, at most 64 characters.
+        schema: { type: string, pattern: '^[a-z0-9]+(-[a-z0-9]+)*$', maxLength: 64 }
+    get:
+      operationId: getDecisionModel
+      summary: List a decision probe's versions
+      description: >-
+        Named, calibrated text classifiers a client can consult before falling
+        back to its own model: trust a prediction whose confidence clears the
+        version's gate, send the rest to the fallback. Admin, or a
+        connector-role service client. Registered only when
+        `LIBRA_OS_DECISION_API_ENABLED` is on and PostgreSQL is configured;
+        otherwise the routes answer 404.
+      tags: [Decision]
+      responses:
+        '200':
+          description: The model's versions with their evaluation reports.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DecisionModel' }
+        '400':
+          description: '`invalid_name`: names are kebab-case, at most 64 characters.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403':
+          description: '`admin_required`.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '404':
+          description: '`decision_model_not_found`: no versions under this name.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+  /v1/decision/{name}/train:
+    parameters:
+      - name: name
+        in: path
+        required: true
+        description: Model name, kebab-case, at most 64 characters.
+        schema: { type: string, pattern: '^[a-z0-9]+(-[a-z0-9]+)*$', maxLength: 64 }
+    post:
+      operationId: trainDecisionModel
+      summary: Train a candidate version
+      description: >-
+        Fits a calibrated classifier (70/15/15 train/calibrate/test split) and
+        stores it as a **candidate**; training never activates a version. A
+        `Content-Type` starting with `application/json` reads
+        `{rows, gate}`; any other content type reads JSONL, one
+        `{"text","label"}` object per line. Limits: 16 MB body, 100,000 rows,
+        2-32 labels, enough rows for 20 calibration and 20 test examples.
+        Training rows are not stored. One training run per server instance
+        at a time. Admin, or a connector-role service client.
+      tags: [Decision]
+      parameters:
+        - name: gate
+          in: query
+          description: Confidence gate in (1/labels, 1]. Default 0.7; a non-zero `gate` in a JSON body wins.
+          schema: { type: number }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/DecisionTrainRequest' }
+          application/x-ndjson:
+            schema:
+              type: string
+              description: One `{"text","label"}` JSON object per line.
+      responses:
+        '201':
+          description: 'The new candidate version (`active: false`).'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DecisionVersion' }
+        '400':
+          description: >-
+            `invalid_name`, `invalid_request` (bad gate, malformed rows, empty
+            text or label, over 100,000 rows) or `cannot_train` (too few
+            labels or examples, too many labels, gate out of range).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403':
+          description: '`admin_required`.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '413':
+          description: Body larger than 16 MB.
+        '422':
+          description: >-
+            The model's above-gate accuracy (95% lower bound) does not beat
+            the majority-class share; nothing was written.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DecisionNotBetterError' }
+        '429':
+          description: '`training_busy`: another training run is in progress on this instance.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+  /v1/decision/{name}/activate:
+    parameters:
+      - name: name
+        in: path
+        required: true
+        description: Model name, kebab-case, at most 64 characters.
+        schema: { type: string, pattern: '^[a-z0-9]+(-[a-z0-9]+)*$', maxLength: 64 }
+    post:
+      operationId: activateDecisionModel
+      summary: Activate a version (also rollback)
+      description: >-
+        Makes `version` the active one. Admin, or a connector-role service
+        client. Other replicas pick up the change within 15 seconds.
+      tags: [Decision]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/DecisionActivateRequest' }
+      responses:
+        '200':
+          description: The now-active version.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DecisionActivateResult' }
+        '400':
+          description: '`invalid_name`, or `invalid_request` (missing or non-positive `version`).'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403':
+          description: '`admin_required`.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '404':
+          description: '`decision_model_not_found`.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+  /v1/decision/{name}/predict:
+    parameters:
+      - name: name
+        in: path
+        required: true
+        description: Model name, kebab-case, at most 64 characters.
+        schema: { type: string, pattern: '^[a-z0-9]+(-[a-z0-9]+)*$', maxLength: 64 }
+    post:
+      operationId: predictDecisionModel
+      summary: Classify texts
+      description: >-
+        Classifies up to 1000 texts with `version`, or the active version
+        when omitted. A 404 means "no usable model — use your fallback".
+        Admin, or a connector-role service client.
+      tags: [Decision]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/DecisionPredictRequest' }
+      responses:
+        '200':
+          description: One prediction per text, in order.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DecisionPredictResult' }
+        '400':
+          description: '`invalid_name`, or `invalid_request` (empty `texts`, more than 1000 texts, non-positive `version`).'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403':
+          description: '`admin_required`.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '404':
+          description: '`decision_model_not_found`: unknown version, or no active version.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '413':
+          description: Body larger than 16 MB.
+  /v1/managed/models/recommendations:
+    get:
+      operationId: getModelRecommendations
+      summary: Model recommendations for this deployment
+      description: >-
+        Matches the deployment's model catalog against the detected host
+        (hardware, inference and embedding paths). With no operator catalog
+        configured, the built-in public starter profiles are used and no
+        measured figures are returned. Any authenticated user; inference-scope
+        keys and connector-role service clients are refused. Results are
+        cached per task for 5 minutes.
+      tags: [Deployment]
+      parameters:
+        - name: task
+          in: query
+          description: Restrict to one catalog task. Unknown tasks are a 400.
+          schema: { type: string }
+        - name: hardware
+          in: query
+          description: Exact-match filter on `hardware`.
+          schema: { type: string }
+        - name: compatibility
+          in: query
+          description: Exact-match filter on `compatibility`.
+          schema:
+            type: string
+            enum: [validated_match, potentially_compatible, incompatible]
+      responses:
+        '200':
+          description: The match report.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ModelRecommendationReport' }
+        '400':
+          description: '`unknown_task`.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '401':
+          description: Not authenticated.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '403':
+          description: Inference-scope key or connector-role service client.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '503':
+          description: '`catalog_unavailable`: the configured catalog file cannot be read.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+  /v1/managed/models/recommendations.md:
+    get:
+      operationId: getModelRecommendationsMarkdown
+      summary: Model recommendations as Markdown
+      description: The same report as `GET /v1/managed/models/recommendations`, rendered as Markdown. Same access rules and query parameters.
+      tags: [Deployment]
+      parameters:
+        - name: task
+          in: query
+          schema: { type: string }
+        - name: hardware
+          in: query
+          schema: { type: string }
+        - name: compatibility
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: The report.
+          content:
+            text/markdown:
+              schema: { type: string }
+        '400':
+          description: '`unknown_task`.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '401':
+          description: Not authenticated.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '403':
+          description: Inference-scope key or connector-role service client.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '503':
+          description: '`catalog_unavailable`.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+  /v1/managed/models/recommendations/{profile_id}:
+    get:
+      operationId: getModelRecommendation
+      summary: One model recommendation
+      description: One result by its `cell_id`. Same access rules as the list.
+      tags: [Deployment]
+      parameters:
+        - name: profile_id
+          in: path
+          required: true
+          description: A result's `cell_id`.
+          schema: { type: string }
+      responses:
+        '200':
+          description: The result.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ModelRecommendationResult' }
+        '400':
+          description: '`bad_profile_id`.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '401':
+          description: Not authenticated.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '403':
+          description: Inference-scope key or connector-role service client.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '404':
+          description: '`unknown_profile`.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '503':
+          description: '`catalog_unavailable`.'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }

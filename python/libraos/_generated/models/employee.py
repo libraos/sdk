@@ -31,7 +31,7 @@ class Employee:
             per-employee → server default).
         web_search_config (WebSearchConfig | Unset): Persona-level web-search configuration. Resolved per-invocation on
             ``skill_deep_research`` via ``searchctx.WebSearchConfigFromContext``.
-            Field names changed in nova-os PR #212 (closes #200) — old
+            Field names changed in server PR #212 (closes #200) — old
             ``backend`` / ``fallback`` are no longer accepted.
         callback (CustomToolCallback | Unset):
         agents (list[str] | Unset): IDs of agents owned by this employee.

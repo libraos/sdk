@@ -13,9 +13,9 @@ bundle endpoints directly.
 Prerequisites::
 
     pip install libraos-sdk
-    export NOVA_OS_SRC_URL=https://nova-source.partner.com
-    export NOVA_OS_DST_URL=https://nova-dest.partner.com
-    export NOVA_OS_API_KEY=msk_live_...
+    export LIBRA_OS_SRC_URL=https://libraos-source.partner.com
+    export LIBRA_OS_DST_URL=https://libraos-dest.partner.com
+    export LIBRA_OS_API_KEY=msk_live_...
 
 Run::
 
@@ -33,10 +33,10 @@ from libraos import Client
 
 
 async def main() -> None:
-    api_key = os.environ["NOVA_OS_API_KEY"]
-    src_url = os.environ.get("NOVA_OS_SRC_URL", os.environ.get("NOVA_OS_URL", "https://nova.partner.com"))
-    dst_url = os.environ.get("NOVA_OS_DST_URL", os.environ.get("NOVA_OS_URL", "https://nova.partner.com"))
-    employee_id = os.environ.get("NOVA_OS_EMPLOYEE_ID", "frontdesk")
+    api_key = os.environ["LIBRA_OS_API_KEY"]
+    src_url = os.environ.get("LIBRA_OS_SRC_URL", os.environ.get("LIBRA_OS_URL", "https://libraos.partner.com"))
+    dst_url = os.environ.get("LIBRA_OS_DST_URL", os.environ.get("LIBRA_OS_URL", "https://libraos.partner.com"))
+    employee_id = os.environ.get("LIBRA_OS_EMPLOYEE_ID", "frontdesk")
 
     # --- Export ---
     async with Client(base_url=src_url, api_key=api_key) as src:
@@ -64,11 +64,10 @@ async def main() -> None:
         import_resp = await dst._http.post(
             "/v1/managed/employees/import",
             content=bundle_bytes,
-            headers={
-                "Content-Type": "application/zip",
-                # on_conflict=overwrite replaces an existing employee with the same ID.
-                "X-Nova-On-Conflict": "overwrite",
-            },
+            # on_conflict=overwrite replaces an existing employee with the same ID
+            # (also "skip"; the default "error" refuses).
+            params={"on_conflict": "overwrite"},
+            headers={"Content-Type": "application/zip"},
         )
         import_resp.raise_for_status()
         result = import_resp.json()

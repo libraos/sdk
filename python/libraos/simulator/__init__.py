@@ -15,7 +15,7 @@ Example::
     from libraos import Client, Archetype
 
     archetype = Archetype.from_yaml_path("./archetypes/my-customer.yaml")
-    c = Client(base_url="https://nova-eval.partner.com", api_key="…")
+    c = Client(base_url="https://libraos-eval.partner.com", api_key="…")
     result = c.simulate(target_agent_id="legal-assistant", archetype=archetype)
     print(result.outcome, result.outcome_reason)
 

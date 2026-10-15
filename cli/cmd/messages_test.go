@@ -37,8 +37,8 @@ func TestMessagesSend_PostsJSONBodyAndPrintsResponse(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	t.Setenv("NOVA_OS_URL", srv.URL)
-	t.Setenv("NOVA_OS_API_KEY", "test-key")
+	t.Setenv("LIBRA_OS_URL", srv.URL)
+	t.Setenv("LIBRA_OS_API_KEY", "test-key")
 	flagURL = ""
 	flagAPIKey = ""
 	msgEndUser = "tenant-42-user-7"
@@ -116,8 +116,8 @@ func TestMessagesStream_ReadsSSEFramesAndPrintsDataLines(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	t.Setenv("NOVA_OS_URL", srv.URL)
-	t.Setenv("NOVA_OS_API_KEY", "test-key")
+	t.Setenv("LIBRA_OS_URL", srv.URL)
+	t.Setenv("LIBRA_OS_API_KEY", "test-key")
 	flagURL = ""
 	flagAPIKey = ""
 	msgEndUser = ""
@@ -146,8 +146,8 @@ func TestMessagesStream_ReadsSSEFramesAndPrintsDataLines(t *testing.T) {
 }
 
 func TestMessagesSend_RejectsBadMetadataJSON(t *testing.T) {
-	t.Setenv("NOVA_OS_URL", "http://test.example")
-	t.Setenv("NOVA_OS_API_KEY", "k")
+	t.Setenv("LIBRA_OS_URL", "http://test.example")
+	t.Setenv("LIBRA_OS_API_KEY", "k")
 	flagURL = ""
 	flagAPIKey = ""
 	msgEndUser = ""

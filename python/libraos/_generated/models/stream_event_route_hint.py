@@ -19,7 +19,7 @@ T = TypeVar("T", bound="StreamEventRouteHint")
 
 @_attrs_define
 class StreamEventRouteHint:
-    """Nova OS extension (v0.1.5+) — emitted exactly once per terminal
+    """LibraOS extension (v0.1.5+) — emitted exactly once per terminal
     message right before `done`. Carries Brain's dispatch decision so
     partner UIs can react before the full reply is rendered.
 

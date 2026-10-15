@@ -66,12 +66,12 @@ def sync_detailed(
     client: AuthenticatedClient | Client,
     body: SessionCreate,
 ) -> Response[Error | Session]:
-    """Create a Nova OS native session
+    """Create a LibraOS native session
 
      Native partner-prefix session create. Shares the SessionStore
-    with the Anthropic-compat /v1/sessions surface — state is
-    consistent across the two mounts. No `anthropic-beta` header
-    gate; partner-friendly response shape.
+    with the /v1/sessions surface — state is consistent across the
+    two mounts. No managed-agents beta header required;
+    partner-friendly response shape.
 
     Args:
         body (SessionCreate):
@@ -100,12 +100,12 @@ def sync(
     client: AuthenticatedClient | Client,
     body: SessionCreate,
 ) -> Error | Session | None:
-    """Create a Nova OS native session
+    """Create a LibraOS native session
 
      Native partner-prefix session create. Shares the SessionStore
-    with the Anthropic-compat /v1/sessions surface — state is
-    consistent across the two mounts. No `anthropic-beta` header
-    gate; partner-friendly response shape.
+    with the /v1/sessions surface — state is consistent across the
+    two mounts. No managed-agents beta header required;
+    partner-friendly response shape.
 
     Args:
         body (SessionCreate):
@@ -129,12 +129,12 @@ async def asyncio_detailed(
     client: AuthenticatedClient | Client,
     body: SessionCreate,
 ) -> Response[Error | Session]:
-    """Create a Nova OS native session
+    """Create a LibraOS native session
 
      Native partner-prefix session create. Shares the SessionStore
-    with the Anthropic-compat /v1/sessions surface — state is
-    consistent across the two mounts. No `anthropic-beta` header
-    gate; partner-friendly response shape.
+    with the /v1/sessions surface — state is consistent across the
+    two mounts. No managed-agents beta header required;
+    partner-friendly response shape.
 
     Args:
         body (SessionCreate):
@@ -161,12 +161,12 @@ async def asyncio(
     client: AuthenticatedClient | Client,
     body: SessionCreate,
 ) -> Error | Session | None:
-    """Create a Nova OS native session
+    """Create a LibraOS native session
 
      Native partner-prefix session create. Shares the SessionStore
-    with the Anthropic-compat /v1/sessions surface — state is
-    consistent across the two mounts. No `anthropic-beta` header
-    gate; partner-friendly response shape.
+    with the /v1/sessions surface — state is consistent across the
+    two mounts. No managed-agents beta header required;
+    partner-friendly response shape.
 
     Args:
         body (SessionCreate):

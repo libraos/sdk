@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { LibraOSClient } from "./client";
-import { NovaApiError } from "./errors";
+import { LibraOSApiError } from "./errors";
 
 const auth = { getAccessToken: async () => "tok" };
 const mk = (b: unknown, s = 200) => new Response(JSON.stringify(b), { status: s, headers: { "content-type": "application/json" } });
@@ -88,16 +88,16 @@ describe("pending actions", () => {
   it("surfaces the 503 error code so UIs can branch (pending_actions_disabled)", async () => {
     const fetchMock = vi.fn(async () => mk({ error: "pending_actions_disabled", message: "disabled" }, 503));
     const client = new LibraOSClient({ baseUrl: "http://x", auth, fetch: fetchMock as unknown as typeof fetch });
-    const err = await client.listPendingActions().catch((e) => e as NovaApiError);
-    expect(err).toBeInstanceOf(NovaApiError);
-    expect((err as NovaApiError).status).toBe(503);
-    expect(((err as NovaApiError).body as { error?: string })?.error).toBe("pending_actions_disabled");
+    const err = await client.listPendingActions().catch((e) => e as LibraOSApiError);
+    expect(err).toBeInstanceOf(LibraOSApiError);
+    expect((err as LibraOSApiError).status).toBe(503);
+    expect(((err as LibraOSApiError).body as { error?: string })?.error).toBe("pending_actions_disabled");
   });
 
   it("surfaces 409 already_decided on approve races", async () => {
     const fetchMock = vi.fn(async () => mk({ error: "already_decided", status: "rejected" }, 409));
     const client = new LibraOSClient({ baseUrl: "http://x", auth, fetch: fetchMock as unknown as typeof fetch });
-    const err = await client.approvePendingAction("pa_1").catch((e) => e as NovaApiError);
-    expect((err as NovaApiError).status).toBe(409);
+    const err = await client.approvePendingAction("pa_1").catch((e) => e as LibraOSApiError);
+    expect((err as LibraOSApiError).status).toBe(409);
   });
 });

@@ -2,7 +2,7 @@
 
 Python reference SDK for **LibraOS** — the agentic operating system that lets you build vertical AI products on a multi-model, multi-tenant runtime.
 
-Published to PyPI as `libraos-sdk`. Status: **v1.2.0** — stable; the public API has been frozen since `v1.0.0`.
+Published to PyPI as `libraos-sdk`. Status: **v2.0.0** — stable; see the [changelog](CHANGELOG.md) for the 2.0 breaking changes.
 
 - [Source](https://github.com/libraos/sdk) · [Issues](https://github.com/libraos/sdk/issues) · [Changelog](https://github.com/libraos/sdk/blob/main/python/CHANGELOG.md) · [Docs](https://libraos.com/docs/)
 
@@ -10,37 +10,29 @@ Published to PyPI as `libraos-sdk`. Status: **v1.2.0** — stable; the public AP
 
 ```bash
 pip install libraos-sdk
-# Optional — for Anthropic SDK drop-in compatibility
-pip install anthropic
 ```
 
 ## Usage
 
 ```python
-from libraos import Client, AnthropicCompatClient, WebhookRouter
+from libraos import Client, WebhookRouter
 
 # LibraOS extended client (multi-model, employees, bundles, async jobs, ...)
-async with Client(base_url="https://nova.partner.com", api_key="...") as c:
+async with Client(base_url="https://libraos.partner.com", api_key="...") as c:
     agents = [a async for a in c.agents.list()]
     msg = await c.messages.create(
         agent_id="...",
         messages=[{"role": "user", "content": "hi"}],
+        model="Qwen/Qwen3.6-35B-A3B",
+        max_tokens=256,
     )
-
-# Drop-in Anthropic SDK compat — partners using the Anthropic SDK
-# can switch base_url and ship without any other code changes.
-client = AnthropicCompatClient(base_url="https://nova.partner.com", api_key="...")
-msg = client.messages.create(
-    model="Qwen/Qwen3.6-35B-A3B",
-    messages=[{"role": "user", "content": "hello"}],
-    max_tokens=256,
-)
+    print(msg.text)
 
 # Mode B custom-tool webhook router (FastAPI mount shown; Flask/Lambda also supported)
 router = WebhookRouter(secret="...")
 @router.tool("fetch_invoice")
 async def fetch_invoice(input, ctx): ...
-app.include_router(router.fastapi_router(), prefix="/nova/cb")
+app.include_router(router.fastapi_router(), prefix="/libraos/cb")
 ```
 
 See [`python/examples/`](https://github.com/libraos/sdk/tree/main/python/examples) on GitHub for 20 worked examples covering every public surface, and
@@ -58,7 +50,7 @@ withholds information?"
 ```python
 from libraos import Client
 
-client = Client(base_url="https://nova-eval.partner.com", api_key="...")
+client = Client(base_url="https://libraos-eval.partner.com", api_key="...")
 
 result = client.simulate(
     target_agent_id="intake-bot",
@@ -154,8 +146,6 @@ This applies to:
 - `model_config.{answer,planner,skill}.primary` in agent + employee YAML
 - The `model:` field in agent markdown frontmatter
 
-**For partners using the Anthropic SDK directly:** the SDK's natural default (`claude-opus-4-7` without prefix) won't resolve through the gateway. Either pin to a gateway-safe prefixed model in your config (for example, `ANTHROPIC_HIGH_MODEL=Qwen/Qwen3.6-35B-A3B`) or add a translation layer that prefixes bare Anthropic model names with `anthropic/` when routing through LibraOS.
-
 The `agent_inference_model` and `ollama_embed_model` settings are exempt — they route to a local Ollama and use `<tag>:<version>` shape (e.g. `gemma4:e4b`).
 
 To list all registered models (catalog discovery):
@@ -163,7 +153,7 @@ To list all registered models (catalog discovery):
 ```python
 # Direct gateway query, requires a gateway-scoped key
 import httpx
-r = httpx.get("https://nova.partner.com/v1/models", headers={"Authorization": f"Bearer {api_key}"})
+r = httpx.get("https://libraos.partner.com/v1/models", headers={"Authorization": f"Bearer {api_key}"})
 print([m["id"] for m in r.json()["data"]])
 ```
 
@@ -184,7 +174,7 @@ Tracking [`libraos/sdk#10`](https://github.com/libraos/sdk/issues/10) for v1.1 �
 
 ```python
 from libraos import (
-    NovaOSError,
+    LibraOSError,
     NotFoundError,
     RateLimitedError,
     BillingError,
@@ -305,7 +295,7 @@ async def fetch_invoice(input: dict, ctx: dict) -> str:
 from fastapi import FastAPI
 
 app = FastAPI()
-app.include_router(router.fastapi_router(), prefix="/nova/callbacks")
+app.include_router(router.fastapi_router(), prefix="/libraos/callbacks")
 ```
 
 **Flask mount:**
@@ -314,7 +304,7 @@ app.include_router(router.fastapi_router(), prefix="/nova/callbacks")
 from flask import Flask
 
 app = Flask(__name__)
-app.register_blueprint(router.flask_blueprint(), url_prefix="/nova/callbacks")
+app.register_blueprint(router.flask_blueprint(), url_prefix="/libraos/callbacks")
 ```
 
 **AWS Lambda mount:**

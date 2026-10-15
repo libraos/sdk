@@ -131,7 +131,7 @@ class WebhookRouter:
 
         return build_router(self)
 
-    def flask_blueprint(self, name: str = "nova_callbacks"):  # type: ignore[no-untyped-def]
+    def flask_blueprint(self, name: str = "libraos_callbacks"):  # type: ignore[no-untyped-def]
         from libraos.integrations.flask import build_blueprint
 
         return build_blueprint(self, name)

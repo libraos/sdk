@@ -23,8 +23,8 @@ describe("createLayoutStore", () => {
     expect(s.readDockWidth()).toBe(400);
   });
   it("reads legacy keys when the new key is absent, but always writes the new key", () => {
-    const st = mem({ "novadesk.copilot.collapsed": "1", "novadesk.copilot.width": "333" });
-    const s = createLayoutStore({ namespace: "desk", storage: st, legacy: { dockCollapsed: ["novadesk.copilot.collapsed"], dockWidth: ["novadesk.copilot.width"] } });
+    const st = mem({ "legacydesk.copilot.collapsed": "1", "legacydesk.copilot.width": "333" });
+    const s = createLayoutStore({ namespace: "desk", storage: st, legacy: { dockCollapsed: ["legacydesk.copilot.collapsed"], dockWidth: ["legacydesk.copilot.width"] } });
     expect(s.readDockCollapsed()).toBe(true);
     expect(s.readDockWidth()).toBe(333);
     s.writeDockCollapsed(false);

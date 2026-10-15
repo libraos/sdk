@@ -12,7 +12,7 @@ verifies:
   or a notebook without having to re-stitch the entrypoint.
 
 We deliberately do NOT execute ``main()`` — it makes live HTTP calls
-against an evaluation ``nova-os`` instance that the test environment is
+against an evaluation LibraOS instance that the test environment is
 not expected to bring up. The point of this test is to catch
 public-surface drift (e.g. someone renaming
 ``libraos.simulator.SimulationResult``) at the unit-test gate rather

@@ -45,8 +45,8 @@ agent = define_agent(
 ## Deploy + run
 
 ```bash
-export LIBRAOS_BASE_URL=https://your-libraos.example.com
-export LIBRAOS_API_KEY=…
+export LIBRA_OS_URL=https://your-libraos.example.com
+export LIBRA_OS_API_KEY=…
 
 adk deploy agent.py                          # upserts the agent on /v1/agents
 adk run refund-copilot "refund order 8842"   # runs on the stack, streaming events
@@ -58,7 +58,7 @@ adk run refund-copilot "refund order 8842"   # runs on the stack, streaming even
 from libraos_adk import LibraAdk
 from agent import agent
 
-adk = LibraAdk()                              # reads LIBRAOS_BASE_URL / LIBRAOS_API_KEY
+adk = LibraAdk()                              # reads LIBRA_OS_URL / LIBRA_OS_API_KEY
 adk.deploy(agent)
 adk.run("refund-copilot", "refund order 8842", on_event=lambda e: print(e.get("type"), e))
 ```
@@ -79,5 +79,5 @@ side-effecting tools, and append-only audit trails.
 ## Roadmap
 
 - **v1 (now):** authoring + deploy + run over the jobs surface; webhook tools; full governance.
-- **v2:** session-based runs + live streaming + in-process tools (Anthropic-Managed-Agents wire-compatible).
+- **v2:** session-based runs + live streaming + in-process tools.
 - **v3:** agent versioning/pinning, MCP client, scheduled deployments.

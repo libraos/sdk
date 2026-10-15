@@ -96,7 +96,7 @@ def simulate(
         rotation is a v2 feature.
     target_model:
         Optional gateway model string (``<provider>/<name>``) to use
-        on the target side. /v1/messages is Anthropic-spec and requires
+        on the target side. /v1/messages requires
         ``model`` on every request — the kernel does not fall through
         to the target agent's baked model. When ``None``, the SDK
         auto-discovers via one ``client.agents.get(target_agent_id)``
@@ -195,7 +195,7 @@ async def async_simulate(
     # parameter (skips the round-trip — useful in tests with mocked HTTP and
     # in production deployments where the partner already knows the target's
     # model). When None, fetch via one ``client.agents.get`` round-trip.
-    # Required because /v1/messages is Anthropic-spec and demands ``model``
+    # Required because /v1/messages demands ``model``
     # on every request — kernel doesn't fall through to baked agent model.
     effective_target_model = (
         target_model
@@ -282,7 +282,7 @@ def _new_session_id() -> str:
 async def _fetch_target_model(client: "Client", target_agent_id: str) -> str:
     """Fetch the target agent's baked ``model`` field.
 
-    /v1/messages is Anthropic-spec and requires ``model`` on every request —
+    /v1/messages requires ``model`` on every request —
     the kernel does NOT fall through to the agent's baked model on that
     endpoint. We fetch it once here so the loop can supply it on each call.
     Raises :class:`AuthenticationError` on 401 and :class:`NotFoundError`

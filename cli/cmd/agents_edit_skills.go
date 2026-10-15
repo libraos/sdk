@@ -1,4 +1,4 @@
-// Skill autocomplete + validation for `nova-os-cli agents edit`
+// Skill autocomplete + validation for `libraos-cli agents edit`
 // (slice 3 of libraos-sdk#18).
 //
 // `GET /api/skills` returns the skills available on the running
@@ -29,7 +29,7 @@ import (
 	"strings"
 )
 
-// fetchSkills calls GET /api/skills on the partner-prefix nova-os
+// fetchSkills calls GET /api/skills on the partner-prefix LibraOS
 // endpoint and returns the sorted list of skill names. Non-200
 // responses return (nil, error) — the caller decides whether to
 // fail-soft (interactive mode does; scriptable mode reports the

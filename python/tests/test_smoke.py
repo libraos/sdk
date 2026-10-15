@@ -33,7 +33,7 @@ def test_client_and_errors_reexported() -> None:
     import libraos
 
     assert hasattr(libraos, "Client")
-    assert hasattr(libraos, "NovaOSError")
+    assert hasattr(libraos, "LibraOSError")
     assert hasattr(libraos, "VertexSchemaError")
     assert hasattr(libraos, "RateLimitedError")
     assert hasattr(libraos, "BillingError")

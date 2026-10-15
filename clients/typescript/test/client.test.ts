@@ -43,7 +43,7 @@ describe("LibraOSClient", () => {
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
-  it("throws a typed NovaApiError on non-2xx", async () => {
+  it("throws a typed LibraOSApiError on non-2xx", async () => {
     const fetchMock = vi.fn(async () =>
       jsonResponse(404, { type: "not_found_error", message: "no such job" }),
     );

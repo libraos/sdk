@@ -24,7 +24,7 @@ class Client:
     """Public LibraOS SDK client.
 
     Args:
-        base_url: LibraOS server URL (e.g. https://nova.partner.com).
+        base_url: LibraOS server URL (e.g. https://libraos.partner.com).
         api_key: HS256 JWT bearer (partner-self-hosted) or msk_live_... (cloud).
         timeout: Per-request timeout in seconds. Default 30.
         transport: Optional httpx.AsyncBaseTransport — useful for tests.

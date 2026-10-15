@@ -128,19 +128,17 @@ LibraOS POSTs a signed JSON payload to a partner-registered URL whenever the age
 ### Webhook payload
 
 ```json
-POST https://partner.example.com/nova/cb/tools/fetch_invoice
+POST https://partner.example.com/libraos/cb/tools/fetch_invoice
 
 Headers:
   Content-Type: application/json
   X-Nova-Signature: t=1714867200,v1=<hex(hmac_sha256(secret, ts + "." + tool_use_id + "." + body))>
-  X-Nova-Tool-Use-Id: toolu_abc123
-  X-Nova-Agent-Id: invoice-bot
-  X-Nova-Employee-Id: legal-team
+  X-Nova-Idempotency-Key: toolu_abc123
 
 Body:
 {
   "tool_use_id": "toolu_abc123",
-  "tool": "fetch_invoice",
+  "name": "fetch_invoice",
   "input": {"invoice_id": "INV-2026-042"},
   "agent_id": "invoice-bot",
   "employee_id": "legal-team",
@@ -171,7 +169,7 @@ import os
 from fastapi import FastAPI
 from libraos.callbacks import WebhookRouter
 
-router = WebhookRouter(secret=os.environ["NOVA_CB_SECRET"])
+router = WebhookRouter(secret=os.environ["LIBRA_OS_CB_SECRET"])
 
 
 @router.tool("fetch_invoice")
@@ -189,7 +187,7 @@ async def check_eligibility(input: dict, ctx: dict) -> dict:
 
 
 app = FastAPI()
-app.include_router(router.fastapi_router(), prefix="/nova/cb")
+app.include_router(router.fastapi_router(), prefix="/libraos/cb")
 ```
 
 `WebhookRouter` handles:
@@ -229,7 +227,7 @@ Or manually (DIY router):
 ```python
 seen_ids = set()
 async def handle(req):
-    tool_use_id = req.headers["X-Nova-Tool-Use-Id"]
+    tool_use_id = req.headers["X-Nova-Idempotency-Key"]  # the tool_use_id
     if tool_use_id in seen_ids:
         return {"output": cached_result_for(tool_use_id), "is_error": False}
     seen_ids.add(tool_use_id)
@@ -240,12 +238,12 @@ In production, use Redis / your DB / a TTL cache — in-process sets don't survi
 
 ### Smoke test
 
-Forge a Nova-OS-shaped signed POST to your handler before exposing it to live traffic:
+Forge a LibraOS-shaped signed POST to your handler before exposing it to live traffic:
 
 ```bash
-export NOVA_CB_SECRET=your-shared-hmac-secret
-nova-os-cli test-callback \
-  --target https://partner.example.com/nova/cb \
+export LIBRA_OS_CB_SECRET=your-shared-hmac-secret
+libraos-cli test-callback \
+  --target https://partner.example.com/libraos/cb \
   --tool fetch_invoice \
   --input '{"invoice_id":"INV-9912"}'
 ```
@@ -274,7 +272,7 @@ await c.agents.create(
             # Mode B: register a callback URL.
             # Omit `callback` to use Mode A (SSE inline).
             "callback": {
-                "url": "https://partner.example.com/nova/cb/tools/fetch_invoice",
+                "url": "https://partner.example.com/libraos/cb/tools/fetch_invoice",
                 "auth": {"type": "hmac_sha256", "secret_ref": "partner_webhook_secret"},
                 "timeout_sec": 30,
                 "retry": {"max_attempts": 3, "backoff": "exponential"},
@@ -301,7 +299,7 @@ If you declare `type: array` in the schema **without** `items`, LibraOS validati
 "input_schema": {"type": "object", "properties": {"ids": {"type": "array", "items": {}}}}
 ```
 
-The CLI's `nova-os-cli validate ./data/` runs this rule offline, before deploy.
+The CLI's `libraos-cli validate ./data/` runs this rule offline, before deploy.
 
 ## Picking between Mode A and Mode B
 
@@ -342,7 +340,6 @@ Configure per-tool via the `retry` block on the callback:
 
 ## See also
 
-- [`anthropic-compat.md`](anthropic-compat.md) — how custom tools surface in the Anthropic SDK
 - [`getting-started.md`](getting-started.md) — front-door + scenario matrix
 - [`python/examples/04_custom_tool_inline.py`](../python/examples/04_custom_tool_inline.py) — Mode A worked example
 - [`python/examples/05_custom_tool_webhook.py`](../python/examples/05_custom_tool_webhook.py) — Mode B worked example

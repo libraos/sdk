@@ -23,12 +23,12 @@ jobs:
   spec-check:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout nova-os-sdk
+      - name: Checkout libraos/sdk
         uses: actions/checkout@v4
         with:
-          repository: MeganovaAI/nova-os-sdk
+          repository: libraos/sdk
           ref: main
-          path: nova-os-sdk
+          path: sdk
 
       - name: Checkout caller repo
         uses: actions/checkout@v4
@@ -54,7 +54,7 @@ jobs:
           import sys
           import yaml
 
-          spec_path = "nova-os-sdk/openapi/libra-os-partner.v1.yaml"
+          spec_path = "sdk/openapi/libra-os-partner.v1.yaml"
           route_index_path = f"caller/{os.environ['ROUTE_INDEX']}"
 
           with open(spec_path) as f:
@@ -101,10 +101,10 @@ jobs:
 
       - name: Compare OpenAPI hash with caller-pinned hash
         run: |
-          actual=$(sha256sum nova-os-sdk/openapi/libra-os-partner.v1.yaml | cut -c1-12)
-          committed=$(cat nova-os-sdk/openapi/openapi-hash.txt)
+          actual=$(sha256sum sdk/openapi/libra-os-partner.v1.yaml | cut -c1-12)
+          committed=$(cat sdk/openapi/openapi-hash.txt)
           if [ "$actual" != "$committed" ]; then
-            echo "::error::nova-os-sdk@main has unsynced spec hash (committed=$committed actual=$actual). Open a PR on nova-os-sdk."
+            echo "::error::libraos/sdk@main has unsynced spec hash (committed=$committed actual=$actual). Open a PR on libraos/sdk."
             exit 1
           fi
           if [ -f caller/docs/openapi-pinned-hash.txt ]; then

@@ -2,7 +2,7 @@
 
 Demonstrates the partner-side document lifecycle on LibraOS:
 
-1. Upload a file (multipart). Super Nova auto-indexes it into the
+1. Upload a file (multipart). LibraOS auto-indexes it into the
    document engine on receipt — partners don't trigger indexing
    separately.
 2. List documents in the target collection to see the new one.
@@ -15,8 +15,8 @@ tools, delete on tenant offboarding.
 Prerequisites::
 
     pip install libraos-sdk
-    export NOVA_OS_URL=https://nova.your-company.example
-    export NOVA_OS_API_KEY=msk_live_...
+    export LIBRA_OS_URL=https://libraos.your-company.example
+    export LIBRA_OS_API_KEY=msk_live_...
 
 Run::
 
@@ -41,8 +41,8 @@ SAMPLE_CONTENT = b"""# Acme Onboarding Checklist
 
 
 async def main() -> None:
-    base_url = os.environ.get("NOVA_OS_URL", "https://nova.your-company.example")
-    api_key = os.environ["NOVA_OS_API_KEY"]
+    base_url = os.environ.get("LIBRA_OS_URL", "https://libraos.your-company.example")
+    api_key = os.environ["LIBRA_OS_API_KEY"]
 
     async with Client(base_url=base_url, api_key=api_key) as c:
         # 1. Upload. ``content`` accepts raw bytes or any binary file-like

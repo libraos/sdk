@@ -2,7 +2,7 @@
 
 Boot-time persona discovery — partners cache the manifest by
 ``manifest_version`` and use ``If-None-Match`` to skip the body when
-unchanged. Stops partners from mirroring nova-os YAML in their own
+unchanged. Stops partners from mirroring LibraOS server YAML in their own
 code: every persona's resolved triage mode + emitted route-hint kinds
 + route-template names are exposed in one envelope.
 

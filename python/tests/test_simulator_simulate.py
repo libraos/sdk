@@ -77,7 +77,7 @@ def _make_handler(
     Parameters
     ----------
     harness_present:
-        Whether ``GET /v1/agents/nova-os-simulator-harness`` returns
+        Whether ``GET /v1/agents/libraos-simulator-harness`` returns
         200 (PRIMARY) or 404 (FALLBACK).
     simulator_replies:
         Sequenced list of simulator response texts.

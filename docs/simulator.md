@@ -18,15 +18,15 @@ behaves correctly under realistic information asymmetry.
 
 ## Quickstart
 
-### 1. Spin up an evaluation `nova-os` instance
+### 1. Spin up an evaluation LibraOS instance
 
 Keep evaluation traffic OFF your production database, gateway key, and
-audit log. Use the [nova-os-stack](https://github.com/MeganovaAI/nova-os-stack)
+audit log. Use the [libraos/stack](https://github.com/libraos/stack)
 `docker-compose.eval.yaml` template:
 
 ```bash
-git clone https://github.com/MeganovaAI/nova-os-stack
-cd nova-os-stack
+git clone https://github.com/libraos/stack
+cd stack
 cp .env.eval.example .env.eval
 # edit .env.eval — set EVAL_PG_PASSWORD, EVAL_JWT_SECRET, EVAL_ADMIN_PASSWORD,
 # EVAL_OPENAI_API_KEY (recommend a low-limit prepaid key for safety)
@@ -80,8 +80,8 @@ that loads all three reference archetypes, runs them streaming, and writes
 per-archetype JSON transcripts.
 
 ```bash
-export EVAL_NOVA_BASE_URL=http://localhost:8901
-export EVAL_NOVA_API_KEY=<eval-jwt>
+export EVAL_LIBRA_OS_URL=http://localhost:8901
+export EVAL_LIBRA_OS_API_KEY=<eval-jwt>
 export EVAL_TARGET_AGENT_ID=default
 python examples/simulator/run_eval.py
 ```
@@ -407,9 +407,9 @@ termination in exactly this order:
 
 The first match wins.
 
-## Two-instance pattern: why a separate `nova-os`
+## Two-instance pattern: why a separate LibraOS
 
-Running `simulate()` against your PRODUCTION nova-os instance pollutes:
+Running `simulate()` against your PRODUCTION LibraOS instance pollutes:
 
 - **`call_log`** — evaluation traffic shows up alongside real customer calls
 - **`persist_fields`** — slot state is written/updated for synthetic conversations
@@ -420,11 +420,11 @@ Running `simulate()` against your PRODUCTION nova-os instance pollutes:
 - **Audit log** — synthetic activity is preserved in your audit trail
 - **Observation memory** — eval conversations may accumulate in observed memory
 
-A second `nova-os` instance with its own PG database, gateway key, and
+A second LibraOS instance with its own PG database, gateway key, and
 data volume cleanly segregates all of this — at the cost of one extra
 process (~57 MB binary, smallest VM tier on any major cloud).
 
-See [nova-os-stack/docker-compose.eval.yaml](https://github.com/MeganovaAI/nova-os-stack/blob/main/docker-compose.eval.yaml)
+See [stack/docker-compose.eval.yaml](https://github.com/libraos/stack/blob/main/docker-compose.eval.yaml)
 for the template.
 
 ## Tradeoffs vs single-turn rubric evaluation
@@ -471,7 +471,7 @@ The eval instance isn't reachable at the configured `base_url`. Check:
 
 - Is `docker-compose -f docker-compose.eval.yaml up -d` running?
 - Does `curl http://<eval-base-url>/health` succeed?
-- Is `EVAL_NOVA_API_KEY` set and valid for the eval instance (not production)?
+- Is `EVAL_LIBRA_OS_API_KEY` set and valid for the eval instance (not production)?
 
 ### `outcome="error"` with `outcome_reason="target_agent_error: HTTP 404"`
 
@@ -513,7 +513,7 @@ when every *required* criterion passes).
 from libraos import Client, RubricCase
 
 case = RubricCase.from_yaml_path("examples/rubrics/legal-vendor-msa-review.yaml")
-c = Client(base_url="https://nova-eval.partner.com", api_key="…", timeout=280)
+c = Client(base_url="https://libraos-eval.partner.com", api_key="…", timeout=280)
 
 result = c.evaluate(target_agent_id="legal-assistant", case=case)
 print(result.task_passed)   # False — a required criterion missed

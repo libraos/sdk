@@ -5,9 +5,8 @@ See https://github.com/libraos/sdk for documentation.
 
 from libraos._version import __version__, OPENAPI_VERSION
 from libraos.client import Client
-from libraos.anthropic_compat import AnthropicCompatClient
 from libraos.errors import (
-    NovaOSError,
+    LibraOSError,
     AuthenticationError,
     PermissionError,
     NotFoundError,
@@ -45,8 +44,7 @@ __all__ = [
     "__version__",
     "OPENAPI_VERSION",
     "Client",
-    "AnthropicCompatClient",
-    "NovaOSError",
+    "LibraOSError",
     "AuthenticationError",
     "PermissionError",
     "NotFoundError",

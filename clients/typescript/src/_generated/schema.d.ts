@@ -70,13 +70,13 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Send an Anthropic-compatible message
+         * Send a message
          * @description Route to a LibraOS agent via `metadata.agent_id`; omit for the default agent.
          *
          *     When `stream:false`, returns a single `MessageResponse`.
          *     When `stream:true`, returns SSE. With `X-Protocol: ag-ui`, frames use
          *     the AG-UI contract in `openapi/ag-ui-events.schema.json`; otherwise
-         *     they use the Anthropic-compatible event sequence defined by `StreamEvent`.
+         *     they use the event sequence defined by `StreamEvent`.
          *     Desk clients send `conversation_id`, a stable per-turn `message_id`,
          *     and an explicit `scope` so the turn is persisted within the correct
          *     personal/company boundary.
@@ -102,7 +102,7 @@ export interface paths {
         /**
          * Submit a custom_tool_use result (Mode A inline)
          * @description Used when partner consumes the SSE stream directly. POST the result
-         *     for an emitted `custom_tool_use` event; Nova OS resumes the agent
+         *     for an emitted `custom_tool_use` event; LibraOS resumes the agent
          *     loop and continues streaming on the original request connection.
          */
         post: operations["submitCustomToolResult"];
@@ -530,11 +530,11 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Create a Nova OS native session
+         * Create a LibraOS native session
          * @description Native partner-prefix session create. Shares the SessionStore
-         *     with the Anthropic-compat /v1/sessions surface — state is
-         *     consistent across the two mounts. No `anthropic-beta` header
-         *     gate; partner-friendly response shape.
+         *     with the /v1/sessions surface — state is consistent across the
+         *     two mounts. No managed-agents beta header required;
+         *     partner-friendly response shape.
          */
         post: operations["createManagedSession"];
         delete?: never;
@@ -781,8 +781,8 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Count input tokens (Anthropic-compatible)
-         * @description Anthropic-compatible pre-flight token count. Accepts the Messages request shape and returns an estimated `input_tokens` for the supplied system + messages. Citation/document consistency validators run here too, so misconfigurations surface as 400 before the chat path.
+         * Count input tokens
+         * @description Pre-flight token count. Accepts the Messages request shape and returns an estimated `input_tokens` for the supplied system + messages. Citation/document consistency validators run here too, so misconfigurations surface as 400 before the chat path.
          */
         post: operations["countTokens"];
         delete?: never;
@@ -3315,7 +3315,7 @@ export interface components {
         };
         /**
          * @description Whether this agent dispatches to other skill agents (persona) or
-         *     executes one skill directly (skill). Maps to nova-os internals;
+         *     executes one skill directly (skill). Maps to LibraOS server internals;
          *     partners only see the discriminator.
          * @enum {string}
          */
@@ -3351,7 +3351,7 @@ export interface components {
         /**
          * @description Persona-level web-search configuration. Resolved per-invocation on
          *     ``skill_deep_research`` via ``searchctx.WebSearchConfigFromContext``.
-         *     Field names changed in nova-os PR #212 (closes #200) — old
+         *     Field names changed in server PR #212 (closes #200) — old
          *     ``backend`` / ``fallback`` are no longer accepted.
          */
         WebSearchConfig: {
@@ -3833,7 +3833,7 @@ export interface components {
         MessageRequest: {
             messages: components["schemas"]["Message"][];
             /**
-             * @description Anthropic-compatible required selector. Desk clients normally set
+             * @description Required selector. Desk clients normally set
              *     this to the selected employee/persona id and also send the same id
              *     as `metadata.agent_id`. A `<vendor>/<model>` value may act as an
              *     answer-model override when the deployment permits it.
@@ -3866,7 +3866,7 @@ export interface components {
             stream: boolean;
             metadata?: {
                 /**
-                 * @description Target a specific Nova OS agent/persona for this turn; omit
+                 * @description Target a specific LibraOS agent/persona for this turn; omit
                  *     for the default agent. Typed here so generated clients can set
                  *     it without falling back to untyped additionalProperties.
                  */
@@ -3926,19 +3926,19 @@ export interface components {
                 input_tokens?: number;
                 output_tokens?: number;
             };
-            /** @description Nova OS extension — same as `model`, surfaced for clarity. */
+            /** @description LibraOS extension — same as `model`, surfaced for clarity. */
             model_used?: string;
-            /** @description Nova OS extension — true if a fallback model handled the request. */
+            /** @description LibraOS extension — true if a fallback model handled the request. */
             fallback_triggered?: boolean;
             /**
-             * @description Nova OS extension — populated only when the agent declared an
+             * @description LibraOS extension — populated only when the agent declared an
              *     `output_type` contract AND the reply failed validation AND the
              *     agent's `violation_mode` is `log` or `repair` (with `error`,
              *     the response is a 422 instead). Empty array means no violations.
              */
             output_violations?: components["schemas"]["OutputViolation"][];
             /**
-             * @description Nova OS extension (v0.1.5+) — Brain's dispatch hint to the
+             * @description LibraOS extension (v0.1.5+) — Brain's dispatch hint to the
              *     partner UI. Always present on terminal replies; partners that
              *     don't consume route hints can ignore the field. Three kinds:
              *     `render_inline`, `navigate_to`, `ask_clarification`.
@@ -4015,7 +4015,7 @@ export interface components {
             message_id?: string;
         };
         /**
-         * @description Nova OS extension (v0.1.5+) — emitted exactly once per terminal
+         * @description LibraOS extension (v0.1.5+) — emitted exactly once per terminal
          *     message right before `done`. Carries Brain's dispatch decision so
          *     partner UIs can react before the full reply is rendered.
          */
@@ -4029,7 +4029,7 @@ export interface components {
         };
         StreamEvent: components["schemas"]["StreamEventTextDelta"] | components["schemas"]["StreamEventToolUse"] | components["schemas"]["StreamEventToolResult"] | components["schemas"]["StreamEventCustomToolUse"] | components["schemas"]["StreamEventThinking"] | components["schemas"]["StreamEventError"] | components["schemas"]["StreamEventDone"] | components["schemas"]["StreamEventRouteHint"];
         /**
-         * @description Structured-output contract for agent replies. When set, Nova OS
+         * @description Structured-output contract for agent replies. When set, LibraOS
          *     validates every assistant reply against `schema` before return.
          *     Server-side since v0.1.4.
          */
@@ -4340,7 +4340,7 @@ export interface components {
         };
         /**
          * @description Minimal, derive-friendly capabilities read so a client (web/iOS) can
-         *     discover what this Nova OS instance supports without probing each
+         *     discover what this LibraOS instance supports without probing each
          *     endpoint. Per the contract-unification design (D1, lean: derive),
          *     this is intentionally small — the persona manifest
          *     (`GET /agents/v1/personas`) remains the source of truth for *which*
@@ -4349,7 +4349,7 @@ export interface components {
          *     All fields are advisory; absence means "not advertised", not "off".
          */
         Deployment: {
-            /** @description Nova OS server version (e.g. "v0.1.9"). "dev"/"unknown" on unstamped builds. */
+            /** @description LibraOS server version (e.g. "v0.1.9"). "dev"/"unknown" on unstamped builds. */
             version: string;
             /**
              * @description Stable string labels for optional server features a client may
@@ -4392,7 +4392,7 @@ export interface components {
             /** @description Message text content. */
             content: string;
         };
-        /** @description Opaque per-request metadata. Nova OS does not interpret arbitrary keys (they are threaded through tenant isolation and audit), but a few reserved keys control per-call behavior. */
+        /** @description Opaque per-request metadata. LibraOS does not interpret arbitrary keys (they are threaded through tenant isolation and audit), but a few reserved keys control per-call behavior. */
         NativeChatMetadata: {
             /** @description When true (and streaming), emit granular orchestration events (tool_use / tool_result / text / thinking) over SSE. */
             stream_events?: boolean;
@@ -4662,7 +4662,7 @@ export interface components {
              */
             reasoning_effort?: "" | "off" | "none" | "low" | "medium" | "high" | "xhigh";
             response_format?: components["schemas"]["ChatCompletionResponseFormat"];
-            /** @description Nova OS extension channel for per-call fields (e.g. a per-call model override). The documented keys below are honoured on this surface the same way as on native chat. */
+            /** @description LibraOS extension channel for per-call fields (e.g. a per-call model override). The documented keys below are honoured on this surface the same way as on native chat. */
             metadata?: {
                 /** @description Per-call answer output-token cap; wins over the top-level fields. */
                 max_tokens?: number;
@@ -4743,7 +4743,7 @@ export interface components {
             choices?: components["schemas"]["ChatCompletionChoice"][];
             usage?: components["schemas"]["ChatCompletionUsage"];
             /**
-             * @description Nova OS extension — per-turn grounded-vs-refusal outcome. Omitted on non-retrieval turns.
+             * @description LibraOS extension — per-turn grounded-vs-refusal outcome. Omitted on non-retrieval turns.
              * @enum {string}
              */
             nova_grounding?: "grounded" | "ungrounded_refusal" | "ungrounded_no_chunks" | "degraded" | "unsupported_claim" | "degraded_retrieval" | "unopened_sources" | "unsupported_figures";
@@ -4767,16 +4767,16 @@ export interface components {
             object?: string;
             data?: components["schemas"]["ModelListEntry"][];
         };
-        /** @description One message in an Anthropic-shaped request. */
+        /** @description One message in a Messages request. */
         CountTokensMessage: {
             /** @enum {string} */
             role: "user" | "assistant";
-            /** @description Message content — a plain string or the Anthropic content-block array. */
+            /** @description Message content — a plain string or an array of content blocks. */
             content: string | {
                 [key: string]: unknown;
             }[];
         };
-        /** @description Anthropic-compatible Messages request used for token counting. */
+        /** @description Messages request used for token counting. */
         CountTokensRequest: {
             model?: string;
             messages: components["schemas"]["CountTokensMessage"][];
@@ -5311,7 +5311,7 @@ export interface components {
             url: string;
             auth: {
                 type?: string;
-                /** @description Name of an environment variable on the Nova OS server holding the shared HMAC secret. The secret itself never travels in the request or the stored row. */
+                /** @description Name of an environment variable on the LibraOS server holding the shared HMAC secret. The secret itself never travels in the request or the stored row. */
                 secret_ref: string;
             };
             timeout_sec?: number;

@@ -51,7 +51,7 @@ describe("parseSse", () => {
     expect(events[0]?.sseId).toBe("7");
   });
 
-  it("normalizes Anthropic citation deltas into a LibraOS custom event", async () => {
+  it("normalizes message-stream citation deltas into a LibraOS custom event", async () => {
     const body = 'data: {"type":"content_block_delta","delta":{"type":"citations_delta","citation":{"type":"web","cite_source":"web","web_uri":"https://example.com"}}}\n\n';
     const events = [];
     for await (const ev of parseAgUiStream(sseResponse(body))) events.push(ev);

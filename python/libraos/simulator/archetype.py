@@ -34,7 +34,7 @@ from libraos.simulator.errors import ArchetypeValidationError
 _NAME_RE = re.compile(r"^[a-z][a-z0-9-]*[a-z0-9]$|^[a-z]$")
 
 # Gateway model-name shape — same rule the kernel enforces on agent.model
-# (private nova-os issue #93). Distinct enforcement copy here so misspellings
+# (LibraOS server issue #93). Distinct enforcement copy here so misspellings
 # get caught before the kernel rejects them.
 _MODEL_OVERRIDE_RE = re.compile(r"^[a-z0-9_-]+/[A-Za-z0-9._-]+$")
 

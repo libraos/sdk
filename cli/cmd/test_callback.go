@@ -30,7 +30,7 @@ var (
 
 var testCallbackCmd = &cobra.Command{
 	Use:   "test-callback",
-	Short: "Forge a Nova-OS-shaped signed webhook POST to a partner endpoint",
+	Short: "Forge a LibraOS-shaped signed webhook POST to a partner endpoint",
 	Long: `Builds the same JSON payload LibraOS's Mode B custom-tool
 dispatcher sends, signs it with HMAC-SHA256 over ts + "." + tool_use_id
 + "." + body, and POSTs to --target. Prints response status + body.
@@ -135,7 +135,7 @@ func init() {
 	testCallbackCmd.Flags().StringVar(&tcFlagTarget, "target", "", "Partner endpoint URL (required)")
 	testCallbackCmd.Flags().StringVar(&tcFlagTool, "tool", "", "Tool name (required)")
 	testCallbackCmd.Flags().StringVar(&tcFlagInput, "input", "{}", `Tool input args as JSON object (default {})`)
-	testCallbackCmd.Flags().StringVar(&tcFlagSecretEnv, "secret-env", "NOVA_CB_SECRET", "Env var name holding the HMAC secret (default NOVA_CB_SECRET)")
+	testCallbackCmd.Flags().StringVar(&tcFlagSecretEnv, "secret-env", "LIBRA_OS_CB_SECRET", "Env var name holding the HMAC secret (default LIBRA_OS_CB_SECRET)")
 	testCallbackCmd.Flags().StringVar(&tcFlagToolUseID, "tool-use-id", "", "tool_use_id to send (default: random toolu_<hex>)")
 	testCallbackCmd.Flags().StringVar(&tcFlagAgentID, "agent-id", "test-agent", "agent_id field on the payload")
 	testCallbackCmd.Flags().StringVar(&tcFlagEmployee, "employee-id", "", "employee_id field on the payload")

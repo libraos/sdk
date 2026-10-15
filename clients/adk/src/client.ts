@@ -7,9 +7,9 @@
 import type { Agent } from "./agent.js";
 
 export interface LibraAdkOptions {
-  /** LibraOS base URL. Defaults to $LIBRAOS_BASE_URL / $NOVA_OS_BASE_URL. */
+  /** LibraOS base URL. Defaults to $LIBRA_OS_URL. */
   baseUrl?: string;
-  /** Bearer token / agent API key. Defaults to $LIBRAOS_API_KEY / $NOVA_OS_API_KEY. */
+  /** Bearer token / agent API key. Defaults to $LIBRA_OS_API_KEY. */
   apiKey?: string;
   /** Custom fetch (tests / non-Node runtimes). */
   fetch?: typeof fetch;
@@ -34,16 +34,19 @@ export interface RunOptions {
 const env = (k: string): string | undefined =>
   typeof process !== "undefined" ? process.env[k] : undefined;
 
+/** Value of the beta header the server requires on /v1/agents. */
+const MANAGED_AGENTS_BETA = "managed-agents-2026-04-01";
+
 export class LibraAdk {
   private readonly baseUrl: string;
   private readonly apiKey: string;
   private readonly doFetch: typeof fetch;
 
   constructor(opts: LibraAdkOptions = {}) {
-    const baseUrl = opts.baseUrl ?? env("LIBRAOS_BASE_URL") ?? env("NOVA_OS_BASE_URL");
-    const apiKey = opts.apiKey ?? env("LIBRAOS_API_KEY") ?? env("NOVA_OS_API_KEY");
-    if (!baseUrl) throw new Error("LibraAdk: baseUrl (or $LIBRAOS_BASE_URL) is required");
-    if (!apiKey) throw new Error("LibraAdk: apiKey (or $LIBRAOS_API_KEY) is required");
+    const baseUrl = opts.baseUrl ?? env("LIBRA_OS_URL");
+    const apiKey = opts.apiKey ?? env("LIBRA_OS_API_KEY");
+    if (!baseUrl) throw new Error("LibraAdk: baseUrl (or $LIBRA_OS_URL) is required");
+    if (!apiKey) throw new Error("LibraAdk: apiKey (or $LIBRA_OS_API_KEY) is required");
     this.baseUrl = baseUrl.replace(/\/+$/, "");
     this.apiKey = apiKey;
     this.doFetch = opts.fetch ?? fetch;
@@ -53,17 +56,31 @@ export class LibraAdk {
     return { authorization: `Bearer ${this.apiKey}`, "content-type": "application/json" };
   }
 
+  /** The /v1/agents routes require the managed-agents beta header (426 without it). */
+  private agentHeaders(): Record<string, string> {
+    return { ...this.headers(), "anthropic-beta": MANAGED_AGENTS_BETA };
+  }
+
   /**
-   * Create or update the agent on the LibraOS control plane
-   * (`PUT /v1/agents/:name`, upsert). Idempotent — safe to re-run on deploy.
+   * Create or update the agent on the LibraOS control plane. Updates with
+   * `PUT /v1/agents/:name`; a new agent (404) is created with `POST /v1/agents`.
+   * Idempotent — safe to re-run on deploy.
    */
   async deploy(agent: Agent): Promise<DeployResult> {
     const name = agent.definition.name;
-    const res = await this.doFetch(`${this.baseUrl}/v1/agents/${encodeURIComponent(name)}`, {
+    const body = agent.toManagedAgentBody();
+    let res = await this.doFetch(`${this.baseUrl}/v1/agents/${encodeURIComponent(name)}`, {
       method: "PUT",
-      headers: this.headers(),
-      body: JSON.stringify(agent.toManagedAgentBody()),
+      headers: this.agentHeaders(),
+      body: JSON.stringify(body),
     });
+    if (res.status === 404) {
+      res = await this.doFetch(`${this.baseUrl}/v1/agents`, {
+        method: "POST",
+        headers: this.agentHeaders(),
+        body: JSON.stringify({ id: name, ...body }),
+      });
+    }
     if (!res.ok) throw new Error(`deploy ${name}: ${res.status} ${await safeText(res)}`);
     const j = (await res.json().catch(() => ({}))) as { id?: string; etag?: string };
     return { id: j.id ?? name, ...(j.etag ? { etag: j.etag } : {}) };
@@ -76,11 +93,12 @@ export class LibraAdk {
    * this can move to the session surface for full Managed-Agents compat.
    */
   async run(agentName: string, input: string, opts: RunOptions = {}): Promise<RunEvent[]> {
-    const key = encodeURIComponent(this.apiKey);
+    // The path names the agent; the API key goes in the Authorization header.
+    const key = encodeURIComponent(agentName);
     const submit = await this.doFetch(`${this.baseUrl}/agents/v1/${key}/jobs`, {
       method: "POST",
       headers: this.headers(),
-      body: JSON.stringify({ agent: agentName, message: input }),
+      body: JSON.stringify({ message: input }),
       ...(opts.signal ? { signal: opts.signal } : {}),
     });
     if (!submit.ok) throw new Error(`run ${agentName}: submit ${submit.status} ${await safeText(submit)}`);

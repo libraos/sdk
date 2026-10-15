@@ -6,20 +6,20 @@ agent)`` triple isn't enough:
 
 - One session per support ticket / pipeline run / batch job.
 - Session-default model overrides (``model="anthropic/claude-opus-4-7"``).
-- Coexists with the Anthropic-compat ``/v1/sessions`` surface — a
+- Coexists with the server's ``/v1/sessions`` surface — a
   session created here is readable via either mount.
 
 For lighter-weight per-end-user isolation that doesn't need explicit
 session management, just pass the ``X-End-User`` header on
 ``c.messages.create()`` calls. See the healthcare recipe in the
-nova-os-cookbook (``healthcare/clinical_note_triage.py`` at
-https://github.com/MeganovaAI/nova-os-cookbook) for that pattern.
+LibraOS cookbook (``healthcare/clinical_note_triage.py`` at
+https://github.com/libraos/cookbook) for that pattern.
 
 Prerequisites::
 
     pip install libraos-sdk
-    export NOVA_OS_URL=https://nova.your-company.example
-    export NOVA_OS_API_KEY=msk_live_...
+    export LIBRA_OS_URL=https://libraos.your-company.example
+    export LIBRA_OS_API_KEY=msk_live_...
 
 Run::
 
@@ -35,9 +35,9 @@ from libraos import Client
 
 
 async def main() -> None:
-    base_url = os.environ.get("NOVA_OS_URL", "https://nova.your-company.example")
-    api_key = os.environ["NOVA_OS_API_KEY"]
-    agent_id = os.environ.get("NOVA_OS_AGENT_ID", "default-assistant")
+    base_url = os.environ.get("LIBRA_OS_URL", "https://libraos.your-company.example")
+    api_key = os.environ["LIBRA_OS_API_KEY"]
+    agent_id = os.environ.get("LIBRA_OS_AGENT_ID", "default-assistant")
 
     async with Client(base_url=base_url, api_key=api_key) as c:
         # 1. Create a session with a per-session model override. Every
@@ -59,7 +59,7 @@ async def main() -> None:
         #    subsequent message calls. Per-message integration is on
         #    the partner's side — pass the session_id in metadata
         #    or via the existing /v1/sessions/{id}/events surface
-        #    (Anthropic-compat) for full conversation tracking.
+        #    for full conversation tracking.
 
 
 if __name__ == "__main__":

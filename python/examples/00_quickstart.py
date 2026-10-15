@@ -1,18 +1,9 @@
 """Quickstart — fastest path from zero to a digital agent answering you.
 
-Maps onto Anthropic's Managed Agents Quickstart
-(https://platform.claude.com/docs/en/managed-agents/overview):
+Three SDK calls: create an employee (it owns agents and their model routing),
+create an agent bound to it, and send it a message.
 
-    Anthropic Managed Agents          LibraOS SDK (this script)
-    ─────────────────────────         ─────────────────────────────
-    1. agents.create(model, ...)      1. employees.create(...)        # owns one or more agents
-    2. environments.create(...)       2. agents.create(id, type, ...) # the digital agent itself
-    3. sessions.create(agent_id)      (no separate session — observational memory is keyed on
-                                       the (api_key, end_user, agent) triple automatically)
-    4. sessions.events.send(...)      3. messages.create(agent_id, messages=[...])
-    5. (interrupt / steer)            (send another messages.create() at any time)
-
-Why no separate session/environment in LibraOS:
+There is no separate session or environment object:
 - Sessions are implicit. LibraOS scopes per-user memory automatically — pass
   ``X-End-User`` on the request and you get isolation equivalent to a session.
 - Environment is the LibraOS server itself. Need a per-tenant filesystem? Add
@@ -24,8 +15,8 @@ Total surface to go from nothing to a working digital agent: 3 SDK calls.
 Prerequisites::
 
     pip install libraos-sdk
-    export NOVA_OS_URL=https://nova.your-company.example
-    export NOVA_OS_API_KEY=msk_live_...
+    export LIBRA_OS_URL=https://libraos.your-company.example
+    export LIBRA_OS_API_KEY=msk_live_...
 
 Run::
 
@@ -41,13 +32,12 @@ from libraos import Client
 
 
 async def main() -> None:
-    base_url = os.environ.get("NOVA_OS_URL", "https://nova.your-company.example")
-    api_key = os.environ["NOVA_OS_API_KEY"]
+    base_url = os.environ.get("LIBRA_OS_URL", "https://libraos.your-company.example")
+    api_key = os.environ["LIBRA_OS_API_KEY"]
 
     async with Client(base_url=base_url, api_key=api_key) as c:
-        # 1. Create the employee — the owner of one or more agents.
-        #    Equivalent to declaring the agent's identity + model config in
-        #    Anthropic's agents.create() call.
+        # 1. Create the employee — the owner of one or more agents, and of
+        #    their model routing.
         await c.employees.create(
             id="my-first-employee",
             display_name="My First Employee",
@@ -60,9 +50,8 @@ async def main() -> None:
         )
 
         # 2. Create the agent — the runnable behavior bound to that employee.
-        #    Equivalent to picking an environment template + tool set in
-        #    Anthropic. LibraOS's "type" tells the registry what loop to run
-        #    (skill = single-call, persona = multi-turn, etc.).
+        #    "type" tells the registry what loop to run (skill = single-call,
+        #    persona = multi-turn, etc.).
         await c.agents.create(
             id="my-first-agent",
             type="skill",
@@ -70,8 +59,7 @@ async def main() -> None:
             instructions="You are a helpful assistant. Answer concisely.",
         )
 
-        # 3. Send the first message. Anthropic-equivalent: sessions.events.send.
-        #    No session ID needed — observational memory is keyed on the
+        # 3. Send the first message. No session ID needed — observational memory is keyed on the
         #    (API key, end_user, agent) triple automatically. Pass the
         #    ``X-End-User`` header to scope memory per end-user; omit it for
         #    a single shared scope (fine for evaluation).

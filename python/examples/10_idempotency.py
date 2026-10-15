@@ -18,8 +18,8 @@ a duplicate having been created.
 Prerequisites::
 
     pip install libraos-sdk
-    export NOVA_OS_URL=https://nova.your-company.example
-    export NOVA_OS_API_KEY=msk_live_...
+    export LIBRA_OS_URL=https://libraos.your-company.example
+    export LIBRA_OS_API_KEY=msk_live_...
 
 Run::
 
@@ -36,8 +36,8 @@ from libraos import Client
 
 
 async def main() -> None:
-    base_url = os.environ.get("NOVA_OS_URL", "https://nova.your-company.example")
-    api_key = os.environ["NOVA_OS_API_KEY"]
+    base_url = os.environ.get("LIBRA_OS_URL", "https://libraos.your-company.example")
+    api_key = os.environ["LIBRA_OS_API_KEY"]
 
     # Fresh idempotency key per logical operation. Persist this client-side
     # before sending the request — that way you can replay it after a crash

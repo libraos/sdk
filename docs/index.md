@@ -16,12 +16,11 @@ Partner integration docs for [LibraOS](https://github.com/libraos/sdk) — the a
 
 | Doc | What it covers |
 |---|---|
-| [Getting Started](getting-started.md) | Front-door table, 5-minute first call, three drop-in compat surfaces, scenario matrix |
+| [Getting Started](getting-started.md) | Front-door table, 5-minute first call, scenario matrix |
 | [Desk Chat and Conversation API](desk-chat-api.md) | Conversation CRUD, persisted messages, AG-UI streaming, citations, scope isolation, recovery |
-| [Anthropic API Compatibility](anthropic-compat.md) | Endpoint-by-endpoint matrix, what's identical, what's extended, what's not implemented |
 | [Multi-Model Routing](multi-model.md) | Three slots (answer / planner / skill), five-level cascade, fallback semantics |
 | [Web Search Backends](web-search.md) | Five pluggable backends, cost-quality table, fallback chains, reformulator, recency intent |
-| [Comparing Search Backends](comparing-search-backends.md) | Side-by-side pricing / latency / features for each backend vs the Anthropic Claude tool |
+| [Comparing Search Backends](comparing-search-backends.md) | Side-by-side pricing / latency / features for each backend |
 | [Custom Tools](custom-tools.md) | Mode A (SSE inline) + Mode B (webhook) end-to-end, HMAC signing, idempotency |
 | [Deployment](deployment.md) | Self-hosted vs cloud, three deploy shapes, reverse-proxy templates, observability |
 | [Scenarios](scenarios.md) | 10 lifecycle workflows traced end-to-end with wire-level detail |
@@ -41,22 +40,21 @@ For partners who need to operate LibraOS themselves:
 
 | Doc | Where |
 |---|---|
-| Install LibraOS | [docs.meganova.ai/nova-os/install](https://docs.meganova.ai/nova-os/install) |
-| Releases / cadence | [docs.meganova.ai/nova-os/releases](https://docs.meganova.ai/nova-os/releases) |
-| Anthropic SDK quickstart | [docs.meganova.ai/nova-os/anthropic-sdk-quickstart](https://docs.meganova.ai/nova-os/anthropic-sdk-quickstart) |
-| Pre-built deploy stack | [`MeganovaAI/nova-os-stack`](https://github.com/MeganovaAI/nova-os-stack) — compose manifests + 8 companion apps |
+| Install LibraOS | [libraos.com/docs](https://libraos.com/docs/) |
+| Releases / cadence | [libraos.com/docs](https://libraos.com/docs/) |
+| Pre-built deploy stack | [`libraos/stack`](https://github.com/libraos/stack) — compose manifests + 8 companion apps |
 
 ## Status
 
-**Python SDK 1.0.0** — Public API stable. PyPI: `pip install libraos-sdk`.
+**Python SDK 2.0.0** — Removes the Anthropic-compatibility client and renames every Nova-era name to LibraOS; see [`python/CHANGELOG.md`](https://github.com/libraos/sdk/blob/main/python/CHANGELOG.md). PyPI: `pip install libraos-sdk`.
 
-**CLI 1.0.0** — Multi-arch binaries (`linux/darwin/windows × amd64/arm64`), cosign-signed, Docker image at `ghcr.io/meganovaai/nova-os-cli`.
+**CLI 1.0.0** — Multi-arch binaries (`linux/darwin/windows × amd64/arm64`), cosign-signed, Docker image at `ghcr.io/libraos/libraos-cli`.
 
-**OpenAPI alpha.7** — Partner-facing API surface continuing to grow toward the v1 freeze. The Python SDK \`__version__\` is stable at 1.0.0; \`OPENAPI_VERSION\` tracks the spec separately.
+**OpenAPI alpha.7** — Partner-facing API surface continuing to grow toward the v1 freeze. The Python SDK \`__version__\` is 2.0.0; \`OPENAPI_VERSION\` tracks the spec separately.
 
-**Server image** — `ghcr.io/meganovaai/nova-os:v0.1.7` (and `:latest`).
+**Server image** — `ghcr.io/libraos/libraos:v0.2.1` (and `:latest`).
 
-See [docs.meganova.ai/nova-os/releases](https://docs.meganova.ai/nova-os/releases) for the cadence.
+See [libraos.com/docs](https://libraos.com/docs/) for the cadence.
 
 ## Contributing
 
@@ -65,5 +63,5 @@ Issues and PRs welcome on the SDK side at [`libraos/sdk`](https://github.com/lib
 ## Contact
 
 - General SDK questions: open an issue on [`libraos/sdk/issues`](https://github.com/libraos/sdk/issues)
-- Server-side issues: [`MeganovaAI/nova-os/issues`](https://github.com/MeganovaAI/nova-os/issues) (private repo — file at the SDK level if you don't have access)
+- Server-side issues: the LibraOS server repository is private; file at the SDK level if you don't have access
 - Commercial licensing: support@libraos.com

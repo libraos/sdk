@@ -2,6 +2,44 @@
 
 All notable changes to `libraos-sdk` (Python) will be documented in this file.
 
+## [2.0.0] — unreleased
+
+**Breaking.** The SDK drops Anthropic SDK compatibility and takes the LibraOS name everywhere it
+owns one. There are no aliases or deprecation shims: update imports and environment variables
+before upgrading.
+
+### Removed
+
+- **`AnthropicCompatClient`.** LibraOS no longer promises to be a drop-in for the Anthropic Python
+  SDK or the Claude Agent SDK. Use `libraos.Client`: `await c.messages.create(agent_id, messages,
+  model=..., max_tokens=...)` returns a `Message`, and `msg.text` joins its text blocks. The
+  `01b_claude_agent_sdk_drop_in.py` example and the compat tests are gone, and `01_basic_chat.py`
+  now uses `libraos.Client`.
+- **The `anthropic` package** is no longer in the `dev` extra.
+
+### Changed
+
+- **`NovaOSError` is now `LibraOSError`.** Every SDK error still subclasses it.
+- **Example and test environment variables** use the `LIBRA_OS_` prefix, the same as the
+  server's settings (`LIBRA_OS_URL`, `LIBRA_OS_API_KEY`, `LIBRA_OS_AGENT_ID`, …).
+- **The simulator's harness agent id** is `libraos-simulator-harness` (was
+  `nova-os-simulator-harness`). A deployment that provisioned the old id falls back to a transient
+  agent until it provisions the new one.
+- **`WebhookRouter.flask_blueprint()`** names its blueprint `libraos_callbacks` by default (was
+  `nova_callbacks`). Pass `name=` to keep the old name.
+- Wire names the server defines (`X-Nova-Signature`, `X-Nova-Idempotency-Key`, `:nova-heartbeat`,
+  `nova_*` response fields, `.nova-bundle.zip`, …) are unchanged.
+
+### Upgrade note
+
+| 1.x | 2.0.0 |
+|---|---|
+| `from libraos import AnthropicCompatClient` | `from libraos import Client` — `await c.messages.create(agent_id, messages, ...)` |
+| `NovaOSError` | `LibraOSError` |
+| `NOVA_OS_URL` | `LIBRA_OS_URL` |
+| `NOVA_OS_API_KEY` | `LIBRA_OS_API_KEY` |
+| `pip install "libraos-sdk[dev]"` installs `anthropic` | no longer installed; install it yourself if you use it directly |
+
 ## [1.2.0] — 2026-10-12
 
 ### Added

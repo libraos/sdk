@@ -7,7 +7,7 @@ import pytest
 from libraos.errors import (
     BillingError,
     ModelNotFoundError,
-    NovaOSError,
+    LibraOSError,
     RateLimitedError,
     VertexSchemaError,
     parse_error_response,
@@ -15,10 +15,10 @@ from libraos.errors import (
 
 
 def test_hierarchy() -> None:
-    assert issubclass(VertexSchemaError, NovaOSError)
-    assert issubclass(BillingError, NovaOSError)
-    assert issubclass(RateLimitedError, NovaOSError)
-    assert issubclass(ModelNotFoundError, NovaOSError)
+    assert issubclass(VertexSchemaError, LibraOSError)
+    assert issubclass(BillingError, LibraOSError)
+    assert issubclass(RateLimitedError, LibraOSError)
+    assert issubclass(ModelNotFoundError, LibraOSError)
 
 
 def test_parse_vertex_schema_error() -> None:
@@ -54,11 +54,11 @@ def test_parse_billing_error() -> None:
 def test_parse_unknown_falls_to_base() -> None:
     body = {"type": "weird_unknown_error", "message": "huh"}
     err = parse_error_response(500, body)
-    assert isinstance(err, NovaOSError)
+    assert isinstance(err, LibraOSError)
     assert not isinstance(err, (VertexSchemaError, BillingError, RateLimitedError))
 
 
 def test_parse_non_json_body() -> None:
     err = parse_error_response(500, "internal server error (plain text)")
-    assert isinstance(err, NovaOSError)
+    assert isinstance(err, LibraOSError)
     assert "500" in str(err)

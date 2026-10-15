@@ -1,6 +1,6 @@
 # Comparing Search Backends
 
-A side-by-side comparison of the five `web_search_config` backends LibraOS supports, plus the Anthropic Claude web search tool for partners weighing whether to use the model-driven path instead. Public-source data only; vendor pricing changes — verify against each vendor's docs before committing to a budget.
+A side-by-side comparison of the five `web_search_config` backends LibraOS supports. Public-source data only; vendor pricing changes — verify against each vendor's docs before committing to a budget.
 
 ## At a glance
 
@@ -11,7 +11,6 @@ A side-by-side comparison of the five `web_search_config` backends LibraOS suppo
 | `brave` | SDK backend | Free tier + per-CPM paid | ✗ (keyword-only) | ✗ | ✗ | ✗ |
 | `exa` | SDK backend | Paid per-query | ✗ (keyword + neural) | ✗ | ✗ | ✗ |
 | `searxng` | SDK backend | Free (self-hosted) | ✗ | ✗ | ✗ | ✗ |
-| Anthropic Claude web search | Tool inside Messages API | $0.01/query + token costs | ✗ (URLs returned) | ✅ Always-on, structured | ✅ `allowed_domains` / `blocked_domains` | ✅ `user_location` |
 
 Verify exact pricing/limits on each vendor's docs:
 - MegaNova — [docs.meganova.ai/api-reference/platform-api/search](https://docs.meganova.ai/api-reference/platform-api/search)
@@ -19,26 +18,10 @@ Verify exact pricing/limits on each vendor's docs:
 - Brave Search API — [api.search.brave.com](https://api.search.brave.com)
 - Exa — [docs.exa.ai](https://docs.exa.ai)
 - SearXNG — [docs.searxng.org](https://docs.searxng.org)
-- Anthropic Claude web search — [platform.claude.com/docs/en/agents-and-tools/tool-use/web-search-tool](https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-search-tool)
 
-## SDK backend vs Claude tool — the layer matters
+## Backends vs model-native search tools
 
-These aren't direct substitutes. They sit at different layers:
-
-| Aspect | SDK backend (`web_search_config`) | Anthropic Claude tool |
-|---|---|---|
-| **Where it runs** | The deep-research skill calls the backend programmatically | Tool injected into the Messages API; Claude decides when to invoke |
-| **Who decides to search** | Caller code / agent definition | Claude (model-driven) |
-| **Returns what** | Ranked passages your code consumes | `web_search_tool_result` content blocks woven into Claude's reply |
-| **Citations** | Partner generates from the returned URLs | Always-on, structured, with `cited_text` + `encrypted_index` |
-| **Cross-vendor** | Works against any LLM you route to | Anthropic-routed models only |
-| **Cost shape** | Per-query backend fee | Per-query tool fee + token costs (search results count as input tokens) |
-
-The SDK backends are for partners who want **programmable, model-agnostic search** — pin a backend per persona, control the fallback chain, run the same search regardless of which LLM family the agent uses.
-
-The Claude tool is for partners who want **the model to handle search end-to-end** — Claude decides when to query, the response includes citations automatically, and you don't write the orchestration code. Trade-off: Anthropic-only and roughly 5× the per-query cost.
-
-You can use both in the same deployment: the deep-research skill uses an SDK backend for structured retrieval, and you give Claude the web search tool separately for ad-hoc lookups during synthesis.
+Some model providers offer their own web search tool inside their API (Anthropic's web search tool is one). Those run at the provider, are tied to that provider's models, and are not configured through LibraOS. The backends above run inside LibraOS: you pin one per persona, control the fallback chain, and get the same search whichever model family the agent routes to.
 
 ## Bundled extraction vs keyword-only
 
@@ -58,21 +41,12 @@ If you're doing multi-aspect research with N hits per query, keyword-only multip
 | `brave` | Sub-second | Keyword backend, fast |
 | `exa` | Low single-digit | Neural ranking adds time |
 | `searxng` | Variable | Aggregator latency = slowest underlying source |
-| Anthropic Claude tool | Adds search round-trip + token streaming | "Pause while search executes" per Anthropic docs |
 
 `meganova`'s latency table is the only one with public P50/P95 numbers from a vendor doc — others are general industry expectations.
 
 ## Which to pick
 
 ```
-Are you running on Anthropic-routed models exclusively?
-├── No → SDK backend (vendor-agnostic)
-└── Yes → Continue ↓
-
-Do you want Claude to decide when to search?
-├── Yes → Claude web search tool
-└── No → SDK backend ↓
-
 Is cost the dominant constraint?
 ├── Yes, plus you're below $0.002/query budget → meganova (free tier first, $0.002 overage)
 ├── Yes, plus you can self-host → searxng
@@ -91,7 +65,7 @@ Is the workload technical / academic / paraphrased queries?
 └── No → tavily (most reliable for current events)
 ```
 
-## Three concrete partner patterns
+## Two concrete partner patterns
 
 ### Cost-conscious general-purpose
 
@@ -115,32 +89,13 @@ web_search_config:
 
 Pay for Tavily on the freshness-dominant majority; fall through to Exa for the long tail.
 
-### Anthropic-only deployment with model-driven search
-
-```python
-# In the partner backend code:
-client = Anthropic(base_url="https://nova-os.your-company.example", api_key="<jwt>")
-
-response = client.messages.create(
-    model="anthropic/claude-opus-4-7",
-    max_tokens=4096,
-    messages=[{"role": "user", "content": "What's the latest on Bill 96?"}],
-    tools=[{"type": "web_search_20250305", "name": "web_search", "max_uses": 3}],
-)
-# Claude decides when to search; results stream back with citations.
-```
-
-Skip `web_search_config` entirely; let Claude orchestrate.
-
 ## Caveats
 
 - **Vendor pricing changes.** All numbers in this doc were captured at the time of writing. Verify against each vendor's docs before committing to a partner-tier price.
 - **Per-query is not per-call.** Some backends bill "groups" (multi-aspect deep research counts as one); some bill per individual search. Read the vendor's billing-unit definition.
 - **Free tiers are real but rate-limited.** Don't size capacity assuming the free tier scales — per-key concurrency caps usually kick in first.
-- **The Anthropic Claude tool requires admin enablement** in the Claude Console (per their docs). It's not on by default.
 
 ## See also
 
 - [`web-search.md`](web-search.md) — full reference for the SDK's `web_search_config`
-- [`anthropic-compat.md`](anthropic-compat.md) — Claude tool integration via the Messages API
 - [`getting-started.md`](getting-started.md) — front-door + scenario matrix

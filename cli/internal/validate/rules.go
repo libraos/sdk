@@ -28,7 +28,7 @@ func (i Issue) String() string {
 }
 
 // modelShapeRE matches "<vendor>/<model>" — same regex shape as the
-// validateModelShape gate in nova-os.
+// validateModelShape gate in the LibraOS server.
 var modelShapeRE = regexp.MustCompile(`^[a-z0-9_.-]+/[A-Za-z0-9_.:-]+$`)
 
 // RuleModelShape verifies model_config.{answer,planner,skill}.primary

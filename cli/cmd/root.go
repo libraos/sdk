@@ -1,4 +1,4 @@
-// Package cmd holds the cobra command tree for nova-os-cli.
+// Package cmd holds the cobra command tree for libraos-cli.
 package cmd
 
 import (
@@ -19,9 +19,9 @@ var (
 	flagJSON    bool
 )
 
-// rootCmd is the entry point for `nova-os-cli ...`.
+// rootCmd is the entry point for `libraos-cli ...`.
 var rootCmd = &cobra.Command{
-	Use:          "nova-os-cli",
+	Use:          "libraos-cli",
 	Short:        "LibraOS partner CLI — sync agents/employees, validate, test webhook callbacks",
 	SilenceUsage: true, // failed runs don't dump full --help spam
 }
@@ -34,9 +34,9 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringVar(&flagProfile, "profile", "", "Profile in ~/.nova-os/config.yaml (overrides NOVA_OS_PROFILE)")
-	rootCmd.PersistentFlags().StringVar(&flagURL, "url", "", "LibraOS server URL (overrides profile + NOVA_OS_URL)")
-	rootCmd.PersistentFlags().StringVar(&flagAPIKey, "api-key", "", "Bearer token (overrides profile + NOVA_OS_API_KEY)")
+	rootCmd.PersistentFlags().StringVar(&flagProfile, "profile", "", "Profile in ~/.libraos/config.yaml (overrides LIBRA_OS_PROFILE)")
+	rootCmd.PersistentFlags().StringVar(&flagURL, "url", "", "LibraOS server URL (overrides profile + LIBRA_OS_URL)")
+	rootCmd.PersistentFlags().StringVar(&flagAPIKey, "api-key", "", "Bearer token (overrides profile + LIBRA_OS_API_KEY)")
 	rootCmd.PersistentFlags().BoolVar(&flagJSON, "json", false, "Emit one JSON object per record on stdout (default: human table)")
 }
 
@@ -45,17 +45,17 @@ func init() {
 func globalConfig() (url string, apiKey string, err error) {
 	url = flagURL
 	if url == "" {
-		url = os.Getenv("NOVA_OS_URL")
+		url = os.Getenv("LIBRA_OS_URL")
 	}
 	apiKey = flagAPIKey
 	if apiKey == "" {
-		apiKey = os.Getenv("NOVA_OS_API_KEY")
+		apiKey = os.Getenv("LIBRA_OS_API_KEY")
 	}
 
 	if url == "" || apiKey == "" {
 		profileName := flagProfile
 		if profileName == "" {
-			profileName = os.Getenv("NOVA_OS_PROFILE")
+			profileName = os.Getenv("LIBRA_OS_PROFILE")
 		}
 		if profile, ok := loadProfile(profileName); ok {
 			if url == "" {
@@ -68,22 +68,22 @@ func globalConfig() (url string, apiKey string, err error) {
 	}
 
 	if url == "" {
-		return "", "", fmt.Errorf("server URL not set (use --url, NOVA_OS_URL, or a profile in ~/.nova-os/config.yaml)")
+		return "", "", fmt.Errorf("server URL not set (use --url, LIBRA_OS_URL, or a profile in ~/.libraos/config.yaml)")
 	}
 	if apiKey == "" {
-		return "", "", fmt.Errorf("api-key not set (use --api-key, NOVA_OS_API_KEY, or a profile pointing at an env var)")
+		return "", "", fmt.Errorf("api-key not set (use --api-key, LIBRA_OS_API_KEY, or a profile pointing at an env var)")
 	}
 	return url, apiKey, nil
 }
 
-// Profile mirrors one entry under profiles: in ~/.nova-os/config.yaml.
+// Profile mirrors one entry under profiles: in ~/.libraos/config.yaml.
 type Profile struct {
 	URL         string `yaml:"url"          mapstructure:"url"`
 	APIKeyEnv   string `yaml:"api_key_env"  mapstructure:"api_key_env"`
 	CallbackURL string `yaml:"callback_url" mapstructure:"callback_url"`
 }
 
-// loadProfile reads ~/.nova-os/config.yaml. If profileName is empty, uses
+// loadProfile reads ~/.libraos/config.yaml. If profileName is empty, uses
 // the file's `default:` field. Returns ok=false silently if file missing
 // or profile not found.
 func loadProfile(profileName string) (Profile, bool) {
@@ -91,7 +91,7 @@ func loadProfile(profileName string) (Profile, bool) {
 	if err != nil {
 		return Profile{}, false
 	}
-	cfgPath := filepath.Join(home, ".nova-os", "config.yaml")
+	cfgPath := filepath.Join(home, ".libraos", "config.yaml")
 	if _, err := os.Stat(cfgPath); err != nil {
 		return Profile{}, false
 	}

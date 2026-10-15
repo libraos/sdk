@@ -4,7 +4,7 @@ The `release-image.yml` workflow in this repo publishes the LibraOS server as a 
 
 This page is the one-time bootstrap. Once it's done, releasing a new version is a single `gh workflow run` invocation (see "Cutting a release" at the bottom).
 
-## Why the workflow lives here, not in nova-os
+## Why the workflow lives here, not in the server repo
 
 The published Docker package on GitHub auto-links to the **publisher** repo (the one whose workflow ran the push). Publishing from the private server repo links the package to it, which leaks the private repo's existence to anyone with read access who lands on the package page. Publishing from this public repo links the package here instead — no leak.
 
@@ -13,20 +13,20 @@ The published Docker package on GitHub auto-links to the **publisher** repo (the
 On any machine:
 
 ```bash
-ssh-keygen -t ed25519 -C "libraos-sdk release-image deploy key" -f /tmp/nova-os-deploy-key -N ""
+ssh-keygen -t ed25519 -C "libraos-sdk release-image deploy key" -f /tmp/libraos-deploy-key -N ""
 ```
 
 Two files are produced:
 
-- `/tmp/nova-os-deploy-key` — private key (goes into a secret on this repo)
-- `/tmp/nova-os-deploy-key.pub` — public key (goes onto the private server repo as a deploy key)
+- `/tmp/libraos-deploy-key` — private key (goes into a secret on this repo)
+- `/tmp/libraos-deploy-key.pub` — public key (goes onto the private server repo as a deploy key)
 
 ## Step 2 — Add the public key to libraos/libraos
 
 1. Open <https://github.com/libraos/libraos/settings/keys>
 2. Click **Add deploy key**
 3. Title: `libraos-sdk release-image (read-only)`
-4. Paste the contents of `/tmp/nova-os-deploy-key.pub`
+4. Paste the contents of `/tmp/libraos-deploy-key.pub`
 5. **Leave "Allow write access" unchecked** — read is sufficient
 6. **Add key**
 
@@ -35,13 +35,13 @@ Two files are produced:
 1. Open <https://github.com/libraos/sdk/settings/secrets/actions>
 2. Click **New repository secret**
 3. Name: `NOVA_OS_DEPLOY_KEY`
-4. Value: paste the entire contents of `/tmp/nova-os-deploy-key` including the `-----BEGIN OPENSSH PRIVATE KEY-----` and `-----END OPENSSH PRIVATE KEY-----` lines
+4. Value: paste the entire contents of `/tmp/libraos-deploy-key` including the `-----BEGIN OPENSSH PRIVATE KEY-----` and `-----END OPENSSH PRIVATE KEY-----` lines
 5. **Add secret**
 
 Then delete the local files:
 
 ```bash
-shred -u /tmp/nova-os-deploy-key /tmp/nova-os-deploy-key.pub
+shred -u /tmp/libraos-deploy-key /tmp/libraos-deploy-key.pub
 ```
 
 ## Step 4 — Package access
@@ -81,7 +81,7 @@ The workflow checks out `libraos/libraos@v0.1.7`, builds the multi-arch image, a
 - `ghcr.io/libraos/libraos:v0.1.7`
 - `ghcr.io/libraos/libraos:latest` (only for stable `vMAJOR.MINOR.PATCH` tags — RC / beta / alpha pre-releases skip the `:latest` move)
 
-The build summary at the end of the run includes the source commit SHA pinned in the image's OCI labels and `nova-os version` output.
+The build summary at the end of the run includes the source commit SHA pinned in the image's OCI labels and `libraos version` output.
 
 ## Rotating the deploy key
 

@@ -30,7 +30,7 @@ class ChatCompletionResponse:
         model (str | Unset):
         choices (list[ChatCompletionChoice] | Unset):
         usage (ChatCompletionUsage | Unset): Per-response token usage.
-        nova_grounding (ChatCompletionResponseNovaGrounding | Unset): Nova OS extension — per-turn grounded-vs-refusal
+        nova_grounding (ChatCompletionResponseNovaGrounding | Unset): LibraOS extension — per-turn grounded-vs-refusal
             outcome. Omitted on non-retrieval turns.
         persisted_state (ChatCompletionResponsePersistedState | Unset): Merged persisted field state, present only for
             agents that declare a persist-fields schema.

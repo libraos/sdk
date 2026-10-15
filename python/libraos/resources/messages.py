@@ -38,8 +38,8 @@ class Messages(Resource):
         ``resp["content"][0]["text"]`` and ``resp.content[0].text`` both work,
         and ``resp.text`` joins all text blocks.
         """
-        # /v1/messages requires a `model` field for Anthropic-SDK wire
-        # compatibility even though routing uses metadata.agent_id (the
+        # /v1/messages requires a `model` field on the wire even though
+        # routing uses metadata.agent_id (the
         # server treats model as cosmetic and echoes it back). Default it
         # to the agent id so callers never need to pass it.
         body: dict[str, Any] = {

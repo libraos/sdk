@@ -1,7 +1,7 @@
 """Sessions resource — /v1/managed/sessions (#185).
 
 LibraOS native session create/get. Shares state with the
-Anthropic-compat /v1/sessions surface — partners can mix the two
+server's /v1/sessions surface — partners can mix the two
 mounts freely; a session created via either is readable via either.
 """
 

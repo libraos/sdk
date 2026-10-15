@@ -1,6 +1,6 @@
 """Vertical pack loader — archetype + rubric catalogs from partner repos (#31).
 
-A *pack* lets a vertical (EqualDocs immigration, nova-os-school education, …)
+A *pack* lets a vertical (EqualDocs immigration, school education, …)
 maintain its own archetype + rubric catalog in its own repo/package, without
 forking the SDK or bloating ``examples/``. A pack is a directory:
 

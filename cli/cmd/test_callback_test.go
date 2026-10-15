@@ -27,7 +27,7 @@ func TestTestCallback_PostsSignedPayload(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	t.Setenv("NOVA_CB_TEST_SECRET", "test-secret-123456")
+	t.Setenv("LIBRA_OS_CB_TEST_SECRET", "test-secret-123456")
 
 	var buf bytes.Buffer
 	rootCmd.SetOut(&buf)
@@ -37,7 +37,7 @@ func TestTestCallback_PostsSignedPayload(t *testing.T) {
 		"--target", srv.URL,
 		"--tool", "fetch_invoice",
 		"--input", `{"invoice_id":"INV-9912"}`,
-		"--secret-env", "NOVA_CB_TEST_SECRET",
+		"--secret-env", "LIBRA_OS_CB_TEST_SECRET",
 		"--tool-use-id", "toolu_test_42",
 		"--agent-id", "invoice-bot",
 	})
@@ -92,7 +92,7 @@ func TestTestCallback_RepeatPostsMultiple(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	t.Setenv("NOVA_CB_TEST_SECRET", "s")
+	t.Setenv("LIBRA_OS_CB_TEST_SECRET", "s")
 
 	var buf bytes.Buffer
 	rootCmd.SetOut(&buf)
@@ -101,7 +101,7 @@ func TestTestCallback_RepeatPostsMultiple(t *testing.T) {
 		"test-callback",
 		"--target", srv.URL,
 		"--tool", "x",
-		"--secret-env", "NOVA_CB_TEST_SECRET",
+		"--secret-env", "LIBRA_OS_CB_TEST_SECRET",
 		"--repeat", "3",
 	})
 
@@ -120,7 +120,7 @@ func TestTestCallback_FailsOnNon2xx(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	t.Setenv("NOVA_CB_TEST_SECRET", "s")
+	t.Setenv("LIBRA_OS_CB_TEST_SECRET", "s")
 
 	var buf bytes.Buffer
 	rootCmd.SetOut(&buf)
@@ -129,7 +129,7 @@ func TestTestCallback_FailsOnNon2xx(t *testing.T) {
 		"test-callback",
 		"--target", srv.URL,
 		"--tool", "x",
-		"--secret-env", "NOVA_CB_TEST_SECRET",
+		"--secret-env", "LIBRA_OS_CB_TEST_SECRET",
 	})
 
 	resetTestCallbackFlags()
@@ -139,7 +139,7 @@ func TestTestCallback_FailsOnNon2xx(t *testing.T) {
 }
 
 func TestTestCallback_FailsOnEmptySecret(t *testing.T) {
-	t.Setenv("NOVA_CB_TEST_SECRET", "")
+	t.Setenv("LIBRA_OS_CB_TEST_SECRET", "")
 
 	var buf bytes.Buffer
 	rootCmd.SetOut(&buf)
@@ -148,7 +148,7 @@ func TestTestCallback_FailsOnEmptySecret(t *testing.T) {
 		"test-callback",
 		"--target", "http://example.com",
 		"--tool", "x",
-		"--secret-env", "NOVA_CB_TEST_SECRET",
+		"--secret-env", "LIBRA_OS_CB_TEST_SECRET",
 	})
 
 	resetTestCallbackFlags()
@@ -164,7 +164,7 @@ func resetTestCallbackFlags() {
 	tcFlagTarget = ""
 	tcFlagTool = ""
 	tcFlagInput = "{}"
-	tcFlagSecretEnv = "NOVA_CB_SECRET"
+	tcFlagSecretEnv = "LIBRA_OS_CB_SECRET"
 	tcFlagToolUseID = ""
 	tcFlagAgentID = "test-agent"
 	tcFlagEmployee = ""

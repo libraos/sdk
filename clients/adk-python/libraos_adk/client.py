@@ -16,6 +16,9 @@ import httpx
 
 from .agent import Agent
 
+# Value of the beta header the server requires on /v1/agents.
+MANAGED_AGENTS_BETA = "managed-agents-2026-04-01"
+
 RunEvent = dict[str, Any]
 
 
@@ -41,14 +44,26 @@ class LibraAdk:
     def _headers(self) -> dict[str, str]:
         return {"authorization": f"Bearer {self.api_key}", "content-type": "application/json"}
 
+    def _agent_headers(self) -> dict[str, str]:
+        # The /v1/agents routes require the managed-agents beta header (426 without it).
+        return {**self._headers(), "anthropic-beta": MANAGED_AGENTS_BETA}
+
     def deploy(self, agent: Agent) -> dict[str, Any]:
-        """Create or update the agent (``PUT /v1/agents/:name``, upsert). Idempotent."""
+        """Create or update the agent. Updates with ``PUT /v1/agents/:name``; a new
+        agent (404) is created with ``POST /v1/agents``. Idempotent."""
+        body = agent.to_managed_agent_body()
         with httpx.Client() as c:
             r = c.put(
                 f"{self.base_url}/v1/agents/{agent.name}",
-                headers=self._headers(),
-                json=agent.to_managed_agent_body(),
+                headers=self._agent_headers(),
+                json=body,
             )
+            if r.status_code == 404:
+                r = c.post(
+                    f"{self.base_url}/v1/agents",
+                    headers=self._agent_headers(),
+                    json={"id": agent.name, **body},
+                )
             if r.status_code >= 400:
                 raise RuntimeError(f"deploy {agent.name}: {r.status_code} {r.text}")
             data = r.json() if r.content else {}
@@ -72,9 +87,10 @@ class LibraAdk:
         events: list[RunEvent] = []
         with httpx.Client(timeout=None) as c:
             r = c.post(
-                f"{self.base_url}/agents/v1/{self.api_key}/jobs",
+                # The path names the agent; the API key goes in the Authorization header.
+                f"{self.base_url}/agents/v1/{agent_name}/jobs",
                 headers=self._headers(),
-                json={"agent": agent_name, "message": message},
+                json={"message": message},
             )
             if r.status_code >= 400:
                 raise RuntimeError(f"run {agent_name}: submit {r.status_code} {r.text}")
@@ -83,7 +99,7 @@ class LibraAdk:
                 raise RuntimeError(f"run {agent_name}: server did not return a job_id")
             with c.stream(
                 "GET",
-                f"{self.base_url}/agents/v1/{self.api_key}/jobs/{job_id}/stream",
+                f"{self.base_url}/agents/v1/{agent_name}/jobs/{job_id}/stream",
                 headers={"authorization": f"Bearer {self.api_key}", "accept": "text/event-stream"},
             ) as s:
                 for ev in _iter_sse(s):

@@ -10,7 +10,7 @@ import type { components } from "./_generated/schema.js";
 import { createRestClient, throwIfError, type AuthProvider, type RestClient } from "./rest.js";
 import { OidcClient } from "./auth/oidc.js";
 import { LibraOSApiError } from "./errors.js";
-import { parseAgUiStream } from "./streaming/sse.js";
+import { parseAgUiStream, parseSse } from "./streaming/sse.js";
 import type { AgUiStreamEvent } from "./streaming/events.js";
 
 type Schemas = components["schemas"];
@@ -18,6 +18,8 @@ export type MessageRequest = Schemas["MessageRequest"];
 export type MessageResponse = Schemas["MessageResponse"];
 export type JobCreate = Schemas["JobCreate"];
 export type Job = Schemas["Job"];
+/** One event of a job's stream (the spec's StreamEvent: text, tool_use, done, …). */
+export type JobStreamEvent = Schemas["StreamEvent"];
 export type Document = Schemas["Document"];
 export type Session = Schemas["Session"];
 export type SessionCreate = Schemas["SessionCreate"];
@@ -820,18 +822,27 @@ export class LibraOSClient {
   async *streamJob(
     jobId: string,
     lastEventId?: string,
-  ): AsyncGenerator<AgUiStreamEvent, void, unknown> {
-    const headers: Record<string, string> = {
-      accept: "text/event-stream",
-      "x-protocol": "ag-ui",
-    };
+  ): AsyncGenerator<JobStreamEvent, void, unknown> {
+    // A job stream carries the job's own events, not AG-UI: parsing it as
+    // AG-UI dropped every frame.
+    const headers: Record<string, string> = { accept: "text/event-stream" };
     if (lastEventId) headers["last-event-id"] = lastEventId;
     const res = await this.rawFetch(`/v1/managed/agents/jobs/${encodeURIComponent(jobId)}/stream`, {
       method: "GET",
       headers,
     });
     if (!res.ok) throw await this.toApiError(res);
-    yield* parseAgUiStream(res);
+    for await (const frame of parseSse<Record<string, unknown>>(res)) {
+      const ev = { ...frame.data };
+      if (typeof ev.type !== "string" && frame.event) ev.type = frame.event;
+      // The spec's done event carries status at the top level; the server
+      // also nests it under metadata.
+      if (ev.type === "done" && ev.status === undefined) {
+        const meta = ev.metadata as { status?: unknown } | undefined;
+        if (meta?.status !== undefined) ev.status = meta.status;
+      }
+      yield ev as JobStreamEvent;
+    }
   }
 
   // ── Documents ──────────────────────────────────────────────────────────

@@ -1,6 +1,6 @@
 # Deployment
 
-How to run LibraOS in production. For first-time install / evaluation, start with [`docs.meganova.ai/nova-os/install`](https://docs.meganova.ai/nova-os/install) — this doc covers what changes when you go from "kick the tires" to "production traffic."
+How to run LibraOS in production. For first-time install / evaluation, start with [libraos.com/docs](https://libraos.com/docs/) — this doc covers what changes when you go from "kick the tires" to "production traffic."
 
 > ⚠️ **License Notice**
 >
@@ -36,26 +36,26 @@ How to run LibraOS in production. For first-time install / evaluation, start wit
 Recommended for production traffic up to roughly 50 concurrent SSE streams or 10 RPS sustained — enough for a small partner integration where LibraOS isn't the bottleneck.
 
 ```bash
-docker run -d --name nova-os \
+docker run -d --name libraos \
   --restart=unless-stopped \
   -p 127.0.0.1:8900:8900 \
-  -e NOVA_OS_DATABASE_URL="postgres://nova:secret@db.internal:5432/nova_os" \
-  -e NOVA_OS_JWT_SECRET="$(openssl rand -hex 32)" \
+  -e LIBRA_OS_DATABASE_URL="postgres://libraos:secret@db.internal:5432/libraos" \
+  -e LIBRA_OS_JWT_SECRET="$(openssl rand -hex 32)" \
   -e OPENAI_API_KEY="msk_live_..." \
-  -e NOVA_OS_ADMIN_EMAIL="ops@partner.example" \
-  -e NOVA_OS_ADMIN_PASSWORD="$(openssl rand -hex 16)" \
-  ghcr.io/meganovaai/nova-os:v0.1.7
+  -e LIBRA_OS_ADMIN_EMAIL="ops@partner.example" \
+  -e LIBRA_OS_ADMIN_PASSWORD="$(openssl rand -hex 16)" \
+  ghcr.io/libraos/libraos:v0.2.1
 ```
 
 Bind to `127.0.0.1` and let the reverse proxy expose it. Don't expose `:8900` to the public internet directly.
 
 ### Shape 2 — Compose with companion apps (recommended)
 
-Use [`MeganovaAI/nova-os-stack`](https://github.com/MeganovaAI/nova-os-stack) — pre-built compose manifests for LibraOS + Postgres + SurrealDB + 8 optional companion apps (LibreChat chat UI, SearXNG, crawl4ai, Firecrawl, Docling, FlashRank, Phoenix, Hermes). Required secrets use the fail-fast `${VAR:?required - hint}` pattern instead of insecure inline defaults.
+Use [`libraos/stack`](https://github.com/libraos/stack) — pre-built compose manifests for LibraOS + Postgres + SurrealDB + 8 optional companion apps (LibreChat chat UI, SearXNG, crawl4ai, Firecrawl, Docling, FlashRank, Phoenix, Hermes). Required secrets use the fail-fast `${VAR:?required - hint}` pattern instead of insecure inline defaults.
 
 ```bash
-git clone https://github.com/MeganovaAI/nova-os-stack
-cd nova-os-stack
+git clone https://github.com/libraos/stack
+cd stack
 cp .env.example .env
 # edit .env with your secrets
 
@@ -74,41 +74,41 @@ docker compose -f docker-compose.yml -f overlays/librechat.yml up -d
 For partners running multi-tenant SaaS or scale beyond what compose handles.
 
 ```yaml
-# nova-os-deployment.yaml
+# libraos-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nova-os
+  name: libraos
 spec:
   replicas: 1   # see "Multi-replica gotchas" below
   selector:
     matchLabels:
-      app: nova-os
+      app: libraos
   template:
     metadata:
       labels:
-        app: nova-os
+        app: libraos
     spec:
       containers:
-        - name: nova-os
-          image: ghcr.io/meganovaai/nova-os:v0.1.7
+        - name: libraos
+          image: ghcr.io/libraos/libraos:v0.2.1
           ports:
             - containerPort: 8900
           env:
-            - name: NOVA_OS_DATABASE_URL
+            - name: LIBRA_OS_DATABASE_URL
               valueFrom:
                 secretKeyRef:
-                  name: nova-os-secrets
+                  name: libraos-secrets
                   key: database-url
-            - name: NOVA_OS_JWT_SECRET
+            - name: LIBRA_OS_JWT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: nova-os-secrets
+                  name: libraos-secrets
                   key: jwt-secret
             - name: OPENAI_API_KEY
               valueFrom:
                 secretKeyRef:
-                  name: nova-os-secrets
+                  name: libraos-secrets
                   key: openai-api-key
           resources:
             requests:
@@ -132,10 +132,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: nova-os
+  name: libraos
 spec:
   selector:
-    app: nova-os
+    app: libraos
   ports:
     - port: 80
       targetPort: 8900
@@ -152,7 +152,7 @@ LibraOS speaks plain HTTP. TLS terminates at your edge. Three streaming-related 
 Automatic Let's Encrypt + reasonable streaming defaults out of the box:
 
 ```caddy
-nova-os.your-company.example {
+libraos.your-company.example {
     reverse_proxy localhost:8900 {
         # SSE-friendly defaults
         flush_interval -1
@@ -164,10 +164,10 @@ nova-os.your-company.example {
 
 ```nginx
 server {
-    server_name nova-os.your-company.example;
+    server_name libraos.your-company.example;
     listen 443 ssl http2;
-    ssl_certificate     /etc/letsencrypt/live/nova-os/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/nova-os/privkey.pem;
+    ssl_certificate     /etc/letsencrypt/live/libraos/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/libraos/privkey.pem;
 
     location / {
         proxy_pass http://127.0.0.1:8900;
@@ -236,26 +236,26 @@ Three classes of secrets:
 
 | Secret | Where |
 |---|---|
-| `NOVA_OS_JWT_SECRET` | Signs user JWTs. Lose it and all existing tokens become invalid. ≥32 hex chars. Use `openssl rand -hex 32`. |
+| `LIBRA_OS_JWT_SECRET` | Signs user JWTs. Lose it and all existing tokens become invalid. ≥32 hex chars. Use `openssl rand -hex 32`. |
 | LLM provider API keys (`OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GOOGLE_API_KEY`) | Pass through to upstream. Use the MegaNova gateway's `msk_...` key for one-key-fits-all. |
 | Webhook callback secrets | Per-tool HMAC-SHA256 secrets. Stored in LibraOS settings DB; partners set via dashboard or `c.settings.set(...)`. |
 
-**Never inline secrets in compose YAML or Kubernetes manifests** — use Docker Secrets, Vault, AWS Secrets Manager, or Kubernetes Secrets. The compose file in [`docs.meganova.ai/nova-os/install`](https://docs.meganova.ai/nova-os/install) is for evaluation only.
+**Never inline secrets in compose YAML or Kubernetes manifests** — use Docker Secrets, Vault, AWS Secrets Manager, or Kubernetes Secrets. The compose file in [libraos.com/docs](https://libraos.com/docs/) is for evaluation only.
 
 ### Admin credentials guardrail
 
-Since the `v0.1.5-week-2026-05-09` weekly tag, the daemon **refuses to start with the leaked-default admin email/password** unless `NOVA_OS_ALLOW_INSECURE_DEFAULTS=1` is set. Production deploys should never set that escape hatch:
+Since the `v0.1.5-week-2026-05-09` weekly tag, the daemon **refuses to start with the leaked-default admin email/password** unless `LIBRA_OS_ALLOW_INSECURE_DEFAULTS=1` is set. Production deploys should never set that escape hatch:
 
 ```bash
 # Production (correct):
--e NOVA_OS_ADMIN_EMAIL="ops@partner.example" \
--e NOVA_OS_ADMIN_PASSWORD="$(openssl rand -hex 16)" \
+-e LIBRA_OS_ADMIN_EMAIL="ops@partner.example" \
+-e LIBRA_OS_ADMIN_PASSWORD="$(openssl rand -hex 16)" \
 
 # Local dev only:
--e NOVA_OS_ALLOW_INSECURE_DEFAULTS=1 \
+-e LIBRA_OS_ALLOW_INSECURE_DEFAULTS=1 \
 ```
 
-If you see `NOVA_OS_ADMIN_EMAIL is unset or matches the insecure default` in startup logs, that's the guardrail firing.
+If you see `LIBRA_OS_ADMIN_EMAIL is unset or matches the insecure default` in startup logs, that's the guardrail firing.
 
 ## Observability
 
@@ -280,23 +280,9 @@ Plain stdout/stderr — Docker / Kubernetes log collection picks them up unchang
 
 Grep these for ops dashboards.
 
-### Metrics
-
-LibraOS exposes Prometheus metrics at `/metrics` (when `NOVA_OS_METRICS_ENABLED=true`):
-
-| Metric | Notes |
-|---|---|
-| `nova_os_chat_requests_total{persona,status}` | Per-persona chat request counter |
-| `nova_os_chat_duration_seconds{persona,model_used}` | Chat latency histogram |
-| `nova_os_skill_runs_total{name,status}` | Skill execution counter |
-| `nova_os_fallback_triggered_total{slot,from_model,to_model}` | Multi-model fallback counter |
-| `nova_os_webhook_delivery_total{tool,attempt,outcome}` | Mode B webhook delivery counter |
-
-Wire these into your Grafana / Datadog / alerting stack.
-
 ## Upgrades
 
-LibraOS follows semver. Stable tags update `:latest` automatically; weekly partner-validation tags (`vX.Y.Z-week-YYYY-MM-DD`) do not. See [`docs.meganova.ai/nova-os/releases`](https://docs.meganova.ai/nova-os/releases) for the cadence.
+LibraOS follows semver. Stable tags update `:latest` automatically; weekly partner-validation tags (`vX.Y.Z-week-YYYY-MM-DD`) do not. See [libraos.com/docs](https://libraos.com/docs/) for the cadence.
 
 **Recommended upgrade path:**
 
@@ -304,7 +290,7 @@ LibraOS follows semver. Stable tags update `:latest` automatically; weekly partn
 2. Test the new tag in a staging environment first. Run the partner's smoke-test scenarios against the new build.
 3. **Roll out one replica at a time across an upgrade boundary** — schema migrations run on container start, and concurrent migrations race.
 4. Verify `/api/health` returns 200 with the new `build_sha` before draining traffic to the upgraded replica.
-5. Monitor `nova_os_chat_requests_total{status="error"}` for a sustained jump post-upgrade.
+5. Watch the server log for a sustained jump in `skill_failed` lines and HTTP 5xx after the upgrade.
 
 **Rollback** is a tag downgrade — pull the previous image, restart. Schema migrations are forward-only; if a migration changed something you depend on, restore from backup. Pre-upgrade backup is non-negotiable for major version bumps.
 
@@ -313,7 +299,7 @@ LibraOS follows semver. Stable tags update `:latest` automatically; weekly partn
 | Gotcha | Mitigation |
 |---|---|
 | Schema migrations race on first-boot of two replicas | Run one replica at a time across upgrade boundaries. |
-| In-memory caches (persona manifest ETag, hook subscription registry) diverge across replicas | Persona manifest re-reads on each `If-None-Match` mismatch — partners using ETag tolerate this. Hook subscriptions are per-replica until [`#177`](https://github.com/MeganovaAI/nova-os/issues/177) follow-up wires persistence. |
+| In-memory caches (persona manifest ETag, hook subscription registry) diverge across replicas | Persona manifest re-reads on each `If-None-Match` mismatch — partners using ETag tolerate this. Hook subscriptions are per-replica until a server follow-up (#177) wires persistence. |
 | WebSocket / SSE sticky sessions needed | Use `ip_hash` (nginx) or session affinity (Kubernetes Service `sessionAffinity: ClientIP`). |
 | Audit log inserts contend on advisory lock | Postgres serializable isolation handles it — don't optimize away. |
 
@@ -321,9 +307,9 @@ For multi-tenant SaaS that spans multiple instances, each tenant should pin to a
 
 ## See also
 
-- [`docs.meganova.ai/nova-os/install`](https://docs.meganova.ai/nova-os/install) — first-time install + evaluation
-- [`docs.meganova.ai/nova-os/releases`](https://docs.meganova.ai/nova-os/releases) — tag cadence + migration notes
-- [`MeganovaAI/nova-os-stack`](https://github.com/MeganovaAI/nova-os-stack) — production compose manifests + 8 companion apps
+- [libraos.com/docs](https://libraos.com/docs/) — first-time install + evaluation
+- [libraos.com/docs](https://libraos.com/docs/) — tag cadence + migration notes
+- [`libraos/stack`](https://github.com/libraos/stack) — production compose manifests + 8 companion apps
 - [`getting-started.md`](getting-started.md) — front-door + scenario matrix
 - [`multi-model.md`](multi-model.md) — model routing in production
 - [`web-search.md`](web-search.md) — backend env vars per provider

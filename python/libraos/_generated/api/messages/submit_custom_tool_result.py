@@ -77,7 +77,7 @@ def sync_detailed(
     """Submit a custom_tool_use result (Mode A inline)
 
      Used when partner consumes the SSE stream directly. POST the result
-    for an emitted `custom_tool_use` event; Nova OS resumes the agent
+    for an emitted `custom_tool_use` event; LibraOS resumes the agent
     loop and continues streaming on the original request connection.
 
     Args:
@@ -113,7 +113,7 @@ def sync(
     """Submit a custom_tool_use result (Mode A inline)
 
      Used when partner consumes the SSE stream directly. POST the result
-    for an emitted `custom_tool_use` event; Nova OS resumes the agent
+    for an emitted `custom_tool_use` event; LibraOS resumes the agent
     loop and continues streaming on the original request connection.
 
     Args:
@@ -144,7 +144,7 @@ async def asyncio_detailed(
     """Submit a custom_tool_use result (Mode A inline)
 
      Used when partner consumes the SSE stream directly. POST the result
-    for an emitted `custom_tool_use` event; Nova OS resumes the agent
+    for an emitted `custom_tool_use` event; LibraOS resumes the agent
     loop and continues streaming on the original request connection.
 
     Args:
@@ -178,7 +178,7 @@ async def asyncio(
     """Submit a custom_tool_use result (Mode A inline)
 
      Used when partner consumes the SSE stream directly. POST the result
-    for an emitted `custom_tool_use` event; Nova OS resumes the agent
+    for an emitted `custom_tool_use` event; LibraOS resumes the agent
     loop and continues streaming on the original request connection.
 
     Args:

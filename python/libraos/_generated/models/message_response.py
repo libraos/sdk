@@ -36,9 +36,9 @@ class MessageResponse:
         stop_reason (MessageResponseStopReason):
         type_ (MessageResponseType | Unset):
         usage (MessageResponseUsage | Unset):
-        model_used (str | Unset): Nova OS extension — same as `model`, surfaced for clarity.
-        fallback_triggered (bool | Unset): Nova OS extension — true if a fallback model handled the request.
-        output_violations (list[OutputViolation] | Unset): Nova OS extension — populated only when the agent declared an
+        model_used (str | Unset): LibraOS extension — same as `model`, surfaced for clarity.
+        fallback_triggered (bool | Unset): LibraOS extension — true if a fallback model handled the request.
+        output_violations (list[OutputViolation] | Unset): LibraOS extension — populated only when the agent declared an
             `output_type` contract AND the reply failed validation AND the
             agent's `violation_mode` is `log` or `repair` (with `error`,
             the response is a 422 instead). Empty array means no violations.

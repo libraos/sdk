@@ -2968,7 +2968,7 @@ func (e CreateMessageParamsXProtocol) Valid() bool {
 // ActionCallback Webhook fired when the action is approved. It is snapshotted onto the row and never surfaced back to clients.
 type ActionCallback struct {
 	Auth struct {
-		// SecretRef Name of an environment variable on the Nova OS server holding the shared HMAC secret. The secret itself never travels in the request or the stored row.
+		// SecretRef Name of an environment variable on the LibraOS server holding the shared HMAC secret. The secret itself never travels in the request or the stored row.
 		SecretRef string  `json:"secret_ref"`
 		Type      *string `json:"type,omitempty"`
 	} `json:"auth"`
@@ -3013,7 +3013,7 @@ type Agent struct {
 	AgentSkills *[]string `json:"agent_skills,omitempty"`
 
 	// AgentType Whether this agent dispatches to other skill agents (persona) or
-	// executes one skill directly (skill). Maps to nova-os internals;
+	// executes one skill directly (skill). Maps to LibraOS server internals;
 	// partners only see the discriminator.
 	AgentType    *AgentType `json:"agent_type,omitempty"`
 	Brain        *bool      `json:"brain,omitempty"`
@@ -3055,7 +3055,7 @@ type Agent struct {
 	// server default.
 	OnAmbiguousEntity *AgentOnAmbiguousEntity `json:"on_ambiguous_entity,omitempty"`
 
-	// OutputType Structured-output contract for agent replies. When set, Nova OS
+	// OutputType Structured-output contract for agent replies. When set, LibraOS
 	// validates every assistant reply against `schema` before return.
 	// Server-side since v0.1.4.
 	OutputType *OutputTypeContract `json:"output_type,omitempty"`
@@ -3100,7 +3100,7 @@ type Agent struct {
 	TurnBudgetTokens *int `json:"turn_budget_tokens,omitempty"`
 
 	// Type Whether this agent dispatches to other skill agents (persona) or
-	// executes one skill directly (skill). Maps to nova-os internals;
+	// executes one skill directly (skill). Maps to LibraOS server internals;
 	// partners only see the discriminator.
 	Type       *AgentType       `json:"type,omitempty"`
 	Version    *int             `json:"version,omitempty"`
@@ -3138,7 +3138,7 @@ type AgentCreate struct {
 	AgentSkills *[]string `json:"agent_skills,omitempty"`
 
 	// AgentType Whether this agent dispatches to other skill agents (persona) or
-	// executes one skill directly (skill). Maps to nova-os internals;
+	// executes one skill directly (skill). Maps to LibraOS server internals;
 	// partners only see the discriminator.
 	AgentType    *AgentType `json:"agent_type,omitempty"`
 	Brain        *bool      `json:"brain,omitempty"`
@@ -3174,7 +3174,7 @@ type AgentCreate struct {
 	// server default.
 	OnAmbiguousEntity *AgentCreateOnAmbiguousEntity `json:"on_ambiguous_entity,omitempty"`
 
-	// OutputType Structured-output contract for agent replies. When set, Nova OS
+	// OutputType Structured-output contract for agent replies. When set, LibraOS
 	// validates every assistant reply against `schema` before return.
 	// Server-side since v0.1.4.
 	OutputType *OutputTypeContract `json:"output_type,omitempty"`
@@ -3469,7 +3469,7 @@ type AgentTriage struct {
 type AgentTriageDefaultBrain string
 
 // AgentType Whether this agent dispatches to other skill agents (persona) or
-// executes one skill directly (skill). Maps to nova-os internals;
+// executes one skill directly (skill). Maps to LibraOS server internals;
 // partners only see the discriminator.
 type AgentType string
 
@@ -3484,7 +3484,7 @@ type AgentUpdate struct {
 	AgentSkills *[]string `json:"agent_skills,omitempty"`
 
 	// AgentType Whether this agent dispatches to other skill agents (persona) or
-	// executes one skill directly (skill). Maps to nova-os internals;
+	// executes one skill directly (skill). Maps to LibraOS server internals;
 	// partners only see the discriminator.
 	AgentType    *AgentType `json:"agent_type,omitempty"`
 	Brain        *bool      `json:"brain,omitempty"`
@@ -3523,7 +3523,7 @@ type AgentUpdate struct {
 	// server default.
 	OnAmbiguousEntity *AgentUpdateOnAmbiguousEntity `json:"on_ambiguous_entity,omitempty"`
 
-	// OutputType Structured-output contract for agent replies. When set, Nova OS
+	// OutputType Structured-output contract for agent replies. When set, LibraOS
 	// validates every assistant reply against `schema` before return.
 	// Server-side since v0.1.4.
 	OutputType *OutputTypeContract `json:"output_type,omitempty"`
@@ -3833,7 +3833,7 @@ type ChatCompletionRequest struct {
 	MaxTokens *int          `json:"max_tokens,omitempty"`
 	Messages  []ChatMessage `json:"messages"`
 
-	// Metadata Nova OS extension channel for per-call fields (e.g. a per-call model override). The documented keys below are honoured on this surface the same way as on native chat.
+	// Metadata LibraOS extension channel for per-call fields (e.g. a per-call model override). The documented keys below are honoured on this surface the same way as on native chat.
 	Metadata *ChatCompletionRequest_Metadata `json:"metadata,omitempty"`
 
 	// Model Target model/agent id. When gateway mode is enabled, a value of the form `llm:<provider>/<model>` selects raw provider passthrough.
@@ -3867,7 +3867,7 @@ type ChatCompletionRequestMetadataResearchDepth string
 // ChatCompletionRequestMetadataThinkingEffort defines model for ChatCompletionRequest.Metadata.Thinking.Effort.
 type ChatCompletionRequestMetadataThinkingEffort string
 
-// ChatCompletionRequest_Metadata Nova OS extension channel for per-call fields (e.g. a per-call model override). The documented keys below are honoured on this surface the same way as on native chat.
+// ChatCompletionRequest_Metadata LibraOS extension channel for per-call fields (e.g. a per-call model override). The documented keys below are honoured on this surface the same way as on native chat.
 type ChatCompletionRequest_Metadata struct {
 	// AllowedSkills Narrows a persona's planner to these skills for this turn. A name the persona does not have is a 400; ignored on non-persona agents.
 	AllowedSkills *[]string `json:"allowed_skills,omitempty"`
@@ -3925,7 +3925,7 @@ type ChatCompletionResponse struct {
 	Id      *string `json:"id,omitempty"`
 	Model   *string `json:"model,omitempty"`
 
-	// NovaGrounding Nova OS extension — per-turn grounded-vs-refusal outcome. Omitted on non-retrieval turns.
+	// NovaGrounding LibraOS extension — per-turn grounded-vs-refusal outcome. Omitted on non-retrieval turns.
 	NovaGrounding *ChatCompletionResponseNovaGrounding `json:"nova_grounding,omitempty"`
 
 	// NovaUsage Aggregated token usage across all of the turn's model sub-calls, with a per-stage breakdown. Omitted on non-model/zero-usage turns. Excludes embedding calls.
@@ -3941,7 +3941,7 @@ type ChatCompletionResponse struct {
 	Usage *ChatCompletionUsage `json:"usage,omitempty"`
 }
 
-// ChatCompletionResponseNovaGrounding Nova OS extension — per-turn grounded-vs-refusal outcome. Omitted on non-retrieval turns.
+// ChatCompletionResponseNovaGrounding LibraOS extension — per-turn grounded-vs-refusal outcome. Omitted on non-retrieval turns.
 type ChatCompletionResponseNovaGrounding string
 
 // ChatCompletionResponseFormat OpenAI-style response format. Must be an object with a non-empty `type` (otherwise 400); the value of `type` is not checked. Forwarded verbatim to OpenAI-compatible providers on the passthrough path; ignored on the agent path, where the agent's `output_type` decides the reply shape.
@@ -4129,9 +4129,9 @@ type ConversationMessage struct {
 // ConversationScope Personal assistant data or governed organization data.
 type ConversationScope string
 
-// CountTokensMessage One message in an Anthropic-shaped request.
+// CountTokensMessage One message in a Messages request.
 type CountTokensMessage struct {
-	// Content Message content — a plain string or the Anthropic content-block array.
+	// Content Message content — a plain string or an array of content blocks.
 	Content CountTokensMessage_Content `json:"content"`
 	Role    CountTokensMessageRole     `json:"role"`
 }
@@ -4142,7 +4142,7 @@ type CountTokensMessageContent0 = string
 // CountTokensMessageContent1 defines model for .
 type CountTokensMessageContent1 = []map[string]interface{}
 
-// CountTokensMessage_Content Message content — a plain string or the Anthropic content-block array.
+// CountTokensMessage_Content Message content — a plain string or an array of content blocks.
 type CountTokensMessage_Content struct {
 	union json.RawMessage
 }
@@ -4150,7 +4150,7 @@ type CountTokensMessage_Content struct {
 // CountTokensMessageRole defines model for CountTokensMessage.Role.
 type CountTokensMessageRole string
 
-// CountTokensRequest Anthropic-compatible Messages request used for token counting.
+// CountTokensRequest Messages request used for token counting.
 type CountTokensRequest struct {
 	Messages []CountTokensMessage `json:"messages"`
 
@@ -4381,7 +4381,7 @@ type DecisionVersion struct {
 }
 
 // Deployment Minimal, derive-friendly capabilities read so a client (web/iOS) can
-// discover what this Nova OS instance supports without probing each
+// discover what this LibraOS instance supports without probing each
 // endpoint. Per the contract-unification design (D1, lean: derive),
 // this is intentionally small — the persona manifest
 // (`GET /agents/v1/personas`) remains the source of truth for *which*
@@ -4423,7 +4423,7 @@ type Deployment struct {
 		Skill *string `json:"skill,omitempty"`
 	} `json:"models,omitempty"`
 
-	// Version Nova OS server version (e.g. "v0.1.9"). "dev"/"unknown" on unstamped builds.
+	// Version LibraOS server version (e.g. "v0.1.9"). "dev"/"unknown" on unstamped builds.
 	Version string `json:"version"`
 }
 
@@ -4476,7 +4476,7 @@ type Employee struct {
 
 	// WebSearchConfig Persona-level web-search configuration. Resolved per-invocation on
 	// ``skill_deep_research`` via ``searchctx.WebSearchConfigFromContext``.
-	// Field names changed in nova-os PR #212 (closes #200) — old
+	// Field names changed in server PR #212 (closes #200) — old
 	// ``backend`` / ``fallback`` are no longer accepted.
 	WebSearchConfig *WebSearchConfig `json:"web_search_config,omitempty"`
 }
@@ -4504,7 +4504,7 @@ type EmployeeUpdate struct {
 
 	// WebSearchConfig Persona-level web-search configuration. Resolved per-invocation on
 	// ``skill_deep_research`` via ``searchctx.WebSearchConfigFromContext``.
-	// Field names changed in nova-os PR #212 (closes #200) — old
+	// Field names changed in server PR #212 (closes #200) — old
 	// ``backend`` / ``fallback`` are no longer accepted.
 	WebSearchConfig *WebSearchConfig `json:"web_search_config,omitempty"`
 }
@@ -5427,7 +5427,7 @@ type MessageRequest struct {
 	Messages  []Message                `json:"messages"`
 	Metadata  *MessageRequest_Metadata `json:"metadata,omitempty"`
 
-	// Model Anthropic-compatible required selector. Desk clients normally set
+	// Model Required selector. Desk clients normally set
 	// this to the selected employee/persona id and also send the same id
 	// as `metadata.agent_id`. A `<vendor>/<model>` value may act as an
 	// answer-model override when the deployment permits it.
@@ -5458,7 +5458,7 @@ type MessageRequestMetadataThinkingEffort string
 
 // MessageRequest_Metadata defines model for MessageRequest.Metadata.
 type MessageRequest_Metadata struct {
-	// AgentId Target a specific Nova OS agent/persona for this turn; omit
+	// AgentId Target a specific LibraOS agent/persona for this turn; omit
 	// for the default agent. Typed here so generated clients can set
 	// it without falling back to untyped additionalProperties.
 	AgentId *string `json:"agent_id,omitempty"`
@@ -5508,17 +5508,17 @@ type MessageRequest_Metadata struct {
 type MessageResponse struct {
 	Content []ContentBlock `json:"content"`
 
-	// FallbackTriggered Nova OS extension — true if a fallback model handled the request.
+	// FallbackTriggered LibraOS extension — true if a fallback model handled the request.
 	FallbackTriggered *bool  `json:"fallback_triggered,omitempty"`
 	Id                string `json:"id"`
 
 	// Model Resolved model that handled the request.
 	Model string `json:"model"`
 
-	// ModelUsed Nova OS extension — same as `model`, surfaced for clarity.
+	// ModelUsed LibraOS extension — same as `model`, surfaced for clarity.
 	ModelUsed *string `json:"model_used,omitempty"`
 
-	// OutputViolations Nova OS extension — populated only when the agent declared an
+	// OutputViolations LibraOS extension — populated only when the agent declared an
 	// `output_type` contract AND the reply failed validation AND the
 	// agent's `violation_mode` is `log` or `repair` (with `error`,
 	// the response is a 422 instead). Empty array means no violations.
@@ -5673,7 +5673,7 @@ type MyGroupMembership struct {
 	Role GroupRole `json:"role"`
 }
 
-// NativeChatMetadata Opaque per-request metadata. Nova OS does not interpret arbitrary keys (they are threaded through tenant isolation and audit), but a few reserved keys control per-call behavior.
+// NativeChatMetadata Opaque per-request metadata. LibraOS does not interpret arbitrary keys (they are threaded through tenant isolation and audit), but a few reserved keys control per-call behavior.
 type NativeChatMetadata struct {
 	// AllowedSkills Narrows a persona's planner to these skills for this turn. A name the persona does not have is a 400; ignored on non-persona agents.
 	AllowedSkills *[]string `json:"allowed_skills,omitempty"`
@@ -5751,7 +5751,7 @@ type NativeChatRequest struct {
 	// Messages OpenAI-style conversation history.
 	Messages *[]ChatMessage `json:"messages,omitempty"`
 
-	// Metadata Opaque per-request metadata. Nova OS does not interpret arbitrary keys (they are threaded through tenant isolation and audit), but a few reserved keys control per-call behavior.
+	// Metadata Opaque per-request metadata. LibraOS does not interpret arbitrary keys (they are threaded through tenant isolation and audit), but a few reserved keys control per-call behavior.
 	Metadata *NativeChatMetadata `json:"metadata,omitempty"`
 
 	// Model Optional model hint (server-side routing may override).
@@ -5908,7 +5908,7 @@ type OidcDiscovery struct {
 	UserinfoEndpoint                  *string   `json:"userinfo_endpoint,omitempty"`
 }
 
-// OutputTypeContract Structured-output contract for agent replies. When set, Nova OS
+// OutputTypeContract Structured-output contract for agent replies. When set, LibraOS
 // validates every assistant reply against `schema` before return.
 // Server-side since v0.1.4.
 type OutputTypeContract struct {
@@ -6438,7 +6438,7 @@ type StreamEventError struct {
 // StreamEventErrorType defines model for StreamEventError.Type.
 type StreamEventErrorType string
 
-// StreamEventRouteHint Nova OS extension (v0.1.5+) — emitted exactly once per terminal
+// StreamEventRouteHint LibraOS extension (v0.1.5+) — emitted exactly once per terminal
 // message right before `done`. Carries Brain's dispatch decision so
 // partner UIs can react before the full reply is rendered.
 type StreamEventRouteHint struct {
@@ -6839,7 +6839,7 @@ type WebSearchBackend string
 
 // WebSearchConfig Persona-level web-search configuration. Resolved per-invocation on
 // “skill_deep_research“ via “searchctx.WebSearchConfigFromContext“.
-// Field names changed in nova-os PR #212 (closes #200) — old
+// Field names changed in server PR #212 (closes #200) — old
 // “backend“ / “fallback“ are no longer accepted.
 type WebSearchConfig struct {
 	// FallbackChain Ordered fallback chain. Used on empty/error/off-topic results.

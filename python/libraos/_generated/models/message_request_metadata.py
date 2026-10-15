@@ -22,7 +22,7 @@ T = TypeVar("T", bound="MessageRequestMetadata")
 class MessageRequestMetadata:
     """
     Attributes:
-        agent_id (str | Unset): Target a specific Nova OS agent/persona for this turn; omit
+        agent_id (str | Unset): Target a specific LibraOS agent/persona for this turn; omit
             for the default agent. Typed here so generated clients can set
             it without falling back to untyped additionalProperties.
         brain (bool | Unset): Per-call planner toggle (3-state — null inherits server default).

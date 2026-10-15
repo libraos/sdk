@@ -15,7 +15,7 @@ T = TypeVar("T", bound="ActionCallbackAuth")
 class ActionCallbackAuth:
     """
     Attributes:
-        secret_ref (str): Name of an environment variable on the Nova OS server holding the shared HMAC secret. The
+        secret_ref (str): Name of an environment variable on the LibraOS server holding the shared HMAC secret. The
             secret itself never travels in the request or the stored row.
         type_ (str | Unset):
     """

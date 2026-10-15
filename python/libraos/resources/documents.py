@@ -10,7 +10,7 @@ from libraos.resources._base import Resource
 class Documents(Resource):
     """Upload, list, and delete documents on a LibraOS instance.
 
-    Documents are auto-indexed by Super Nova on upload; partners typically
+    Documents are auto-indexed by the server on upload; partners typically
     upload once and reference resulting `document_id` values from agent
     skills (knowledge_search etc.) thereafter.
     """

@@ -196,8 +196,8 @@ Only the newest user turn needs to be sent. LibraOS reads prior history from
   clients may omit it.
 
 For a non-streaming call, set `stream:false` and omit `X-Protocol`; the response
-is an Anthropic-compatible `MessageResponse`. The actual provider model is also
-reported in `X-Nova-Model-Used`; do not confuse the response's persona selector
+is a `MessageResponse`. The actual provider model is also
+reported in `X-Nova-Model-Used` (the server's wire name); do not confuse the response's persona selector
 with the model that ran.
 
 ### AG-UI events
@@ -233,7 +233,7 @@ payload rather than treating model-written outlet names as verified links.
 Structured citations in a non-streaming response are on a text block's
 `citations` array.
 
-Without the AG-UI header, streaming uses Anthropic's
+Without the AG-UI header, streaming uses the
 `message_start → content_block_delta → message_stop` sequence. The TypeScript
 client normalizes both dialects to AG-UI events.
 
@@ -267,7 +267,7 @@ const history = await libraos.getConversation(conversationId);
 
 `LibraOSClient.listConversations({ scope: "corporate" })` applies the boundary at
 the server. The client checks HTTP status before reading an SSE body and throws
-`NovaApiError` for rejected streams.
+`LibraOSApiError` for rejected streams.
 
 ## Disconnect recovery and idempotency
 

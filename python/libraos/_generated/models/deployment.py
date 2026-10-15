@@ -19,7 +19,7 @@ T = TypeVar("T", bound="Deployment")
 @_attrs_define
 class Deployment:
     """Minimal, derive-friendly capabilities read so a client (web/iOS) can
-    discover what this Nova OS instance supports without probing each
+    discover what this LibraOS instance supports without probing each
     endpoint. Per the contract-unification design (D1, lean: derive),
     this is intentionally small — the persona manifest
     (`GET /agents/v1/personas`) remains the source of truth for *which*
@@ -28,7 +28,7 @@ class Deployment:
     All fields are advisory; absence means "not advertised", not "off".
 
         Attributes:
-            version (str): Nova OS server version (e.g. "v0.1.9"). "dev"/"unknown" on unstamped builds.
+            version (str): LibraOS server version (e.g. "v0.1.9"). "dev"/"unknown" on unstamped builds.
             capabilities (list[str]): Stable string labels for optional server features a client may
                 branch on (e.g. "observational_memory", "report_generator",
                 "async_jobs", "workflows", "knowledge_gate", "ag_ui_streaming").

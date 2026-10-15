@@ -32,7 +32,7 @@ def test_fastapi_mount_dispatches_and_signs() -> None:
         return f"got {input['invoice_id']}"
 
     app = FastAPI()
-    app.include_router(router.fastapi_router(), prefix="/nova")
+    app.include_router(router.fastapi_router(), prefix="/libraos")
 
     client = TestClient(app)
     body_obj = {"tool_use_id": "tu1", "name": "fetch_invoice", "input": {"invoice_id": "INV-1"}}
@@ -40,7 +40,7 @@ def test_fastapi_mount_dispatches_and_signs() -> None:
     sig, _ = _sign("s-1234567890", "tu1", body)
 
     resp = client.post(
-        "/nova/",
+        "/libraos/",
         content=body,
         headers={
             "X-Nova-Signature": sig,
@@ -57,13 +57,13 @@ def test_fastapi_mount_dispatches_and_signs() -> None:
 def test_fastapi_mount_rejects_bad_signature() -> None:
     router = WebhookRouter(secret="s-1")
     app = FastAPI()
-    app.include_router(router.fastapi_router(), prefix="/nova")
+    app.include_router(router.fastapi_router(), prefix="/libraos")
     client = TestClient(app)
 
     body = b'{"tool_use_id":"x","name":"t","input":{}}'
     sig, _ = _sign("WRONG", "x", body)
     resp = client.post(
-        "/nova/",
+        "/libraos/",
         content=body,
         headers={
             "X-Nova-Signature": sig,

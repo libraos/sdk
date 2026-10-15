@@ -11,8 +11,8 @@ For Mode A custom-tool dispatch over the same context manager, see
 Prerequisites::
 
     pip install libraos-sdk
-    export NOVA_OS_URL=https://nova.your-company.example
-    export NOVA_OS_API_KEY=msk_live_...
+    export LIBRAOS_BASE_URL=https://libraos.your-company.example
+    export LIBRAOS_API_KEY=msk_live_...
 
 Run::
 
@@ -28,9 +28,9 @@ from libraos import Client
 
 
 async def main() -> None:
-    base_url = os.environ.get("NOVA_OS_URL", "https://nova.your-company.example")
-    api_key = os.environ["NOVA_OS_API_KEY"]
-    agent_id = os.environ.get("NOVA_OS_AGENT_ID", "default-assistant")
+    base_url = os.environ.get("LIBRAOS_BASE_URL", "https://libraos.your-company.example")
+    api_key = os.environ["LIBRAOS_API_KEY"]
+    agent_id = os.environ.get("LIBRAOS_AGENT_ID", "default-assistant")
 
     async with Client(base_url=base_url, api_key=api_key) as c:
         async with c.messages.stream(

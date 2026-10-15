@@ -9,7 +9,7 @@ This repo ships:
 - **OpenAPI spec** (`openapi/libra-os-partner.v1.yaml`) — source of truth for the partner-facing API surface.
 - **CLI** (`cli/`) — single static Go binary for sync, validate, test-callback, export/import.
 - **Python SDK** (`python/`) — reference client library, published to PyPI as `libraos-sdk`.
-- **Docs** (`docs/`) — getting started, Desk chat, Anthropic compatibility, multi-model, web-search, custom tools.
+- **Docs** (`docs/`) — getting started, Desk chat, multi-model, web-search, custom tools.
 - **Examples** (`examples/`) — worked partner integrations (legaltech, healthcare, finance).
 
 Official docs: [libraos.com/docs](https://libraos.com/docs/) — including [Create your first agent](https://libraos.com/docs/creating-an-agent/) and [Model settings & token plans](https://libraos.com/docs/model-settings/).
@@ -19,7 +19,7 @@ Official docs: [libraos.com/docs](https://libraos.com/docs/) — including [Crea
 | Surface | Command |
 |---|---|
 | Python SDK | `pip install libraos-sdk` |
-| CLI binary | `curl -L $(release_url)/nova-os-cli_linux_amd64.tar.gz \| tar -xz` |
+| CLI binary | `curl -L $(release_url)/libraos-cli_linux_amd64.tar.gz \| tar -xz` |
 | CLI Docker | `docker pull ghcr.io/libraos/libraos-cli:latest` |
 
 See `python/README.md` and `cli/README.md` for usage details.
@@ -33,7 +33,7 @@ The SDK targets a running LibraOS server. To stand one up yourself:
 
 | Resource | What it is |
 |---|---|
-| [`ghcr.io/libraos/libraos`](https://github.com/orgs/libraos/packages/container/package/libraos) | Public, multi-arch Docker image of the server. `docker pull ghcr.io/libraos/libraos:v0.1.16-week-2026-08-04`. |
+| [`ghcr.io/libraos/libraos`](https://github.com/orgs/libraos/packages/container/package/libraos) | Public, multi-arch Docker image of the server. `docker pull ghcr.io/libraos/libraos:v0.2.1`. |
 | [`libraos/stack`](https://github.com/libraos/stack) | Reference docker-compose manifests — core (LibraOS + Postgres + SurrealDB) plus 8 optional companion apps (LibreChat chat UI, SearXNG, crawl4ai, Firecrawl, Docling, FlashRank, Phoenix, Hermes). |
 | [docs.libraos.com/install](https://docs.libraos.com/install) | Step-by-step install guide: prerequisites, env vars, smoke tests, reverse-proxy templates. |
 | [docs.libraos.com/releases](https://docs.libraos.com/releases) | Release notes + migration notes for each server version. |
@@ -43,60 +43,59 @@ The SDK targets a running LibraOS server. To stand one up yourself:
 Smallest practical local instance — LibraOS plus a disposable Postgres. **Not for production**:
 
 ```bash
-docker network create nova-os-eval
-docker run --rm -d --name nova-os-pg --network nova-os-eval \
-  -e POSTGRES_USER=nova \
-  -e POSTGRES_PASSWORD=nova \
-  -e POSTGRES_DB=nova_os \
+docker network create libraos-eval
+docker run --rm -d --name libraos-pg --network libraos-eval \
+  -e POSTGRES_USER=libraos \
+  -e POSTGRES_PASSWORD=libraos \
+  -e POSTGRES_DB=libraos \
   postgres:16
-docker run --rm --network nova-os-eval -p 8900:8900 \
-  -e NOVA_OS_PUBLIC_URL=http://localhost:8900 \
-  -e NOVA_OS_ADMIN_EMAIL=admin@example.com \
-  -e NOVA_OS_ADMIN_PASSWORD=$(openssl rand -hex 16) \
-  -e NOVA_OS_DATABASE_URL='postgres://nova:nova@nova-os-pg:5432/nova_os?sslmode=disable' \
+docker run --rm --network libraos-eval -p 8900:8900 \
+  -e LIBRA_OS_PUBLIC_URL=http://localhost:8900 \
+  -e LIBRA_OS_JWT_SECRET=$(openssl rand -hex 32) \
+  -e LIBRA_OS_ADMIN_EMAIL=admin@example.com \
+  -e LIBRA_OS_ADMIN_PASSWORD=$(openssl rand -hex 16) \
+  -e LIBRA_OS_DATABASE_URL='postgres://libraos:libraos@libraos-pg:5432/libraos?sslmode=disable' \
   -e OPENAI_API_BASE=http://your-vllm-host:8000/v1 \
   -e OPENAI_API_KEY=local \
-  ghcr.io/libraos/libraos:v0.1.16-week-2026-08-04
+  ghcr.io/libraos/libraos:v0.2.1
 ```
 
 The server runs against **any OpenAI-compatible endpoint** — a local vLLM/Ollama
 for a fully self-hosted, air-gapped deployment (shown above), or a hosted
-provider. To use hosted Claude instead, drop the `OPENAI_*` vars and set
-`ANTHROPIC_API_KEY` — it is optional, not required.
-
-```
-```
+provider. Set `OPENAI_API_BASE`, `OPENAI_API_KEY` and, optionally,
+`OPENAI_MODEL` to match.
 
 Then point the SDK at it:
 
 ```python
-from libraos import AnthropicCompatClient
+import asyncio
+from libraos import Client
 
-client = AnthropicCompatClient(base_url="http://localhost:8900", api_key="msk_eval_...")
-msg = client.messages.create(
-    model="Qwen/Qwen3.6-35B-A3B",
-    max_tokens=256,
-    messages=[{"role": "user", "content": "Hello, LibraOS!"}],
-)
+async def main() -> None:
+    async with Client(base_url="http://localhost:8900", api_key="msk_eval_...") as client:
+        msg = await client.messages.create(
+            "default",
+            [{"role": "user", "content": "Hello, LibraOS!"}],
+            max_tokens=256,
+        )
+        print(msg.text)
+
+asyncio.run(main())
 ```
 
-For anything beyond evaluation (real Postgres, SurrealDB knowledge store, companion apps, TLS, OIDC) use the [`libraos/stack`](https://github.com/libraos/stack) manifests linked above and follow [docs.libraos.com/install](https://docs.libraos.com/install).
+For anything beyond evaluation (real Postgres, companion apps, TLS, OIDC) use the [`libraos/stack`](https://github.com/libraos/stack) manifests linked above and follow [docs.libraos.com/install](https://docs.libraos.com/install).
 
 If you only need to call a hosted LibraOS that someone else operates, skip this section — the SDK works against any reachable LibraOS endpoint.
 
-## Three drop-in compat surfaces
+## Python SDK
 
-Existing partner code targeting any of the three Anthropic-published Python entry points works against LibraOS with at most an env-var or constructor change:
+The native client (`from libraos import Client`) covers the whole partner surface: chat over `/v1/messages`, the multi-model `model_config` cascade at employee and agent level, structured-output `output_type` validation, custom-tool callbacks (Mode A inline / Mode B webhook), portable employee bundles and async jobs. See [`python/examples/00_quickstart.py`](python/examples/00_quickstart.py).
 
-- **Anthropic Messages SDK** (`anthropic.Anthropic(base_url=...)`) — set `base_url` to your LibraOS instance. The 1:1 Messages-API surface plus the Managed Agents beta endpoints (`/v1/agents`, `/v1/sessions`, `/v1/messages` behind the `anthropic-beta: managed-agents-2026-04-01` header) work unchanged. See [`python/examples/01_basic_chat.py`](python/examples/01_basic_chat.py).
-- **Claude Agent SDK** (`claude_agent_sdk.query` / `ClaudeSDKClient`) — set `ANTHROPIC_BASE_URL` + `ANTHROPIC_API_KEY` (or `ClaudeAgentOptions(env={...})`) to redirect the bundled CLI subprocess to LibraOS. Local agent loop ergonomics (Read/Bash/Edit + custom MCP tools) backed by LibraOS's multi-tenant runtime instead of `api.anthropic.com`. See [`python/examples/01b_claude_agent_sdk_drop_in.py`](python/examples/01b_claude_agent_sdk_drop_in.py).
-- **LibraOS native** (`from libraos import Client`) — the extended surface partners reach for once they're past hello-world: multi-model `model_config` cascade at employee + agent level, structured-output `output_type` validation, custom-tool webhook callbacks (Mode A inline / Mode B webhook), portable employee bundles, async jobs. See [`python/examples/00_quickstart.py`](python/examples/00_quickstart.py).
-
-The first two are about meeting partners where they are. The third is the surface they grow into when their integration deepens.
+Python SDK 2.0 removes the Anthropic-compatibility client; see [`python/CHANGELOG.md`](python/CHANGELOG.md).
 
 ## Status
 
-**Python SDK: v1.2.0** — published to PyPI as [`libraos-sdk`](https://pypi.org/project/libraos-sdk/). The public API has been frozen since `v1.0.0`; downstream consumers can integrate without chasing a moving target. See [`python/CHANGELOG.md`](python/CHANGELOG.md).
+**Python SDK: v2.0.0** — published to PyPI as [`libraos-sdk`](https://pypi.org/project/libraos-sdk/). 2.0.0 is a clean break: the Anthropic-compatibility client is gone and every Nova-era name is now LibraOS. See [`python/CHANGELOG.md`](python/CHANGELOG.md).
 
 **OpenAPI spec: v1.0.0-alpha.7** — still advancing ahead of the SDK to declare new server endpoints as they land.
 

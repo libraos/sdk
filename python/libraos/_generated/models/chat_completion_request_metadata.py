@@ -21,7 +21,7 @@ T = TypeVar("T", bound="ChatCompletionRequestMetadata")
 
 @_attrs_define
 class ChatCompletionRequestMetadata:
-    """Nova OS extension channel for per-call fields (e.g. a per-call model override). The documented keys below are
+    """LibraOS extension channel for per-call fields (e.g. a per-call model override). The documented keys below are
     honoured on this surface the same way as on native chat.
 
         Attributes:

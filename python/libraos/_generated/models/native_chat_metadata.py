@@ -21,7 +21,7 @@ T = TypeVar("T", bound="NativeChatMetadata")
 
 @_attrs_define
 class NativeChatMetadata:
-    """Opaque per-request metadata. Nova OS does not interpret arbitrary keys (they are threaded through tenant isolation
+    """Opaque per-request metadata. LibraOS does not interpret arbitrary keys (they are threaded through tenant isolation
     and audit), but a few reserved keys control per-call behavior.
 
         Attributes:

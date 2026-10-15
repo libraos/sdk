@@ -1,14 +1,14 @@
-"""Anthropic-compat hello world — drop-in usage of the Anthropic SDK.
+"""Hello world — one message to an existing agent with ``libraos.Client``.
 
-Demonstrates that code written against ``anthropic.Anthropic(base_url=...)``
-works against LibraOS unchanged. Partners who already use the Anthropic SDK
-only need to swap the base_url and API key — zero other code changes required.
+No agent setup: this talks to an agent that already exists on your LibraOS
+server (``default`` is present on a stock install).
 
 Prerequisites::
 
-    pip install libraos-sdk anthropic
-    export NOVA_OS_URL=https://nova.partner.com
-    export NOVA_OS_API_KEY=msk_live_...
+    pip install libraos-sdk
+    export LIBRAOS_BASE_URL=https://libraos.partner.com
+    export LIBRAOS_API_KEY=msk_live_...
+    export LIBRAOS_AGENT_ID=default  # optional
 
 Run::
 
@@ -17,34 +17,33 @@ Run::
 
 from __future__ import annotations
 
+import asyncio
 import os
 
-from libraos import AnthropicCompatClient
+from libraos import Client
 
 
-def main() -> None:
-    base_url = os.environ.get("NOVA_OS_URL", "https://nova.partner.com")
-    api_key = os.environ["NOVA_OS_API_KEY"]
+async def main() -> None:
+    base_url = os.environ.get("LIBRAOS_BASE_URL", "https://libraos.partner.com")
+    api_key = os.environ["LIBRAOS_API_KEY"]
+    agent_id = os.environ.get("LIBRAOS_AGENT_ID", "default")
 
-    # AnthropicCompatClient returns an anthropic.Anthropic instance pre-configured
-    # for LibraOS's /v1/managed compat path. The full Anthropic SDK API is available.
-    client = AnthropicCompatClient(base_url=base_url, api_key=api_key)
-
-    msg = client.messages.create(
-        model="anthropic/claude-opus-4-7",
-        max_tokens=256,
-        messages=[{"role": "user", "content": "Hello, LibraOS!"}],
-    )
+    async with Client(base_url=base_url, api_key=api_key) as c:
+        msg = await c.messages.create(
+            agent_id,
+            messages=[{"role": "user", "content": "Hello, LibraOS!"}],
+            model="anthropic/claude-opus-4-7",
+            max_tokens=256,
+        )
 
     print(f"Message ID : {msg.id}")
     print(f"Model used : {msg.model}")
     print(f"Stop reason: {msg.stop_reason}")
-    print(f"Tokens     : {msg.usage.input_tokens} in / {msg.usage.output_tokens} out")
+    if msg.usage is not None:
+        print(f"Tokens     : {msg.usage.input_tokens} in / {msg.usage.output_tokens} out")
     print()
-    for block in msg.content:
-        if hasattr(block, "text"):
-            print(block.text)
+    print(msg.text)
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

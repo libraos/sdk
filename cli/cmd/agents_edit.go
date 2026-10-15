@@ -1,7 +1,7 @@
 // Schema-driven guided agent authoring (libraos-sdk#18).
 //
 // This subcommand consumes GET /v1/agents/schema (kernel surface
-// shipped in MeganovaAI/nova-os#393) so the CLI knows which fields are
+// shipped in the LibraOS server) so the CLI knows which fields are
 // valid on an AgentDef without code-duplicating the field list. Operators
 // `--set key=value` (scalars) or `--set-list key=a,b,c` (string lists)
 // and the CLI rejects unknown keys with a "did you mean…?" suggestion
@@ -64,10 +64,10 @@ Two modes share the schema-driven validation core:
 
 Examples:
   # Interactive: walk every schema field with a guided form
-  nova-os-cli agents edit my-frontdesk-agent
+  libraos-cli agents edit my-frontdesk-agent
 
   # Scripted / CI-friendly: set fields explicitly, skip the confirm prompt
-  nova-os-cli agents edit my-frontdesk-agent \
+  libraos-cli agents edit my-frontdesk-agent \
       --set model=gemini/gemini-3.1-pro-preview \
       --set agent_type=persona \
       --set-list tools=knowledge_search,human_handoff \
@@ -75,12 +75,12 @@ Examples:
       --confirm
 
   # Inspect without writing
-  nova-os-cli agents edit my-agent \
+  libraos-cli agents edit my-agent \
       --set model=gemini/gemini-3.1-pro-preview \
       --dry-run
 
   # Create a new agent (POST) instead of editing an existing one (PUT)
-  nova-os-cli agents edit my-new-agent --new \
+  libraos-cli agents edit my-new-agent --new \
       --set model=gemini/gemini-2.5-flash \
       --set agent_type=skill \
       --confirm
@@ -102,24 +102,24 @@ Slice 3 polish (all active):
     field names (tools / name / agent_type / maxTurns) with a once-per-
     run deprecation warning citing the schema's x-deprecation-target.
 
-Manual smoke test (against a local nova-os):
+Manual smoke test (against a local LibraOS server):
 
   # 1. Start a local instance (Docker) and mint an nk_ key, then:
-  export NOVA_OS_URL=http://localhost:8900 NOVA_OS_API_KEY=nk_...
+  export LIBRAOS_BASE_URL=http://localhost:8900 LIBRAOS_API_KEY=nk_...
 
   # 2. Dry-run a create — fetches the live schema, validates, prints the
   #    markdown + JSON body, writes nothing:
-  nova-os-cli agents edit smoke-agent --new \
+  libraos-cli agents edit smoke-agent --new \
       --set model=gemini/gemini-2.5-flash --set agent_type=skill --dry-run
 
   # 3. Submit it, then confirm it round-trips:
-  nova-os-cli agents edit smoke-agent --new \
+  libraos-cli agents edit smoke-agent --new \
       --set model=gemini/gemini-2.5-flash --set agent_type=skill --confirm
-  nova-os-cli agents list | grep smoke-agent
+  libraos-cli agents list | grep smoke-agent
 
   # 4. Interactive edit walks every schema field (tools autocompletes
   #    from /api/skills; system_prompt opens $EDITOR):
-  nova-os-cli agents edit smoke-agent`,
+  libraos-cli agents edit smoke-agent`,
 	Args: cobra.ExactArgs(1),
 	RunE: runAgentsEdit,
 }
@@ -243,7 +243,7 @@ func runAgentsEdit(cmd *cobra.Command, args []string) error {
 		}
 		var ok bool
 		if err := huh.NewConfirm().
-			Title("Submit to nova-os?").
+			Title("Submit to LibraOS?").
 			Description(fmt.Sprintf("Will %s agent %q.",
 				map[bool]string{true: "CREATE", false: "UPDATE"}[editNew], id)).
 			Affirmative("Yes, submit").

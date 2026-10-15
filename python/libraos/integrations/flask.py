@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from libraos.callbacks import WebhookRouter
 
 
-def build_blueprint(wr: "WebhookRouter", name: str = "nova_callbacks"):  # type: ignore[no-untyped-def]
+def build_blueprint(wr: "WebhookRouter", name: str = "libraos_callbacks"):  # type: ignore[no-untyped-def]
     from flask import Blueprint, Response, jsonify, request
 
     bp = Blueprint(name, __name__)

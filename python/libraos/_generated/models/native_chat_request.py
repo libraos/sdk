@@ -31,7 +31,7 @@ class NativeChatRequest:
             has no skills. No-op on single-skill agents.
         include_metadata (bool | Unset): When true, include additional diagnostic fields (e.g. tools_used, per-stage
             details) in the response.
-        metadata (NativeChatMetadata | Unset): Opaque per-request metadata. Nova OS does not interpret arbitrary keys
+        metadata (NativeChatMetadata | Unset): Opaque per-request metadata. LibraOS does not interpret arbitrary keys
             (they are threaded through tenant isolation and audit), but a few reserved keys control per-call behavior.
     """
 

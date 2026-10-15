@@ -14,11 +14,7 @@
 // Convenience client + endpoint method types.
 export {
   LibraOSClient,
-  /** @deprecated Use LibraOSClient. */
-  NovaClient,
   type LibraOSClientOptions,
-  /** @deprecated Use LibraOSClientOptions. */
-  type NovaClientOptions,
   type StreamMessageOptions,
   type MessageRequest,
   type MessageResponse,
@@ -139,10 +135,10 @@ export type {
 
 // Errors.
 export {
-  NovaApiError,
-  asNovaErrorBody,
-  type NovaErrorBody,
-  type NovaErrorType,
+  LibraOSApiError,
+  asLibraOSErrorBody,
+  type LibraOSErrorBody,
+  type LibraOSErrorType,
 } from "./errors.js";
 
 // Re-export generated OpenAPI types for advanced typing.

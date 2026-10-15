@@ -70,14 +70,14 @@ def sync_detailed(
     client: AuthenticatedClient | Client,
     body: CountTokensRequest,
 ) -> Response[CountTokensResult | Error]:
-    """Count input tokens (Anthropic-compatible)
+    """Count input tokens
 
-     Anthropic-compatible pre-flight token count. Accepts the Messages request shape and returns an
-    estimated `input_tokens` for the supplied system + messages. Citation/document consistency
-    validators run here too, so misconfigurations surface as 400 before the chat path.
+     Pre-flight token count. Accepts the Messages request shape and returns an estimated `input_tokens`
+    for the supplied system + messages. Citation/document consistency validators run here too, so
+    misconfigurations surface as 400 before the chat path.
 
     Args:
-        body (CountTokensRequest): Anthropic-compatible Messages request used for token counting.
+        body (CountTokensRequest): Messages request used for token counting.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -103,14 +103,14 @@ def sync(
     client: AuthenticatedClient | Client,
     body: CountTokensRequest,
 ) -> CountTokensResult | Error | None:
-    """Count input tokens (Anthropic-compatible)
+    """Count input tokens
 
-     Anthropic-compatible pre-flight token count. Accepts the Messages request shape and returns an
-    estimated `input_tokens` for the supplied system + messages. Citation/document consistency
-    validators run here too, so misconfigurations surface as 400 before the chat path.
+     Pre-flight token count. Accepts the Messages request shape and returns an estimated `input_tokens`
+    for the supplied system + messages. Citation/document consistency validators run here too, so
+    misconfigurations surface as 400 before the chat path.
 
     Args:
-        body (CountTokensRequest): Anthropic-compatible Messages request used for token counting.
+        body (CountTokensRequest): Messages request used for token counting.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -131,14 +131,14 @@ async def asyncio_detailed(
     client: AuthenticatedClient | Client,
     body: CountTokensRequest,
 ) -> Response[CountTokensResult | Error]:
-    """Count input tokens (Anthropic-compatible)
+    """Count input tokens
 
-     Anthropic-compatible pre-flight token count. Accepts the Messages request shape and returns an
-    estimated `input_tokens` for the supplied system + messages. Citation/document consistency
-    validators run here too, so misconfigurations surface as 400 before the chat path.
+     Pre-flight token count. Accepts the Messages request shape and returns an estimated `input_tokens`
+    for the supplied system + messages. Citation/document consistency validators run here too, so
+    misconfigurations surface as 400 before the chat path.
 
     Args:
-        body (CountTokensRequest): Anthropic-compatible Messages request used for token counting.
+        body (CountTokensRequest): Messages request used for token counting.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -162,14 +162,14 @@ async def asyncio(
     client: AuthenticatedClient | Client,
     body: CountTokensRequest,
 ) -> CountTokensResult | Error | None:
-    """Count input tokens (Anthropic-compatible)
+    """Count input tokens
 
-     Anthropic-compatible pre-flight token count. Accepts the Messages request shape and returns an
-    estimated `input_tokens` for the supplied system + messages. Citation/document consistency
-    validators run here too, so misconfigurations surface as 400 before the chat path.
+     Pre-flight token count. Accepts the Messages request shape and returns an estimated `input_tokens`
+    for the supplied system + messages. Citation/document consistency validators run here too, so
+    misconfigurations surface as 400 before the chat path.
 
     Args:
-        body (CountTokensRequest): Anthropic-compatible Messages request used for token counting.
+        body (CountTokensRequest): Messages request used for token counting.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

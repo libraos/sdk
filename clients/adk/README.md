@@ -84,5 +84,5 @@ await adk.run("refund-copilot", "refund order 8842", {
 ## Roadmap
 
 - **v1 (now):** authoring + deploy + run over the jobs surface; webhook tools; full governance.
-- **v2:** session-based runs + live streaming + in-process tools (Anthropic-Managed-Agents wire-compatible).
+- **v2:** session-based runs + live streaming + in-process tools.
 - **v3:** agent versioning/pinning, MCP client, scheduled deployments.

@@ -1,6 +1,6 @@
 // Package sign produces Stripe-style HMAC-SHA256 signatures for
 // outgoing test-callback webhooks. The signing scheme matches the
-// receiver-side verification in nova_os.callbacks.WebhookRouter
+// receiver-side verification in libraos.callbacks.WebhookRouter
 // (Python SDK):
 //
 //	signed input = "<unix_ts>.<tool_use_id>.<body>"
@@ -19,7 +19,7 @@ import (
 	"time"
 )
 
-// Sign returns the canonical X-Nova-Signature header value.
+// Sign returns the canonical X-Nova-Signature header value (the server's wire name).
 func Sign(secret, toolUseID string, body []byte, now time.Time) string {
 	ts := strconv.FormatInt(now.Unix(), 10)
 	mac := hmac.New(sha256.New, []byte(secret))

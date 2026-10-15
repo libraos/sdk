@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "libraos-sdk"
 dynamic = ["version"]
-description = "Partner SDK for LibraOS — Anthropic Managed Agents compatible with multi-model + employee enhancements"
+description = "Partner SDK for LibraOS — multi-model agents with employee enhancements"
 readme = "README.md"
 license = { text = "MIT" }
 authors = [{ name = "LibraOS Team", email = "engineering@meganova.ai" }]
@@ -24,7 +24,6 @@ dev = [
     "pytest>=8.0",
     "pytest-asyncio>=0.23",
     "openapi-python-client==0.28.3",
-    "anthropic>=0.30",
     "fastapi>=0.110",
     "flask>=3.0",
 ]
@@ -50,5 +49,5 @@ include = ["libraos*"]
 testpaths = ["tests"]
 asyncio_mode = "auto"
 markers = [
-    "integration: runs against a real Libra OS server (needs LIBRA_OS_URL + LIBRA_OS_API_KEY)",
+    "integration: runs against a real LibraOS server (needs LIBRA_OS_URL + LIBRA_OS_API_KEY)",
 ]

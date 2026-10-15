@@ -17,12 +17,12 @@ T = TypeVar("T", bound="CountTokensMessage")
 
 @_attrs_define
 class CountTokensMessage:
-    """One message in an Anthropic-shaped request.
+    """One message in a Messages request.
 
     Attributes:
         role (CountTokensMessageRole):
-        content (list[CountTokensMessageContentType1Item] | str): Message content — a plain string or the Anthropic
-            content-block array.
+        content (list[CountTokensMessageContentType1Item] | str): Message content — a plain string or an array of
+            content blocks.
     """
 
     role: CountTokensMessageRole

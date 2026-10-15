@@ -23,7 +23,7 @@ class MessageRequest:
     """
     Attributes:
         messages (list[Message]):
-        model (str): Anthropic-compatible required selector. Desk clients normally set
+        model (str): Required selector. Desk clients normally set
             this to the selected employee/persona id and also send the same id
             as `metadata.agent_id`. A `<vendor>/<model>` value may act as an
             answer-model override when the deployment permits it.

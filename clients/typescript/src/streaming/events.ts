@@ -5,7 +5,7 @@
  * of the AG-UI events LibraOS emits over SSE on the `X-Protocol: ag-ui` gated
  * stream. This is a SEPARATE contract from the OpenAPI partner spec's
  * `StreamEvent` union (the #99-native snake_case dialect): AG-UI is the adopted
- * streaming standard (nova-os #370). Wire fields are camelCase and `type` carries
+ * streaming standard for LibraOS. Wire fields are camelCase and `type` carries
  * the canonical `@ag-ui/core` SCREAMING_SNAKE discriminator. The OpenAPI codegen
  * does NOT produce these (it emits no SSE runtime) — same split as the Python
  * SDK's hand-written `_sse.py`.
@@ -119,7 +119,8 @@ export interface StateSnapshot {
 
 /**
  * Escape hatch for LibraOS-specific extensions without a standard AG-UI type.
- * `name` is a `nova.<x>` namespaced inner event (e.g. "nova.route_hint").
+ * `name` is a `nova.<x>` namespaced inner event (e.g. "nova.route_hint";
+ * `nova.` is the server's wire namespace).
  * Canonical discriminator "CUSTOM" (NOT "CUSTOM_EVENT").
  */
 export interface CustomEvent {

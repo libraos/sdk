@@ -3,7 +3,7 @@
 Two strategies, in order of preference:
 
 1. **PRIMARY: harness agent.** A pre-created agent (id
-   ``nova-os-simulator-harness``) with a minimal, instructive-only
+   ``libraos-simulator-harness``) with a minimal, instructive-only
    baked system prompt. The SDK lands the archetype-derived system
    prompt as ``messages[0].role == "system"`` on each call, and the
    harness agent's small baked prompt does not fight it.
@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     from libraos.client import Client
 
 
-HARNESS_AGENT_ID = "nova-os-simulator-harness"
+HARNESS_AGENT_ID = "libraos-simulator-harness"
 
 HARNESS_AGENT_SYSTEM_PROMPT = (
     "You will receive a customer archetype as the first system message "
@@ -84,7 +84,7 @@ async def ensure_simulator_agent(
     # baked-prompt shape (instructive-only) by default; partners can
     # override via the explicit simulator_system_prompt arg.
     baked_prompt = simulator_system_prompt or HARNESS_AGENT_SYSTEM_PROMPT
-    transient_name = f"nova-os-simulator-transient-{archetype.name}"
+    transient_name = f"libraos-simulator-transient-{archetype.name}"
     created = await client.agents.create(
         name=transient_name,
         agent_type="skill",

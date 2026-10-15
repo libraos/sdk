@@ -178,6 +178,8 @@ func newClient() (*gen.ClientWithResponses, error) {
 	))
 }
 
+// managedAgentsBetaHeader is the managed-agents beta header value the
+// server requires on /v1/agents*, /v1/environments* and /v1/sessions*.
 const managedAgentsBetaHeader = "managed-agents-2026-04-01"
 
 func requiresManagedAgentsBeta(path string) bool {

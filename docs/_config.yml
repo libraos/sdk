@@ -13,7 +13,7 @@
 # Until DNS lands, the site is reachable at https://meganovaai.github.io/libraos-sdk/
 
 title: LibraOS SDK
-description: Partner integration SDK for LibraOS — Anthropic Managed Agents compatible with multi-model + employee enhancements.
+description: Partner integration SDK for LibraOS — multi-model, multi-tenant agent runtime with employees, custom tools and knowledge.
 url: https://libraos-sdk.meganova.ai
 baseurl: ""
 

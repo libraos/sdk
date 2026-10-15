@@ -2,7 +2,7 @@
 
 Mirrors the OpenAPI Error.type enum:
 
-  - invalid_request_error / validation_error → NovaOSError (base)
+  - invalid_request_error / validation_error → LibraOSError (base)
   - authentication_error                      → AuthenticationError
   - permission_error                          → PermissionError
   - not_found_error                           → NotFoundError
@@ -22,7 +22,7 @@ from __future__ import annotations
 from typing import Any
 
 
-class NovaOSError(Exception):
+class LibraOSError(Exception):
     """Base class for every LibraOS SDK error."""
 
     def __init__(
@@ -48,19 +48,19 @@ class NovaOSError(Exception):
         return " ".join(parts)
 
 
-class AuthenticationError(NovaOSError):
+class AuthenticationError(LibraOSError):
     """401 — missing or invalid bearer token."""
 
 
-class PermissionError(NovaOSError):  # noqa: A001 — shadows builtin intentionally for parity with OpenAPI Error.type
+class PermissionError(LibraOSError):  # noqa: A001 — shadows builtin intentionally for parity with OpenAPI Error.type
     """403 — token valid but lacks permission."""
 
 
-class NotFoundError(NovaOSError):
+class NotFoundError(LibraOSError):
     """404 — resource not found (or hidden from this token's scope)."""
 
 
-class RateLimitedError(NovaOSError):
+class RateLimitedError(LibraOSError):
     """429 — too many requests. retry_after is seconds."""
 
     def __init__(self, message: str, *, retry_after: int | None = None, **kw: Any) -> None:
@@ -68,23 +68,22 @@ class RateLimitedError(NovaOSError):
         self.retry_after = retry_after
 
 
-class BillingError(NovaOSError):
+class BillingError(LibraOSError):
     """402/403 — billing issue (credits exhausted, monthly cap, etc).
 
     Detect via `code` (e.g. credits_exhausted, USAGE_LIMIT_EXCEEDED).
     """
 
 
-class UpstreamError(NovaOSError):
+class UpstreamError(LibraOSError):
     """5xx propagated from an upstream provider (gateway, vendor)."""
 
 
-class VertexSchemaError(NovaOSError):
+class VertexSchemaError(LibraOSError):
     """400 root-caused to Vertex AI's strict tool-schema validation.
 
     Surfaces the offending tool + parameter path so partners can fix the
-    schema rather than retrying as transient. See nova-os CLAUDE.md for
-    the detailed root-cause pattern.
+    schema rather than retrying as transient.
     """
 
     def __init__(
@@ -113,11 +112,11 @@ class VertexSchemaError(NovaOSError):
         return base
 
 
-class ModelNotFoundError(NovaOSError):
+class ModelNotFoundError(LibraOSError):
     """Bare model name (no <vendor>/ prefix) or unknown model id."""
 
 
-class InternalError(NovaOSError):
+class InternalError(LibraOSError):
     """500 — server bug. Report at https://github.com/libraos/sdk/issues."""
 
 
@@ -135,7 +134,7 @@ class PersonaNotFound(NotFoundError):
         self.persona_id = persona_id
 
 
-_TYPE_TO_CLASS: dict[str, type[NovaOSError]] = {
+_TYPE_TO_CLASS: dict[str, type[LibraOSError]] = {
     "authentication_error": AuthenticationError,
     "permission_error": PermissionError,
     "not_found_error": NotFoundError,
@@ -152,7 +151,7 @@ _TYPE_TO_CLASS: dict[str, type[NovaOSError]] = {
 # Status-code fallback when the server returns a 4xx/5xx with no recognized
 # ``type`` field. Defensive — keeps `except NotFoundError` paths working even
 # when the server adds a new endpoint that doesn't follow the type convention.
-_STATUS_TO_CLASS: dict[int, type[NovaOSError]] = {
+_STATUS_TO_CLASS: dict[int, type[LibraOSError]] = {
     401: AuthenticationError,
     403: PermissionError,
     404: NotFoundError,
@@ -160,11 +159,11 @@ _STATUS_TO_CLASS: dict[int, type[NovaOSError]] = {
 }
 
 
-def parse_error_response(status: int, body: Any) -> NovaOSError:
-    """Convert an HTTP error response into a typed NovaOSError.
+def parse_error_response(status: int, body: Any) -> LibraOSError:
+    """Convert an HTTP error response into a typed LibraOSError.
 
     `body` is the parsed JSON body (dict) or the raw text fallback (str).
-    Returns the most specific NovaOSError subclass we can identify.
+    Returns the most specific LibraOSError subclass we can identify.
 
     Handles three server envelope shapes observed in practice:
     1. Flat:    ``{"message": "...", "type": "...", "code": ...}``
@@ -174,7 +173,7 @@ def parse_error_response(status: int, body: Any) -> NovaOSError:
     All three normalize to the same typed subclass on the way out.
     """
     if not isinstance(body, dict):
-        return NovaOSError(f"HTTP {status}: {body}", status=status)
+        return LibraOSError(f"HTTP {status}: {body}", status=status)
 
     # Persona-manifest endpoint uses a distinct envelope:
     #     {"error": "persona not found", "id": "<requested>"}
@@ -231,11 +230,11 @@ def parse_error_response(status: int, body: Any) -> NovaOSError:
     if status_cls is not None:
         return status_cls(message, **common)
 
-    return NovaOSError(message, **common)
+    return LibraOSError(message, **common)
 
 
 __all__ = [
-    "NovaOSError",
+    "LibraOSError",
     "AuthenticationError",
     "PermissionError",
     "NotFoundError",

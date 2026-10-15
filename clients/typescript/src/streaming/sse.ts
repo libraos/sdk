@@ -64,11 +64,11 @@ export async function* parseSse<T = unknown>(
 
 /** Convenience: iterate a `text/event-stream` body as typed {@link AgUiEvent}s.
  *
- * The kernel's /v1/messages is Anthropic-Messages-compatible and streams
- * Anthropic-native SSE (`message_start` / `content_block_delta` / `message_stop`
- * / `error`). Older builds streamed AG-UI events directly. We normalize BOTH:
- * AG-UI frames pass through by their `type`; Anthropic frames are translated to
- * the AG-UI equivalents the consumers switch on, so a kernel format change never
+ * The server's /v1/messages streams the LibraOS message-stream events
+ * (`message_start` / `content_block_delta` / `message_stop` / `error`). Older
+ * builds streamed AG-UI events directly. We normalize BOTH: AG-UI frames pass
+ * through by their `type`; message-stream events are translated to the AG-UI
+ * equivalents the consumers switch on, so a server format change never
  * silently drops the stream. */
 export async function* parseAgUiStream(
   response: Response,
@@ -88,7 +88,7 @@ export async function* parseAgUiStream(
       yield withSseId(d as unknown as AgUiEvent, frame.id);
       continue;
     }
-    // ── Anthropic-native SSE → AG-UI translation ──
+    // ── Message-stream events → AG-UI translation ──
     if (t === "content_block_delta") {
       const delta = (d as { delta?: { type?: string; text?: string } }).delta;
       if (delta?.type === "text_delta" && typeof delta.text === "string") {

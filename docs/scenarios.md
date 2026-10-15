@@ -6,7 +6,7 @@ Ten end-to-end partner workflows. Each scenario shows what happens from the user
 |---|---|---|---|
 | 1 | [Partner onboarding — create employee + agent](#1-partner-onboarding) | Setup | Shared folder + CLI sync |
 | 2 | [Knowledge upload + first retrieval](#2-knowledge-upload--first-retrieval) | Setup | SDK |
-| 3 | [End-user's first chat](#3-end-users-first-chat) | Runtime | SDK / Anthropic SDK |
+| 3 | [End-user's first chat](#3-end-users-first-chat) | Runtime | SDK |
 | 4 | [Custom tool — Mode A (SSE inline)](#4-custom-tool--mode-a-sse-inline) | Runtime | SDK |
 | 5 | [Custom tool — Mode B (webhook)](#5-custom-tool--mode-b-webhook) | Runtime | SDK + partner HTTP server |
 | 6 | [Multi-model fallback fires under load](#6-multi-model-fallback-fires-under-load) | Runtime | (transparent) |
@@ -23,18 +23,18 @@ Ten end-to-end partner workflows. Each scenario shows what happens from the user
 
 **What the user does:**
 - Drops `data/employees/<id>.md` and `data/agents/<id>.md` files in their git repo
-- Runs `nova-os-cli validate ./data/` as a CI gate
-- Runs `nova-os-cli sync ./data/` to push to the server
+- Runs `libraos-cli validate ./data/` as a CI gate
+- Runs `libraos-cli sync ./data/` to push to the server
 
 **What flows on the wire:**
 
 ```
-$ nova-os-cli validate ./data/
+$ libraos-cli validate ./data/
 ✓ data/employees/legal-team.md         frontmatter / model_shape / vertex-array OK
 ✓ data/agents/legal-assistant.md       frontmatter / model_shape / route_templates OK
 0 errors
 
-$ nova-os-cli sync ./data/
+$ libraos-cli sync ./data/
 PLAN
   CREATE employee  legal-team
   CREATE agent     legal-assistant       (owner_employee=legal-team)
@@ -73,10 +73,10 @@ POST /v1/messages
 
 **Surface choice:**
 - **SDK** for partner backends ingesting at scale.
-- **CLI** for one-off ingestion: `nova-os-cli knowledge ingest -f document.md --collection case-law`.
+- **CLI** for one-off ingestion: `libraos-cli knowledge ingest -f document.md --collection case-law`.
 - **Dashboard UI** for ad-hoc partner-internal review.
 
-**Verification:** Run `nova-os-cli knowledge search "Bill 96 termination" --collection case-law --top-k 3`. If your ingest succeeded, ranked passages come back.
+**Verification:** Run `libraos-cli knowledge search "Bill 96 termination" --collection case-law --top-k 3`. If your ingest succeeded, ranked passages come back.
 
 **Worked example:** [`03_upload_knowledge.py`](../python/examples/03_upload_knowledge.py).
 
@@ -86,7 +86,7 @@ POST /v1/messages
 
 **Goal:** End-user (a person logged into the partner's product) sends a question and gets a response.
 
-**What flows on the wire (Anthropic SDK pattern):**
+**What flows on the wire:**
 
 ```
 1. Partner backend authenticates the end-user (their own auth — JWT, session cookie, etc.)
@@ -112,8 +112,7 @@ POST /v1/messages
 ```
 
 **Surface choice:**
-- **Anthropic SDK** if the partner already has Anthropic-SDK code — change `base_url` only.
-- **LibraOS native SDK** for partners who want extensions (multi-model, output_type, custom tools).
+- **LibraOS Python SDK** (`c.messages.create`), which also carries the extensions (multi-model, output_type, custom tools).
 
 **Worked example:** [`01_basic_chat.py`](../python/examples/01_basic_chat.py).
 
@@ -156,11 +155,10 @@ server → client : event: message_stop
 1. Agent run starts: POST /v1/messages (server-side)
 2. Mid-run, agent decides to call fetch_invoice. LibraOS:
 
-   POST https://partner.example.com/nova/cb/tools/fetch_invoice
+   POST https://partner.example.com/libraos/cb/tools/fetch_invoice
      headers: X-Nova-Signature: t=<ts>,v1=<hmac_sha256(secret, ts.tool_use_id.body)>
-              X-Nova-Tool-Use-Id: toolu_abc
-              X-Nova-Agent-Id: invoice-bot
-     body: {"tool_use_id": "toolu_abc", "tool": "fetch_invoice", "input": {...}, ...}
+              X-Nova-Idempotency-Key: toolu_abc
+     body: {"tool_use_id": "toolu_abc", "name": "fetch_invoice", "input": {...}, ...}
 
 3. Partner WebhookRouter:
    - Verifies HMAC + timestamp window (5min replay window)
@@ -264,14 +262,14 @@ $ git diff data/agents/legal-assistant.md
 +system_prompt: "You answer questions about contracts and cite the relevant clause."
 
 # Push to running LibraOS:
-$ nova-os-cli sync ./data/
+$ libraos-cli sync ./data/
 PLAN
   UPDATE agent legal-assistant
 APPLY
   PUT /v1/managed/agents/legal-assistant → 200
 
 # Or live-reload during development:
-$ nova-os-cli sync --watch ./data/
+$ libraos-cli sync --watch ./data/
 [watching ./data/ for changes...]
 ```
 
@@ -283,8 +281,8 @@ The change is hot — next chat request uses the new prompt without restarting L
 
 For partners who maintain agents YAML in git, the discipline is:
 1. PR review on YAML changes
-2. CI runs `nova-os-cli validate ./data/` (pre-deploy gate)
-3. Post-merge, CI runs `nova-os-cli sync ./data/` against staging, then production
+2. CI runs `libraos-cli validate ./data/` (pre-deploy gate)
+3. Post-merge, CI runs `libraos-cli sync ./data/` against staging, then production
 
 ---
 
@@ -326,7 +324,7 @@ POST https://partner.example/hooks/audit
 | `output_violation` | `output_type` validation failed (when `violation_mode: log` or `repair`) |
 | `route_hint_emitted` | Brain dispatch contract emits a route_hint |
 
-**Surface choice:** SDK. The first server-side slice ([`#177`](https://github.com/MeganovaAI/nova-os/issues/177)) lives in-memory; persistence + bus bridge tracked for a follow-up. Partners running multi-replica should pin to a single replica until persistence ships, or accept that subscriptions don't propagate across replicas.
+**Surface choice:** SDK. The first server-side slice (server issue #177) lives in-memory; persistence + bus bridge tracked for a follow-up. Partners running multi-replica should pin to a single replica until persistence ships, or accept that subscriptions don't propagate across replicas.
 
 **Worked example:** [`13_hooks_subscribe.py`](../python/examples/13_hooks_subscribe.py).
 
@@ -340,14 +338,14 @@ POST https://partner.example/hooks/audit
 
 ```python
 # Source instance:
-src = Client(base_url="https://nova-staging.example", api_key="...")
+src = Client(base_url="https://libraos-staging.example", api_key="...")
 bundle_bytes = await src.employees.export_bundle("legal-team")   # → bytes
 
 with open("legal-team.nova-bundle.zip", "wb") as f:
     f.write(bundle_bytes)
 
 # Target instance:
-tgt = Client(base_url="https://nova-prod.example", api_key="...")
+tgt = Client(base_url="https://libraos-prod.example", api_key="...")
 with open("legal-team.nova-bundle.zip", "rb") as f:
     result = await tgt.employees.import_bundle(f.read())
 
@@ -378,7 +376,6 @@ The CLI doesn't currently wrap this; if partners want a one-liner, they can do `
 ## See also
 
 - [`getting-started.md`](getting-started.md) — front-door + scenario matrix
-- [`anthropic-compat.md`](anthropic-compat.md) — endpoint-by-endpoint compat coverage
 - [`multi-model.md`](multi-model.md) — model resolution cascade
 - [`web-search.md`](web-search.md) — pluggable backends
 - [`custom-tools.md`](custom-tools.md) — Mode A and Mode B

@@ -18,7 +18,7 @@ T = TypeVar("T", bound="OutputTypeContract")
 
 @_attrs_define
 class OutputTypeContract:
-    """Structured-output contract for agent replies. When set, Nova OS
+    """Structured-output contract for agent replies. When set, LibraOS
     validates every assistant reply against `schema` before return.
     Server-side since v0.1.4.
 

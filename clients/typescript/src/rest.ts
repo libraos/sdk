@@ -10,7 +10,7 @@
 import createOpenApiClient from "openapi-fetch";
 import type { Client } from "openapi-fetch";
 import type { paths } from "./_generated/schema.js";
-import { NovaApiError, asNovaErrorBody } from "./errors.js";
+import { LibraOSApiError, asLibraOSErrorBody } from "./errors.js";
 
 /** Supplies the current bearer token and a one-shot refresh on 401. */
 export interface AuthProvider {
@@ -76,11 +76,11 @@ export function createRestClient(options: RestClientOptions): RestClient {
 }
 
 /**
- * Raise a {@link NovaApiError} from an openapi-fetch `{ error, response }` result.
+ * Raise a {@link LibraOSApiError} from an openapi-fetch `{ error, response }` result.
  * Use after a typed call when you want exceptions instead of the result tuple.
  */
 export function throwIfError(result: { error?: unknown; response: Response }): void {
   if (result.error !== undefined || !result.response.ok) {
-    throw new NovaApiError(result.response.status, asNovaErrorBody(result.error));
+    throw new LibraOSApiError(result.response.status, asLibraOSErrorBody(result.error));
   }
 }

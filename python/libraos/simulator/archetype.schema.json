@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "NovaOSSimulatorArchetype",
+  "title": "LibraOSSimulatorArchetype",
   "type": "object",
   "required": ["name", "description", "hidden_facts", "disclosure_willingness", "success_signal"],
   "properties": {

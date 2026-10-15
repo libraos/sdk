@@ -25,7 +25,7 @@ import {
 export interface OidcConfig {
   /** OIDC issuer / public base URL (from `Deployment.auth.issuer`). No trailing slash required. */
   issuer: string;
-  /** Registered public client id, e.g. "nova-os-ui" or "nova-os-ios". */
+  /** Registered public client id, e.g. "nova-os-ui" (the server's built-in UI client) or your own registered client. */
   clientId: string;
   /** Registered redirect URI for this client. */
   redirectUri: string;
@@ -219,7 +219,7 @@ export class OidcClient {
 }
 
 function extractQuery(callbackUrl: string): URLSearchParams {
-  // Accept a full URL, a "?a=b" query, or a custom-scheme deep link (novaos://...).
+  // Accept a full URL, a "?a=b" query, or a custom-scheme deep link (myapp://...).
   const q = callbackUrl.indexOf("?");
   if (q !== -1) return new URLSearchParams(callbackUrl.slice(q + 1));
   return new URLSearchParams(callbackUrl);

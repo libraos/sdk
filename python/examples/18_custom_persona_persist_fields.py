@@ -19,22 +19,22 @@ Stitches three v0.1.7 server primitives end-to-end:
    state surfaces as ``metadata.persisted_state`` on sync responses and
    on the terminal ``done`` streaming event.
 
-Requires nova-os ≥ v0.1.7 with PRs #328 (sync) + #334 (streaming) on
+Requires the LibraOS server ≥ v0.1.7 with PRs #328 (sync) + #334 (streaming) on
 the ``/v1/messages`` partner-prefix surface. The bundled image at
-``ghcr.io/meganovaai/nova-os:v0.1.7`` lags the git tag until
+``ghcr.io/libraos/libraos:v0.1.7`` lags the git tag until
 ``docker-publish.yml`` rebuilds — pin to the weekly explicitly until
 then::
 
-    docker pull ghcr.io/meganovaai/nova-os:v0.1.7-week-2026-05-26
+    docker pull ghcr.io/libraos/libraos:v0.1.7-week-2026-05-26
 
 Prerequisites::
 
     pip install libraos-sdk
-    export NOVA_OS_URL=https://nova.your-company.example
-    export NOVA_OS_API_KEY=msk_live_...
+    export LIBRAOS_BASE_URL=https://libraos.your-company.example
+    export LIBRAOS_API_KEY=msk_live_...
     # The directory must match what LibraOS scans server-side.
     # Defaults to data/agents/_runtime/ inside the container.
-    export NOVA_OS_AGENTS_RUNTIME_DIR=/srv/nova-os/data/agents/_runtime
+    export LIBRA_OS_AGENTS_RUNTIME_DIR=/srv/libraos/data/agents/_runtime
 
 Run::
 
@@ -97,11 +97,11 @@ output_type:
 
 
 async def main() -> None:
-    base_url = os.environ.get("NOVA_OS_URL", "https://nova.your-company.example")
-    api_key = os.environ["NOVA_OS_API_KEY"]
+    base_url = os.environ.get("LIBRAOS_BASE_URL", "https://libraos.your-company.example")
+    api_key = os.environ["LIBRAOS_API_KEY"]
     runtime_dir = os.environ.get(
-        "NOVA_OS_AGENTS_RUNTIME_DIR",
-        "/srv/nova-os/data/agents/_runtime",
+        "LIBRA_OS_AGENTS_RUNTIME_DIR",
+        "/srv/libraos/data/agents/_runtime",
     )
 
     # 1. Install the persona into the runtime-agents directory. Single-host
@@ -119,7 +119,7 @@ async def main() -> None:
         if "appointment-booker" not in ids:
             print(
                 "appointment-booker not registered yet. Verify "
-                "NOVA_OS_AGENTS_RUNTIME_DIR matches what the server scans, "
+                "LIBRA_OS_AGENTS_RUNTIME_DIR matches what the server scans, "
                 "then re-run."
             )
             return
@@ -180,7 +180,7 @@ async def main() -> None:
 
 def _text(resp: dict) -> str:
     """Pull reply_to_user from a sync response. messages_api returns
-    Anthropic-shape content blocks; the validated reply lives in the
+    content blocks; the validated reply lives in the
     text block."""
     for block in resp.get("content") or []:
         if isinstance(block, dict) and block.get("type") == "text":

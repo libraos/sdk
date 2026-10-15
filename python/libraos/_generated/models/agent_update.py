@@ -37,12 +37,12 @@ class AgentUpdate:
         visibility (AgentUpdateVisibility | Unset):
         filesystem (AgentUpdateFilesystem | Unset):
         agent_type (AgentType | Unset): Whether this agent dispatches to other skill agents (persona) or
-            executes one skill directly (skill). Maps to nova-os internals;
+            executes one skill directly (skill). Maps to LibraOS server internals;
             partners only see the discriminator.
         brain (bool | Unset):
         capabilities (list[str] | Unset):
         max_turns (int | Unset):
-        output_type (OutputTypeContract | Unset): Structured-output contract for agent replies. When set, Nova OS
+        output_type (OutputTypeContract | Unset): Structured-output contract for agent replies. When set, LibraOS
             validates every assistant reply against `schema` before return.
             Server-side since v0.1.4.
         knowledge_bindings (list[str] | Unset):

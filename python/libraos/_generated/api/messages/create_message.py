@@ -105,14 +105,14 @@ def sync_detailed(
     body: MessageRequest,
     x_protocol: CreateMessageXProtocol | Unset = UNSET,
 ) -> Response[Error | MessageResponse]:
-    """Send an Anthropic-compatible message
+    """Send a message
 
      Route to a LibraOS agent via `metadata.agent_id`; omit for the default agent.
 
     When `stream:false`, returns a single `MessageResponse`.
     When `stream:true`, returns SSE. With `X-Protocol: ag-ui`, frames use
     the AG-UI contract in `openapi/ag-ui-events.schema.json`; otherwise
-    they use the Anthropic-compatible event sequence defined by `StreamEvent`.
+    they use the event sequence defined by `StreamEvent`.
     Desk clients send `conversation_id`, a stable per-turn `message_id`,
     and an explicit `scope` so the turn is persisted within the correct
     personal/company boundary.
@@ -147,14 +147,14 @@ def sync(
     body: MessageRequest,
     x_protocol: CreateMessageXProtocol | Unset = UNSET,
 ) -> Error | MessageResponse | None:
-    """Send an Anthropic-compatible message
+    """Send a message
 
      Route to a LibraOS agent via `metadata.agent_id`; omit for the default agent.
 
     When `stream:false`, returns a single `MessageResponse`.
     When `stream:true`, returns SSE. With `X-Protocol: ag-ui`, frames use
     the AG-UI contract in `openapi/ag-ui-events.schema.json`; otherwise
-    they use the Anthropic-compatible event sequence defined by `StreamEvent`.
+    they use the event sequence defined by `StreamEvent`.
     Desk clients send `conversation_id`, a stable per-turn `message_id`,
     and an explicit `scope` so the turn is persisted within the correct
     personal/company boundary.
@@ -184,14 +184,14 @@ async def asyncio_detailed(
     body: MessageRequest,
     x_protocol: CreateMessageXProtocol | Unset = UNSET,
 ) -> Response[Error | MessageResponse]:
-    """Send an Anthropic-compatible message
+    """Send a message
 
      Route to a LibraOS agent via `metadata.agent_id`; omit for the default agent.
 
     When `stream:false`, returns a single `MessageResponse`.
     When `stream:true`, returns SSE. With `X-Protocol: ag-ui`, frames use
     the AG-UI contract in `openapi/ag-ui-events.schema.json`; otherwise
-    they use the Anthropic-compatible event sequence defined by `StreamEvent`.
+    they use the event sequence defined by `StreamEvent`.
     Desk clients send `conversation_id`, a stable per-turn `message_id`,
     and an explicit `scope` so the turn is persisted within the correct
     personal/company boundary.
@@ -224,14 +224,14 @@ async def asyncio(
     body: MessageRequest,
     x_protocol: CreateMessageXProtocol | Unset = UNSET,
 ) -> Error | MessageResponse | None:
-    """Send an Anthropic-compatible message
+    """Send a message
 
      Route to a LibraOS agent via `metadata.agent_id`; omit for the default agent.
 
     When `stream:false`, returns a single `MessageResponse`.
     When `stream:true`, returns SSE. With `X-Protocol: ag-ui`, frames use
     the AG-UI contract in `openapi/ag-ui-events.schema.json`; otherwise
-    they use the Anthropic-compatible event sequence defined by `StreamEvent`.
+    they use the event sequence defined by `StreamEvent`.
     Desk clients send `conversation_id`, a stable per-turn `message_id`,
     and an explicit `scope` so the turn is persisted within the correct
     personal/company boundary.

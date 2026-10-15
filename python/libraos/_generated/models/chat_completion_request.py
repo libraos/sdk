@@ -40,7 +40,7 @@ class ChatCompletionRequest:
             non-empty `type` (otherwise 400); the value of `type` is not checked. Forwarded verbatim to OpenAI-compatible
             providers on the passthrough path; ignored on the agent path, where the agent's `output_type` decides the reply
             shape.
-        metadata (ChatCompletionRequestMetadata | Unset): Nova OS extension channel for per-call fields (e.g. a per-call
+        metadata (ChatCompletionRequestMetadata | Unset): LibraOS extension channel for per-call fields (e.g. a per-call
             model override). The documented keys below are honoured on this surface the same way as on native chat.
     """
 

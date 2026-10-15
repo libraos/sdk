@@ -9,7 +9,7 @@
 import type { components } from "./_generated/schema.js";
 import { createRestClient, throwIfError, type AuthProvider, type RestClient } from "./rest.js";
 import { OidcClient } from "./auth/oidc.js";
-import { NovaApiError } from "./errors.js";
+import { LibraOSApiError } from "./errors.js";
 import { parseAgUiStream } from "./streaming/sse.js";
 import type { AgUiStreamEvent } from "./streaming/events.js";
 
@@ -193,7 +193,7 @@ export interface ConversationMessage {
   seq?: number;
 }
 
-/** A pending side-effecting action awaiting approval (nova-os#546/#767/#768). */
+/** A pending side-effecting action awaiting approval (LibraOS server #546/#767/#768). */
 export interface PendingAction {
   id: string;
   agentId: string;
@@ -395,7 +395,7 @@ export interface ExecutionCapability {
   token?: string;
 }
 
-/** A named group in the kernel registry (nova-os#768). */
+/** A named group in the kernel registry (LibraOS server #768). */
 export interface Group {
   id: string;
   tenantId: string;
@@ -436,7 +436,7 @@ export interface OperatorOrganization {
 
 /**
  * A connector's kernel-owned settings, MASKED: secretKeys names which
- * credentials are set — values never reach the client (nova-os#777).
+ * credentials are set — values never reach the client (LibraOS server #777).
  */
 export type GovernanceMode = "desk_managed" | "brokered" | "external";
 
@@ -636,9 +636,6 @@ export interface StreamMessageOptions {
   lastEventId?: string;
 }
 
-/** @deprecated Use {@link LibraOSClientOptions}. */
-export type NovaClientOptions = LibraOSClientOptions;
-
 function toAuthProvider(auth: LibraOSClientOptions["auth"]): AuthProvider | undefined {
   if (!auth) return undefined;
   if (typeof auth === "string") {
@@ -689,6 +686,7 @@ export class LibraOSClient {
   }
 
   // ── Agents ─────────────────────────────────────────────────────────────
+  // /v1/agents* calls carry the managed-agents beta header the server requires.
 
   /** List agents. */
   async listAgents(): Promise<Agent[]> {
@@ -741,7 +739,7 @@ export class LibraOSClient {
     throwIfError(res);
   }
 
-  // ── Messages (Anthropic-shaped) ────────────────────────────────────────
+  // ── Messages (LibraOS Messages API) ────────────────────────────────────
 
   /** Send a non-streaming message. Target an agent via `metadata.agent_id`. */
   async createMessage(request: MessageRequest): Promise<MessageResponse> {
@@ -750,7 +748,7 @@ export class LibraOSClient {
     });
     throwIfError(res);
     const message = res.data as MessageResponse;
-    // `/v1/messages` keeps the Anthropic-compatible `model` body field equal
+    // `/v1/messages` keeps the response `model` body field equal
     // to the requested persona id, while the provider model that actually ran
     // is authoritative in the LibraOS observability headers. Fold those headers
     // into the typed extensions so browser clients do not mistake an agent id
@@ -1326,7 +1324,7 @@ export class LibraOSClient {
   /**
    * List knowledge signals. Requires admin role (server-enforced).
    * Returns 503 `{"error":"knowledge signals unavailable"}` when KSG is disabled;
-   * throws a {@link NovaApiError} with `status === 503` in that case.
+   * throws a {@link LibraOSApiError} with `status === 503` in that case.
    */
   async listKnowledgeSignals(opts?: { status?: string; limit?: number; tenant?: string; signal?: AbortSignal }): Promise<KnowledgeSignal[]> {
     const qs = new URLSearchParams();
@@ -1433,7 +1431,7 @@ export class LibraOSClient {
 
   /**
    * List all users in the tenant. Admin-only (403 `{"error":"admin_required"}`
-   * when called by a non-admin — throws a {@link NovaApiError} with `status === 403`).
+   * when called by a non-admin — throws a {@link LibraOSApiError} with `status === 403`).
    */
   async listUsers(opts?: { signal?: AbortSignal }): Promise<User[]> {
     const res = await this.rawFetch("/api/users", { method: "GET", signal: opts?.signal });
@@ -1516,7 +1514,7 @@ export class LibraOSClient {
   // ── Pending actions + groups (#546/#767/#768, sdk#56) ──────────────────
   //
   // 503 responses carry {error: "pending_actions_disabled" | "no_database" |
-  // "executor_not_wired"} in NovaApiError.body — UIs branch on error, not text.
+  // "executor_not_wired"} in LibraOSApiError.body — UIs branch on error, not text.
 
   /** List pending actions. Non-admins see actions of groups they belong to. */
   async listPendingActions(opts?: { status?: string; source?: string; externalRef?: string; limit?: number }): Promise<PendingAction[]> {
@@ -1540,9 +1538,9 @@ export class LibraOSClient {
   }
 
   /**
-   * Submit a connector-sourced action for approval (nova-os#767). Requires an
+   * Submit a connector-sourced action for approval (LibraOS server #767). Requires an
    * admin/service credential. `callback.auth.secretRef` names an env var ON
-   * THE NOVA OS SERVER holding the shared HMAC secret.
+   * THE LIBRAOS SERVER holding the shared HMAC secret.
    */
   async createPendingAction(input: {
     toolName: string;
@@ -1816,7 +1814,7 @@ export class LibraOSClient {
   }
 
   /**
-   * The CALLER's own group memberships with roles (nova-os#774). Authenticated
+   * The CALLER's own group memberships with roles (LibraOS server #774). Authenticated
    * but not admin-gated — group-conditional UI (e.g. the Inbox) branches on
    * this. Returns [] for users in no groups.
    */
@@ -1847,7 +1845,7 @@ export class LibraOSClient {
     }));
   }
 
-  // ── Connector configs (nova-os#777, employee-assistant #38) ────────────
+  // ── Connector configs (LibraOS server #777, employee-assistant #38) ─────
 
   /** List connector configs (admin; masked — secret values never serialize). */
   async listConnectorConfigs(): Promise<ConnectorConfig[]> {
@@ -2190,21 +2188,15 @@ export class LibraOSClient {
     return res;
   }
 
-  private async toApiError(res: Response): Promise<NovaApiError> {
+  private async toApiError(res: Response): Promise<LibraOSApiError> {
     try {
       const body = await res.json();
-      return new NovaApiError(res.status, body);
+      return new LibraOSApiError(res.status, body);
     } catch {
-      return new NovaApiError(res.status);
+      return new LibraOSApiError(res.status);
     }
   }
 }
-
-/**
- * @deprecated Use {@link LibraOSClient}. Kept as a source-compatible alias
- * while existing applications migrate to the LibraOS name.
- */
-export { LibraOSClient as NovaClient };
 
 // ── pending-actions/groups wire shapes (snake_case → camelCase) ───────────
 

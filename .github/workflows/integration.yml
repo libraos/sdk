@@ -26,12 +26,12 @@ jobs:
       postgres:
         image: postgres:16-alpine
         env:
-          POSTGRES_USER: nova
-          POSTGRES_PASSWORD: nova
-          POSTGRES_DB: nova_os
+          POSTGRES_USER: libraos
+          POSTGRES_PASSWORD: libraos
+          POSTGRES_DB: libraos
         ports: ['5432:5432']
         options: >-
-          --health-cmd "pg_isready -U nova -d nova_os"
+          --health-cmd "pg_isready -U libraos -d libraos"
           --health-interval 5s --health-timeout 5s --health-retries 10
     steps:
       - uses: actions/checkout@v4
@@ -42,7 +42,7 @@ jobs:
           python-version: '3.12'
 
       - name: Install SDK + pytest
-        run: pip install -e python && pip install pytest pytest-asyncio anthropic
+        run: pip install -e python && pip install pytest pytest-asyncio
 
       - name: Boot Libra OS
         env:
@@ -53,7 +53,7 @@ jobs:
         run: |
           docker run -d --name libraos --network host --ulimit memlock=-1 \
             -e LIBRA_OS_PUBLIC_URL=http://localhost:8900 \
-            -e LIBRA_OS_DATABASE_URL='postgresql://nova:nova@localhost:5432/nova_os?sslmode=disable' \
+            -e LIBRA_OS_DATABASE_URL='postgresql://libraos:libraos@localhost:5432/libraos?sslmode=disable' \
             -e LIBRA_OS_JWT_SECRET=ci-integration-jwt-secret-strong-2026 \
             -e LIBRA_OS_ADMIN_EMAIL=ci@test.local -e LIBRA_OS_ADMIN_PASSWORD='Ci-Test-2026-strong!' \
             -e OPENAI_API_KEY="$OPENAI_API_KEY" -e OPENAI_API_BASE="$OPENAI_API_BASE" -e OPENAI_MODEL="$OPENAI_MODEL" \

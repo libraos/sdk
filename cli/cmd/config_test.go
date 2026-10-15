@@ -7,7 +7,7 @@ import (
 )
 
 // setTempHome overrides HOME (and USERPROFILE on Windows) to a temp dir so
-// config tests don't touch the real ~/.nova-os/config.yaml.
+// config tests don't touch the real ~/.libraos/config.yaml.
 func setTempHome(t *testing.T) string {
 	t.Helper()
 	tmp := t.TempDir()
@@ -33,8 +33,8 @@ func TestConfig_SetListDelete(t *testing.T) {
 
 	// Set a profile
 	out := runConfigCmd(t, "config", "set", "partner-prod",
-		"--url", "https://nova.example.com",
-		"--api-key-env", "NOVA_PROD_KEY",
+		"--url", "https://libraos.example.com",
+		"--api-key-env", "LIBRAOS_PROD_KEY",
 	)
 	if !strings.Contains(out, "partner-prod") {
 		t.Fatalf("expected 'partner-prod' in set output, got: %q", out)
@@ -45,13 +45,13 @@ func TestConfig_SetListDelete(t *testing.T) {
 	if !strings.Contains(out, "partner-prod") {
 		t.Fatalf("expected 'partner-prod' in list output, got: %q", out)
 	}
-	if !strings.Contains(out, "https://nova.example.com") {
+	if !strings.Contains(out, "https://libraos.example.com") {
 		t.Fatalf("expected URL in list output, got: %q", out)
 	}
 
 	// Get should show the single profile
 	out = runConfigCmd(t, "config", "get", "partner-prod")
-	if !strings.Contains(out, "NOVA_PROD_KEY") {
+	if !strings.Contains(out, "LIBRAOS_PROD_KEY") {
 		t.Fatalf("expected api_key_env in get output, got: %q", out)
 	}
 
@@ -74,11 +74,11 @@ func TestConfig_Default(t *testing.T) {
 	// Create two profiles
 	runConfigCmd(t, "config", "set", "staging",
 		"--url", "https://staging.example.com",
-		"--api-key-env", "NOVA_STAGING_KEY",
+		"--api-key-env", "LIBRAOS_STAGING_KEY",
 	)
 	runConfigCmd(t, "config", "set", "prod",
 		"--url", "https://prod.example.com",
-		"--api-key-env", "NOVA_PROD_KEY",
+		"--api-key-env", "LIBRAOS_PROD_KEY",
 	)
 
 	// Explicitly set default to prod
@@ -99,22 +99,22 @@ func TestConfig_Roundtrip(t *testing.T) {
 
 	// set -> read back via loadProfile
 	runConfigCmd(t, "config", "set", "acme",
-		"--url", "https://acme.nova.com",
+		"--url", "https://acme.libraos.example.com",
 		"--api-key-env", "ACME_KEY",
-		"--callback-url", "https://partner.acme.com/nova",
+		"--callback-url", "https://partner.acme.com/libraos",
 	)
 
 	p, ok := loadProfile("acme")
 	if !ok {
 		t.Fatal("loadProfile returned not-ok after config set")
 	}
-	if p.URL != "https://acme.nova.com" {
-		t.Fatalf("expected URL 'https://acme.nova.com', got %q", p.URL)
+	if p.URL != "https://acme.libraos.example.com" {
+		t.Fatalf("expected URL 'https://acme.libraos.example.com', got %q", p.URL)
 	}
 	if p.APIKeyEnv != "ACME_KEY" {
 		t.Fatalf("expected APIKeyEnv 'ACME_KEY', got %q", p.APIKeyEnv)
 	}
-	if p.CallbackURL != "https://partner.acme.com/nova" {
+	if p.CallbackURL != "https://partner.acme.com/libraos" {
 		t.Fatalf("expected CallbackURL, got %q", p.CallbackURL)
 	}
 }

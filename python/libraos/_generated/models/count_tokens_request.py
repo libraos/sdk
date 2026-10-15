@@ -19,7 +19,7 @@ T = TypeVar("T", bound="CountTokensRequest")
 
 @_attrs_define
 class CountTokensRequest:
-    """Anthropic-compatible Messages request used for token counting.
+    """Messages request used for token counting.
 
     Attributes:
         messages (list[CountTokensMessage]):

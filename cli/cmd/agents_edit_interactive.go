@@ -1,4 +1,4 @@
-// Interactive TUI mode for `nova-os-cli agents edit` (slice 2 of #18).
+// Interactive TUI mode for `libraos-cli agents edit` (slice 2 of #18).
 //
 // When invoked WITHOUT scriptable flags and with stdin attached to a
 // terminal, the subcommand walks every field declared by the live
@@ -283,7 +283,7 @@ func editInFile(initial, filename string) (string, error) {
 		editor = "vim"
 	}
 
-	tmpDir, err := os.MkdirTemp("", "nova-os-cli-edit-")
+	tmpDir, err := os.MkdirTemp("", "libraos-cli-edit-")
 	if err != nil {
 		return "", err
 	}

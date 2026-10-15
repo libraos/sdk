@@ -24,7 +24,7 @@ import asyncio
 import time
 from typing import TYPE_CHECKING, Any, AsyncIterator
 
-from libraos.errors import NovaOSError
+from libraos.errors import LibraOSError
 from libraos.simulator._signals import (
     all_signals_match,
     any_signal_matches,
@@ -578,8 +578,8 @@ async def _call_target(
 ) -> dict[str, Any]:
     """One /v1/messages call against the target agent (no extra system).
 
-    ``target_model`` must be supplied because /v1/messages is Anthropic-spec
-    which requires ``model`` in every request body — the kernel does not
+    ``target_model`` must be supplied because /v1/messages
+    requires ``model`` in every request body — the kernel does not
     fall through to the agent's baked model on this endpoint. The caller
     fetches it once at simulate-start via ``client.agents.get(target_agent_id)``
     and threads it through (see ``simulate.py``).
@@ -647,7 +647,7 @@ async def _call_target_with_retries(
                 target_model=target_model,
             )
             return resp, None
-        except NovaOSError as exc:
+        except LibraOSError as exc:
             status = getattr(exc, "status", None)
             if status is not None and 500 <= int(status) < 600:
                 # 5xx — return immediately per spec.
@@ -697,7 +697,7 @@ def _extract_text_and_tokens(
 
     Defensively handles both shapes the SDK sees in the wild:
 
-    - Anthropic-canonical: ``content`` is a list of content blocks
+    - Canonical: ``content`` is a list of content blocks
       with ``{"type": "text", "text": "..."}``.
     - Simplified: ``content`` is a plain string (used in tests + by
       some early server builds).

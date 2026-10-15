@@ -21,8 +21,8 @@ If this is your first agent on LibraOS, the [Create your first agent](https://li
 
 ```bash
 pip install libraos-sdk
-export NOVA_OS_URL=https://nova.your-company.example
-export NOVA_OS_API_KEY=msk_live_...
+export LIBRAOS_BASE_URL=https://libraos.your-company.example
+export LIBRAOS_API_KEY=msk_live_...
 ```
 
 ## Why no `legaltech/`, `healthcare/`, `finance/` here?

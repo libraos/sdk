@@ -32,14 +32,14 @@ def test_flask_dispatches() -> None:
         return f"got {input['x']}"
 
     app = Flask(__name__)
-    app.register_blueprint(router.flask_blueprint(), url_prefix="/nova")
+    app.register_blueprint(router.flask_blueprint(), url_prefix="/libraos")
 
     client = app.test_client()
     body = json.dumps({"tool_use_id": "tu1", "name": "fetch", "input": {"x": 42}}).encode()
     sig = _sign("s-flask", "tu1", body)
 
     resp = client.post(
-        "/nova/",
+        "/libraos/",
         data=body,
         headers={
             "X-Nova-Signature": sig,
@@ -55,13 +55,13 @@ def test_flask_dispatches() -> None:
 def test_flask_rejects_bad_signature() -> None:
     router = WebhookRouter(secret="s")
     app = Flask(__name__)
-    app.register_blueprint(router.flask_blueprint(), url_prefix="/nova")
+    app.register_blueprint(router.flask_blueprint(), url_prefix="/libraos")
     client = app.test_client()
 
     body = b'{"tool_use_id":"x","name":"f","input":{}}'
     bad_sig = _sign("WRONG", "x", body)
     resp = client.post(
-        "/nova/",
+        "/libraos/",
         data=body,
         headers={
             "X-Nova-Signature": bad_sig,

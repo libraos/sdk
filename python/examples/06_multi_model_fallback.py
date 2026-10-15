@@ -12,8 +12,8 @@ message, and inspects the routing result.
 Prerequisites::
 
     pip install libraos-sdk
-    export NOVA_OS_URL=https://nova.partner.com
-    export NOVA_OS_API_KEY=msk_live_...
+    export LIBRAOS_BASE_URL=https://libraos.partner.com
+    export LIBRAOS_API_KEY=msk_live_...
 
 Run::
 
@@ -29,8 +29,8 @@ from libraos import Client
 
 
 async def main() -> None:
-    base_url = os.environ.get("NOVA_OS_URL", "https://nova.partner.com")
-    api_key = os.environ["NOVA_OS_API_KEY"]
+    base_url = os.environ.get("LIBRAOS_BASE_URL", "https://libraos.partner.com")
+    api_key = os.environ["LIBRAOS_API_KEY"]
 
     async with Client(base_url=base_url, api_key=api_key) as c:
         # 1. Create an employee with a three-tier model cascade.

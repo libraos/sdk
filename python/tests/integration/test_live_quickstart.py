@@ -1,4 +1,4 @@
-"""Opt-in integration tests against a real Libra OS server.
+"""Opt-in integration tests against a real LibraOS server.
 
 These are the tests that would have caught the ``model is required`` 400
 that mock-transport tests structurally cannot (#73): they exercise the
@@ -74,22 +74,6 @@ async def test_messages_stream_roundtrip() -> None:
                 if getattr(event, "type", None) in {"text", "delta", "content_block_delta"}:
                     got_text = True
         assert got_text or True  # some builds emit phase markers only; not fatal
-
-
-@skip_no_server
-def test_anthropic_compat_client() -> None:
-    """AnthropicCompatClient (sync, Anthropic-SDK-shaped) must speak
-    /v1/messages against a live server."""
-    from libraos import AnthropicCompatClient
-
-    client = AnthropicCompatClient(base_url=_URL, api_key=_KEY)
-    resp = client.messages.create(
-        model=_AGENT,
-        max_tokens=64,
-        messages=[{"role": "user", "content": "Reply with exactly: OK"}],
-        metadata={"agent_id": _AGENT},
-    )
-    assert resp is not None
 
 
 # CRUD surfaces need more than a service key: nk_ keys are scope=inference

@@ -41,8 +41,8 @@ import { LibraOSClient } from "@libraos/client";
 const libraos = new LibraOSClient({ baseUrl: "https://libraos.example", auth: process.env.LIBRAOS_JWT! });
 
 const dep = await libraos.getDeployment();       // capabilities read
-const msg = await libraos.createMessage({        // Anthropic-shaped
-  model: "claude-opus-4-8",
+const msg = await libraos.createMessage({        // LibraOS Messages API
+  model: "anthropic/claude-opus-4-8",
   max_tokens: 1024,
   stream: false,
   messages: [{ role: "user", content: "Hello" }],
@@ -65,7 +65,7 @@ import { LibraOSClient, OidcClient, MemoryTokenStore } from "@libraos/client";
 
 const oidc = new OidcClient({
   issuer: dep.auth!.issuer!,        // from getDeployment()
-  clientId: "nova-os-ui",
+  clientId: "nova-os-ui",           // the server's built-in UI client id (wire name)
   redirectUri: `${location.origin}/oauth/callback`,
   tokenStore: new MemoryTokenStore(), // inject Keychain / secure-store in production
 });
@@ -90,9 +90,6 @@ Use `listConversations`, `getConversation`, `createConversation`, and
 `conversation_id`, a stable per-turn `message_id`, and the explicit
 `personal|corporate` scope. See the complete
 [Desk chat and conversation API](../../docs/desk-chat-api.md).
-
-`NovaClient` remains exported as a deprecated compatibility alias. New code
-should use the LibraOS name.
 
 ## Build / develop
 

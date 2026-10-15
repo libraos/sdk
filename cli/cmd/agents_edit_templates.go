@@ -1,4 +1,4 @@
-// Starter persona templates for `nova-os-cli agents edit --template`
+// Starter persona templates for `libraos-cli agents edit --template`
 // (slice 3 of libraos-sdk#18).
 //
 // Hand-curated short personas baked into the CLI binary as Go string

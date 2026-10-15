@@ -9,7 +9,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// configFile holds the full structure of ~/.nova-os/config.yaml.
+// configFile holds the full structure of ~/.libraos/config.yaml.
 type configFile struct {
 	Default  string             `yaml:"default,omitempty"`
 	Profiles map[string]Profile `yaml:"profiles,omitempty"`
@@ -17,7 +17,7 @@ type configFile struct {
 
 var configCmd = &cobra.Command{
 	Use:   "config",
-	Short: "Manage profiles in ~/.nova-os/config.yaml",
+	Short: "Manage profiles in ~/.libraos/config.yaml",
 }
 
 var configListCmd = &cobra.Command{
@@ -172,13 +172,13 @@ func init() {
 	rootCmd.AddCommand(configCmd)
 }
 
-// configFilePath returns the path to ~/.nova-os/config.yaml.
+// configFilePath returns the path to ~/.libraos/config.yaml.
 func configFilePath() (string, error) {
 	home, err := os.UserHomeDir()
 	if err != nil {
 		return "", fmt.Errorf("resolve home dir: %w", err)
 	}
-	return filepath.Join(home, ".nova-os", "config.yaml"), nil
+	return filepath.Join(home, ".libraos", "config.yaml"), nil
 }
 
 // readConfigFile reads the config file; returns an error if it doesn't exist.
@@ -219,7 +219,7 @@ func readConfigFileOrEmpty() (configFile, error) {
 	return cfg, nil
 }
 
-// writeConfigFile atomically writes cfg to ~/.nova-os/config.yaml via
+// writeConfigFile atomically writes cfg to ~/.libraos/config.yaml via
 // temp-file + rename so partial writes never corrupt the config.
 func writeConfigFile(cfg configFile) error {
 	path, err := configFilePath()

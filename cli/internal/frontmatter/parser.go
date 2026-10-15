@@ -1,6 +1,6 @@
-// Package frontmatter splits Claude-Agent-SDK-style markdown into
-// a YAML frontmatter region and a body region. Mirrors the Go-side
-// implementation that ships in the nova-os corporate package, so the
+// Package frontmatter splits agent markdown files (YAML frontmatter
+// followed by a markdown body) into a YAML frontmatter region and a body
+// region. Mirrors the LibraOS server's own frontmatter parsing, so the
 // frontmatter the CLI parses is bit-for-bit what the server parses.
 package frontmatter
 

@@ -1,6 +1,6 @@
 // cli/cmd/messages.go
 //
-// `nova-os-cli messages send` + `nova-os-cli messages stream` — partner
+// `libraos-cli messages send` + `libraos-cli messages stream` — partner
 // smoke-test path matching the shape of `test-callback` (see #13). One
 // short HTTP round-trip from the same auth/profile resolution as the
 // rest of the CLI.

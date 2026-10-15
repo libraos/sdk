@@ -5,7 +5,7 @@
  */
 
 /** Discriminator values for the partner `Error.type` field. */
-export type NovaErrorType =
+export type LibraOSErrorType =
   | "invalid_request_error"
   | "authentication_error"
   | "permission_error"
@@ -18,8 +18,8 @@ export type NovaErrorType =
   | "internal_error";
 
 /** The JSON body LibraOS returns on an error response. */
-export interface NovaErrorBody {
-  type: NovaErrorType | string;
+export interface LibraOSErrorBody {
+  type: LibraOSErrorType | string;
   message: string;
   param?: string;
   /** Machine-readable subcode (e.g. "credits_exhausted"). */
@@ -35,16 +35,16 @@ export interface NovaErrorBody {
 }
 
 /** Error thrown by the typed client for any non-2xx REST response. */
-export class NovaApiError extends Error {
+export class LibraOSApiError extends Error {
   readonly status: number;
-  readonly type: NovaErrorType | string;
+  readonly type: LibraOSErrorType | string;
   readonly code?: string;
   readonly retryAfter?: number;
-  readonly body?: NovaErrorBody;
+  readonly body?: LibraOSErrorBody;
 
-  constructor(status: number, body?: NovaErrorBody, fallbackMessage?: string) {
+  constructor(status: number, body?: LibraOSErrorBody, fallbackMessage?: string) {
     super(body?.message ?? fallbackMessage ?? `LibraOS request failed (HTTP ${status})`);
-    this.name = "NovaApiError";
+    this.name = "LibraOSApiError";
     this.status = status;
     this.type = body?.type ?? "internal_error";
     this.code = body?.code;
@@ -58,10 +58,10 @@ export class NovaApiError extends Error {
   }
 }
 
-/** Coerce an unknown openapi-fetch error payload into a {@link NovaErrorBody}. */
-export function asNovaErrorBody(raw: unknown): NovaErrorBody | undefined {
+/** Coerce an unknown openapi-fetch error payload into a {@link LibraOSErrorBody}. */
+export function asLibraOSErrorBody(raw: unknown): LibraOSErrorBody | undefined {
   if (raw && typeof raw === "object" && "message" in raw) {
-    return raw as NovaErrorBody;
+    return raw as LibraOSErrorBody;
   }
   return undefined;
 }

@@ -31,7 +31,7 @@ per-call (request body)
    └─ per-skill (skill agent's model_config)
         └─ per-agent (agent.model_config)
              └─ per-employee (employee.model_config — cascades to all owned agents)
-                  └─ server default (NOVA_OS_BRAIN_MODEL / NOVA_OS_SKILL_MODEL / OPENAI_MODEL env)
+                  └─ server default (LIBRA_OS_BRAIN_MODEL / LIBRA_OS_SKILL_MODEL / OPENAI_MODEL env)
 ```
 
 Each level may set any subset of slots. Unset slots fall through. Practical example:
@@ -39,8 +39,8 @@ Each level may set any subset of slots. Unset slots fall through. Practical exam
 ```python
 # Server defaults (env vars set at boot):
 #   OPENAI_MODEL              = gemini/gemini-2.5-flash         # answer
-#   NOVA_OS_SKILL_MODEL       = gemini/gemini-2.5-flash         # skill
-#   NOVA_OS_BRAIN_MODEL       = anthropic/claude-haiku-4-5      # planner
+#   LIBRA_OS_SKILL_MODEL       = gemini/gemini-2.5-flash         # skill
+#   LIBRA_OS_BRAIN_MODEL       = anthropic/claude-haiku-4-5      # planner
 
 # Employee overrides answer only:
 employee.model_config = {
@@ -132,16 +132,7 @@ Inherits `planner` and `skill` from the employee.
 
 ### Per-call
 
-Anthropic SDK shape:
-
-```python
-client.messages.create(
-    model="gemini/gemini-2.5-pro",
-    messages=[...],
-)
-```
-
-LibraOS native shape:
+Pass `model` on the call:
 
 ```python
 await c.messages.create(
@@ -158,16 +149,16 @@ Per-call wins over every other level.
 | Env var | Slot | Default | Notes |
 |---|---|---|---|
 | `OPENAI_MODEL` | `answer` | `gemini/gemini-2.5-flash` (since v0.1.5 force-update on 2026-05-05) | Gateway-safe per `validateModelShape`. |
-| `NOVA_OS_BRAIN_MODEL` | `planner` | varies by deployment | Often a local Qwen via vLLM, or Haiku. |
-| `NOVA_OS_PLANNER_API_BASE` | `planner` (URL) | unset | When set, `planner` calls hit this URL instead of the model gateway. |
-| `NOVA_OS_SKILL_MODEL` | `skill` | `gemini/gemini-2.5-flash` | Cheap-fast tier. |
-| `NOVA_OS_MEMORY_WORKER_MODEL` | memory worker | falls back to `OPENAI_MODEL` | Observer/Reflector LLM. |
+| `LIBRA_OS_BRAIN_MODEL` | `planner` | varies by deployment | Often a local Qwen via vLLM, or Haiku. |
+| `LIBRA_OS_PLANNER_API_BASE` | `planner` (URL) | unset | When set, `planner` calls hit this URL instead of the model gateway. |
+| `LIBRA_OS_SKILL_MODEL` | `skill` | `gemini/gemini-2.5-flash` | Cheap-fast tier. |
+| `LIBRA_OS_MEMORY_WORKER_MODEL` | memory worker | falls back to `OPENAI_MODEL` | Observer/Reflector LLM. |
 
 These are operator-set; partners typically don't touch them.
 
 ## Model identifier requirement: `<vendor>/<model>`
 
-Every model identifier must carry a vendor prefix. This is gateway-safe per `validateModelShape` ([`#93`](https://github.com/MeganovaAI/nova-os/issues/93)):
+Every model identifier must carry a vendor prefix. This is gateway-safe per the server's `validateModelShape` check:
 
 | Vendor prefix | Routes to |
 |---|---|
@@ -176,7 +167,7 @@ Every model identifier must carry a vendor prefix. This is gateway-safe per `val
 | `gemini/` | Google Vertex AI (or MegaNova gateway routing) |
 | `nebula/` | NebulaBlock |
 
-**Bare names like `gpt-4o` or `claude-opus-4-7` get rejected at validation.** The default-value fix in [`#197`](https://github.com/MeganovaAI/nova-os/issues/197) / [`#198`](https://github.com/MeganovaAI/nova-os/pull/198) makes the boot-time default (`OPENAI_MODEL`) gateway-safe; per-level overrides must follow the same shape.
+**Bare names like `gpt-4o` or `claude-opus-4-7` get rejected at validation.** The boot-time default (`OPENAI_MODEL`) is gateway-safe; per-level overrides must follow the same shape.
 
 ## Inspecting which model served a request
 
@@ -189,7 +180,7 @@ print(resp["model_used"], resp["fallback_triggered"])
 ```
 
 **2. Response headers** (planned — `X-Nova-Model-Used` / `X-Nova-Model-Fallback-Triggered`):
-Tracked at [`MeganovaAI/nova-os` issue tracker](https://github.com/MeganovaAI/nova-os/issues). Until shipped, use the body fields.
+Tracked on the LibraOS server. Until shipped, use the body fields. (`X-Nova-*` is the server's wire name.)
 
 **3. Server logs:**
 ```
@@ -239,7 +230,6 @@ client.messages.create(model=model, ...)
 
 ## See also
 
-- [`anthropic-compat.md`](anthropic-compat.md) — model parameter on `/v1/messages` endpoint
 - [`web-search.md`](web-search.md) — backend selection (parallel concept for search)
 - [`getting-started.md`](getting-started.md) — front-door + scenario matrix
 - [`python/examples/06_multi_model_fallback.py`](../python/examples/06_multi_model_fallback.py) — worked example

@@ -15,11 +15,31 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"net/http"
 	"strconv"
 	"time"
 )
 
-// Sign returns the canonical X-Nova-Signature header value (the server's wire name).
+// Header names. The server sends both the LibraOS names and the older
+// X-Nova-* ones during the rename, so test callbacks do the same: a
+// receiver written against either name verifies them.
+const (
+	SignatureHeader         = "X-LibraOS-Signature"
+	IdempotencyKeyHeader    = "X-LibraOS-Idempotency-Key"
+	LegacySignatureHeader   = "X-Nova-Signature"
+	LegacyIdempotencyHeader = "X-Nova-Idempotency-Key"
+)
+
+// SetHeaders sets the signature and idempotency-key headers under both
+// the new and the legacy names.
+func SetHeaders(h http.Header, signature, toolUseID string) {
+	h.Set(SignatureHeader, signature)
+	h.Set(IdempotencyKeyHeader, toolUseID)
+	h.Set(LegacySignatureHeader, signature)
+	h.Set(LegacyIdempotencyHeader, toolUseID)
+}
+
+// Sign returns the signature header value (`t=<unix>,v1=<hex>`).
 func Sign(secret, toolUseID string, body []byte, now time.Time) string {
 	ts := strconv.FormatInt(now.Unix(), 10)
 	mac := hmac.New(sha256.New, []byte(secret))

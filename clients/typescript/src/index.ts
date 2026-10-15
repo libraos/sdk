@@ -109,6 +109,7 @@ export {
 export {
   parseSse,
   parseAgUiStream,
+  normalizeCustomEventName,
   type SseFrame,
 } from "./streaming/sse.js";
 export type {

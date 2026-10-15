@@ -22,7 +22,7 @@ export interface SseFrame<T = unknown> {
 /**
  * Parse a fetch `Response` whose body is `text/event-stream` into an async
  * iterator of {@link SseFrame}. Comment lines (`:` prefix — e.g. LibraOS's
- * `:nova-heartbeat`) and frames without a JSON-parseable `data` are skipped.
+ * `:libraos-heartbeat`) and frames without a JSON-parseable `data` are skipped.
  */
 export async function* parseSse<T = unknown>(
   response: Response,
@@ -85,7 +85,11 @@ export async function* parseAgUiStream(
     if (!d || typeof d !== "object" || !("type" in d)) continue;
     const t = (d as { type: string }).type;
     if (AGUI_TYPES.has(t)) {
-      yield withSseId(d as unknown as AgUiEvent, frame.id);
+      let ev = d as unknown as AgUiEvent;
+      if (ev.type === "CUSTOM" && typeof ev.name === "string") {
+        ev = { ...ev, name: normalizeCustomEventName(ev.name) };
+      }
+      yield withSseId(ev, frame.id);
       continue;
     }
     // ── Message-stream events → AG-UI translation ──
@@ -98,7 +102,7 @@ export async function* parseAgUiStream(
         if (citation !== undefined) {
           yield withSseId({
             type: "CUSTOM",
-            name: "nova.citations",
+            name: "libraos.citations",
             value: { citations: [citation] },
           }, frame.id);
         }
@@ -112,6 +116,18 @@ export async function* parseAgUiStream(
     // message_start / content_block_start / content_block_stop / message_delta /
     // ping — no AG-UI equivalent needed; skip.
   }
+}
+
+/**
+ * Normalize an AG-UI CUSTOM event name to the `libraos.` namespace.
+ *
+ * Servers emit `libraos.<name>` when the request carries
+ * `X-LibraOS-Event-Names: libraos` and `nova.<name>` otherwise (older
+ * servers always do). `parseAgUiStream` maps both to `libraos.<name>`, so
+ * consumers match one name whichever server they talk to.
+ */
+export function normalizeCustomEventName(name: string): string {
+  return name.startsWith("nova.") ? `libraos.${name.slice("nova.".length)}` : name;
 }
 
 function withSseId(event: AgUiEvent, id: string | undefined): AgUiStreamEvent {

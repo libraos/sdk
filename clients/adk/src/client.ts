@@ -34,7 +34,7 @@ export interface RunOptions {
 const env = (k: string): string | undefined =>
   typeof process !== "undefined" ? process.env[k] : undefined;
 
-/** Value of the beta header the server requires on /v1/agents. */
+/** Value of the managed-agents beta header sent on /v1/agents (older servers require it; current ones ignore it). */
 const MANAGED_AGENTS_BETA = "managed-agents-2026-04-01";
 
 export class LibraAdk {
@@ -56,7 +56,7 @@ export class LibraAdk {
     return { authorization: `Bearer ${this.apiKey}`, "content-type": "application/json" };
   }
 
-  /** The /v1/agents routes require the managed-agents beta header (426 without it). */
+  /** Older servers require the managed-agents beta header on /v1/agents (426 without it); current ones accept and ignore it. */
   private agentHeaders(): Record<string, string> {
     return { ...this.headers(), "anthropic-beta": MANAGED_AGENTS_BETA };
   }

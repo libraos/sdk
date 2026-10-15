@@ -25,10 +25,9 @@ Total to go from zero to a working digital agent: **3 SDK calls** (`00_quickstar
 | `01_basic_chat.py` | Hello world — one `c.messages.create()` to an existing agent, no agent setup |
 | `02_create_employee_and_agent.py` | Full lifecycle: employee → owned agent → first chat → cleanup |
 | `03_upload_knowledge.py` | `c.knowledge` — ingest a document then search it back |
-| `04_custom_tool_inline.py` | Mode A (SSE inline) — partner intercepts `custom_tool_use` mid-stream |
-| `05_custom_tool_webhook.py` | Mode B (webhook) — partner exposes a FastAPI endpoint |
+| `05_custom_tool_webhook.py` | Custom tool over a webhook — partner exposes a FastAPI endpoint |
 | `06_multi_model_fallback.py` | Per-employee `model_config` cascade, observe fallback fields |
-| `07_bundle_export_import.py` | Tenant onboarding via `.nova-bundle.zip` round-trip |
+| `07_bundle_export_import.py` | Tenant onboarding via `.libraos-bundle.zip` round-trip |
 | `08_async_job_long_running.py` | Submit async job, poll status, receive final result |
 | `09_streaming_messages.py` | `c.messages.stream(...)` minimum-lines example — token-on-the-wire latency for chat UIs |
 | `10_idempotency.py` | `idempotency_key=` on `create()` — safely retry across network failures, no duplicates |

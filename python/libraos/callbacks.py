@@ -6,7 +6,11 @@ the tool; this router decorates partner-side handlers, verifies the
 HMAC-SHA256 signature, dedupes by `Idempotency-Key`, and dispatches.
 
 HMAC scheme: signing input is `ts + "." + tool_use_id + "." + body`.
-Signature header format is `t=<unix>,v1=<hex>`. Replay window default
+Signature header format is `t=<unix>,v1=<hex>`, sent as
+`X-LibraOS-Signature` (with the tool_use_id in `X-LibraOS-Idempotency-Key`).
+Servers send the older `X-Nova-Signature` / `X-Nova-Idempotency-Key` too
+during the rename, and older servers send only those; the router reads
+the new names first and falls back to the old ones. Replay window default
 5 min. The LibraOS server-side dispatcher signs with the same scheme.
 
 Idempotency dedup is in-memory for v1 — a process restart loses the
@@ -68,11 +72,14 @@ class WebhookRouter:
         Raises PermissionError on signature verification failure (caller
         should turn that into HTTP 401 / 403).
         """
-        sig_header = _get_header(headers, "X-Nova-Signature") or _get_header(headers, "x-nova-signature")
-        idem_key = _get_header(headers, "X-Nova-Idempotency-Key") or _get_header(headers, "x-nova-idempotency-key")
+        # New names first; older servers send only the X-Nova-* ones.
+        sig_header = _get_header(headers, "X-LibraOS-Signature") or _get_header(headers, "X-Nova-Signature")
+        idem_key = _get_header(headers, "X-LibraOS-Idempotency-Key") or _get_header(
+            headers, "X-Nova-Idempotency-Key"
+        )
 
         if not sig_header or not idem_key:
-            raise PermissionError("missing X-Nova-Signature or X-Nova-Idempotency-Key")
+            raise PermissionError("missing X-LibraOS-Signature or X-LibraOS-Idempotency-Key")
 
         ts, v1 = _parse_signature(sig_header)
         now = int(time.time())
@@ -155,11 +162,11 @@ def _parse_signature(header: str) -> tuple[int, str]:
         elif kv[0] == "v1":
             sig = kv[1]
     if not ts_str or not sig:
-        raise PermissionError("malformed X-Nova-Signature")
+        raise PermissionError("malformed X-LibraOS-Signature")
     try:
         ts = int(ts_str)
     except ValueError:
-        raise PermissionError("malformed X-Nova-Signature timestamp")
+        raise PermissionError("malformed X-LibraOS-Signature timestamp")
     return ts, sig
 
 

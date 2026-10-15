@@ -99,6 +99,7 @@ from .chat_completion_request_metadata_thinking_effort import ChatCompletionRequ
 from .chat_completion_request_reasoning_effort import ChatCompletionRequestReasoningEffort
 from .chat_completion_response import ChatCompletionResponse
 from .chat_completion_response_format import ChatCompletionResponseFormat
+from .chat_completion_response_libraos_grounding import ChatCompletionResponseLibraosGrounding
 from .chat_completion_response_nova_grounding import ChatCompletionResponseNovaGrounding
 from .chat_completion_response_persisted_state import ChatCompletionResponsePersistedState
 from .chat_completion_usage import ChatCompletionUsage
@@ -152,7 +153,6 @@ from .custom_tool_callback_auth import CustomToolCallbackAuth
 from .custom_tool_callback_auth_type import CustomToolCallbackAuthType
 from .custom_tool_callback_retry import CustomToolCallbackRetry
 from .custom_tool_callback_retry_backoff import CustomToolCallbackRetryBackoff
-from .custom_tool_result_request import CustomToolResultRequest
 from .debug_retrieve_knowledge_body import DebugRetrieveKnowledgeBody
 from .decision_activate_request import DecisionActivateRequest
 from .decision_activate_result import DecisionActivateResult
@@ -640,6 +640,7 @@ __all__ = (
     "ChatCompletionRequestReasoningEffort",
     "ChatCompletionResponse",
     "ChatCompletionResponseFormat",
+    "ChatCompletionResponseLibraosGrounding",
     "ChatCompletionResponseNovaGrounding",
     "ChatCompletionResponsePersistedState",
     "ChatCompletionUsage",
@@ -693,7 +694,6 @@ __all__ = (
     "CustomToolCallbackAuthType",
     "CustomToolCallbackRetry",
     "CustomToolCallbackRetryBackoff",
-    "CustomToolResultRequest",
     "DebugRetrieveKnowledgeBody",
     "DecisionActivateRequest",
     "DecisionActivateResult",

@@ -191,7 +191,7 @@
     },
     "CustomEvent": {
       "type": "object",
-      "description": "Escape hatch for Nova-OS-specific extensions without a standard AG-UI event type. `name` is a `nova.<x>` namespaced inner event (e.g. \"nova.route_hint\", \"nova.citations\", \"nova.phase\", \"nova.done_meta\"); `value` is the partner-defined payload. Uses the canonical discriminator \"CUSTOM\" (NOT \"CUSTOM_EVENT\" — strict-zod consumers reject the latter; nova-os #416).",
+      "description": "Escape hatch for LibraOS-specific extensions without a standard AG-UI event type. `name` is a namespaced inner event: `libraos.<x>` when the request sends `X-LibraOS-Event-Names: libraos` (e.g. \"libraos.route_hint\", \"libraos.citations\", \"libraos.phase\", \"libraos.done_meta\"), otherwise the former `nova.<x>`. `value` is the partner-defined payload. Uses the canonical discriminator \"CUSTOM\" (NOT \"CUSTOM_EVENT\" — strict-zod consumers reject the latter).",
       "required": ["type", "name", "value"],
       "additionalProperties": false,
       "properties": {

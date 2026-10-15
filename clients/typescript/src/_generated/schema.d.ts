@@ -88,30 +88,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/managed/agents/messages/{message_id}/custom_tool_results": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                message_id: string;
-            };
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Submit a custom_tool_use result (Mode A inline)
-         * @description Used when partner consumes the SSE stream directly. POST the result
-         *     for an emitted `custom_tool_use` event; LibraOS resumes the agent
-         *     loop and continues streaming on the original request connection.
-         */
-        post: operations["submitCustomToolResult"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/v1/managed/employees": {
         parameters: {
             query?: never;
@@ -160,7 +136,7 @@ export interface paths {
             };
             cookie?: never;
         };
-        /** Download a portable .nova-bundle.zip */
+        /** Download a portable .libraos-bundle.zip */
         get: operations["exportEmployeeBundle"];
         put?: never;
         post?: never;
@@ -179,7 +155,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Import a .nova-bundle.zip */
+        /** Import a .libraos-bundle.zip */
         post: operations["importEmployeeBundle"];
         delete?: never;
         options?: never;
@@ -720,7 +696,7 @@ export interface paths {
         };
         /**
          * Stream job events (SSE)
-         * @description Server-Sent Events stream. Replays stored events first (honoring `Last-Event-ID`), then delivers live events until the job reaches a terminal state. Each frame carries `id` (sequence), `event` (type) and a JSON `data` payload; `: nova-heartbeat` comments are sent every 10s.
+         * @description Server-Sent Events stream. Replays stored events first (honoring `Last-Event-ID`), then delivers live events until the job reaches a terminal state. Each frame carries `id` (sequence), `event` (type) and a JSON `data` payload; `: libraos-heartbeat` comments are sent every 10s.
          */
         get: operations["streamNativeJob"];
         put?: never;
@@ -1290,6 +1266,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/conversations/{cid}/attachments/{aid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Remove an attachment
+         * @description Soft-delete an attachment. Idempotent.
+         */
+        delete: operations["deleteAttachment"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/conversations/{cid}/attachments/{aid}/download": {
         parameters: {
             query?: never;
@@ -1304,11 +1300,7 @@ export interface paths {
         get: operations["downloadAttachment"];
         put?: never;
         post?: never;
-        /**
-         * Remove an attachment
-         * @description Soft-delete an attachment. Idempotent.
-         */
-        delete: operations["deleteAttachment"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -2023,7 +2015,7 @@ export interface paths {
         put?: never;
         /**
          * Submit login credentials
-         * @description Verifies email + password, sets the `nova_oidc_session` cookie, and redirects to the `continue` URL (typically the original `/oauth/authorize` request). On failure re-renders the login page with a generic error (no account enumeration).
+         * @description Verifies email + password, sets the `libraos_oidc_session` cookie, and redirects to the `continue` URL (typically the original `/oauth/authorize` request). On failure re-renders the login page with a generic error (no account enumeration).
          */
         post: operations["oauthLogin"];
         delete?: never;
@@ -2141,7 +2133,7 @@ export interface paths {
         };
         /**
          * Upstream IdP callback
-         * @description Completes the upstream exchange, JIT-creates or links the local user, establishes the `nova_oidc_session` cookie, and redirects to the original `continue` target. On any failure re-renders the login page.
+         * @description Completes the upstream exchange, JIT-creates or links the local user, establishes the `libraos_oidc_session` cookie, and redirects to the original `continue` target. On any failure re-renders the login page.
          */
         get: operations["oauthUpstreamCallback"];
         put?: never;
@@ -3742,7 +3734,13 @@ export interface components {
             /** @enum {integer} */
             schema_version: 1;
             employee_id: string;
+            /**
+             * @deprecated
+             * @description Former name of `libraos_min_version`. Servers write both during the transition.
+             */
             nova_os_min_version: string;
+            /** @description Minimum LibraOS version that can import this bundle. */
+            libraos_min_version?: string;
             /** Format: date-time */
             created_at: string;
             agents?: string[];
@@ -4103,12 +4101,6 @@ export interface components {
          *     Three kinds — partners switch on `kind` to decide UI behaviour.
          */
         RouteHint: components["schemas"]["RouteHintRenderInline"] | components["schemas"]["RouteHintNavigateTo"] | components["schemas"]["RouteHintAskClarification"];
-        CustomToolResultRequest: {
-            tool_use_id: string;
-            output: string;
-            /** @default false */
-            is_error: boolean;
-        };
         /** @enum {string} */
         JobStatus: "queued" | "running" | "completed" | "failed" | "cancelled";
         Job: {
@@ -4746,11 +4738,22 @@ export interface components {
              * @description LibraOS extension — per-turn grounded-vs-refusal outcome. Omitted on non-retrieval turns.
              * @enum {string}
              */
+            libraos_grounding?: "grounded" | "ungrounded_refusal" | "ungrounded_no_chunks" | "degraded" | "unsupported_claim" | "degraded_retrieval" | "unopened_sources" | "unsupported_figures";
+            /**
+             * @deprecated
+             * @description Former name of `libraos_grounding` (same value), still sent during the transition.
+             * @enum {string}
+             */
             nova_grounding?: "grounded" | "ungrounded_refusal" | "ungrounded_no_chunks" | "degraded" | "unsupported_claim" | "degraded_retrieval" | "unopened_sources" | "unsupported_figures";
             /** @description Merged persisted field state, present only for agents that declare a persist-fields schema. */
             persisted_state?: {
                 [key: string]: unknown;
             };
+            libraos_usage?: components["schemas"]["UsageBlock"];
+            /**
+             * @deprecated
+             * @description Former name of `libraos_usage` (same value), still sent during the transition.
+             */
             nova_usage?: components["schemas"]["UsageBlock"];
         };
         ModelListEntry: {
@@ -6908,8 +6911,18 @@ export interface operations {
                     /** @description AG-UI protocol version when `X-Protocol: ag-ui` was selected. */
                     "X-Ag-Ui-Version"?: string;
                     /** @description Provider model that actually produced the answer. */
-                    "X-Nova-Model-Used"?: string;
+                    "X-LibraOS-Model-Used"?: string;
                     /** @description Whether model fallback was used. */
+                    "X-LibraOS-Model-Fallback-Triggered"?: "true" | "false" | "1" | "0";
+                    /**
+                     * @deprecated
+                     * @description Former name of X-LibraOS-Model-Used (same value), still sent during the transition.
+                     */
+                    "X-Nova-Model-Used"?: string;
+                    /**
+                     * @deprecated
+                     * @description Former name of X-LibraOS-Model-Fallback-Triggered (same value), still sent during the transition.
+                     */
                     "X-Nova-Model-Fallback-Triggered"?: "true" | "false" | "1" | "0";
                     [name: string]: unknown;
                 };
@@ -6942,33 +6955,6 @@ export interface operations {
                     "application/json": components["schemas"]["Error"];
                 };
             };
-        };
-    };
-    submitCustomToolResult: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                message_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CustomToolResultRequest"];
-            };
-        };
-        responses: {
-            /** @description Result accepted; streaming resumes on the original connection. */
-            202: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            400: components["responses"]["BadRequest"];
-            401: components["responses"]["Unauthorized"];
-            404: components["responses"]["NotFound"];
         };
     };
     listEmployees: {
@@ -9544,6 +9530,29 @@ export interface operations {
             429: components["responses"]["RateLimited"];
         };
     };
+    deleteAttachment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                cid: string;
+                aid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The attachment was deleted (or was already deleted). */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
     downloadAttachment: {
         parameters: {
             query?: never;
@@ -9583,29 +9592,6 @@ export interface operations {
                     "application/json": components["schemas"]["Error"];
                 };
             };
-        };
-    };
-    deleteAttachment: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                cid: string;
-                aid: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description The attachment was deleted (or was already deleted). */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            401: components["responses"]["Unauthorized"];
-            404: components["responses"]["NotFound"];
         };
     };
     listAuthorizationIntents: {

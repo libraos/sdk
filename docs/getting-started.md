@@ -18,7 +18,7 @@ The front door for partners adopting LibraOS. Use the table below to jump to the
 | **Validate a folder of agent/employee definitions before deploy** | `libraos-cli validate ./data/` — offline CI gate | [`cli/README.md` → validate](../cli/README.md#validate-offline-ci-gate) |
 | **Sync a local folder of definitions to a server** | `libraos-cli sync ./data/` (one-shot or `--watch`) | [`cli/README.md` → sync](../cli/README.md#sync-folder--server) |
 | **Use multi-model fallbacks** | Per-call / per-skill / per-agent / per-employee / server-default cascade | [`multi-model.md`](multi-model.md) |
-| **Add a custom tool with HTTP webhook fan-out** | Mode A (SSE inline) or Mode B (webhook) | [`custom-tools.md`](custom-tools.md) |
+| **Add a custom tool with HTTP webhook fan-out** | Signed webhook per tool call | [`custom-tools.md`](custom-tools.md) |
 | **Bring my own search backend** | Tavily, Brave, Exa, SearXNG, MegaNova with fallback chains | [`web-search.md`](web-search.md) |
 | **Compare search backends** | Pricing, latency, features for each option | [`comparing-search-backends.md`](comparing-search-backends.md) |
 | **Deploy to production** | Reverse proxy, TLS, Postgres, scaling notes | [`deployment.md`](deployment.md) |
@@ -90,10 +90,9 @@ End-to-end paths for the most common partner tasks. Each row points at a worked 
 | Hello-world chat | `c.messages.create` round-trip | [`python/examples/01_basic_chat.py`](../python/examples/01_basic_chat.py) |
 | Create an employee + agent from scratch | Define employee, attach agents, set model_config | [`python/examples/02_create_employee_and_agent.py`](../python/examples/02_create_employee_and_agent.py) |
 | Upload knowledge to a collection | Ingest + verify retrieval at chat time | [`python/examples/03_upload_knowledge.py`](../python/examples/03_upload_knowledge.py) |
-| Mode A custom tool (SSE inline) | Stream + `submit_tool_result` round-trip | [`python/examples/04_custom_tool_inline.py`](../python/examples/04_custom_tool_inline.py) |
-| Mode B custom tool (webhook) | HMAC-signed webhook + idempotency dedup | [`python/examples/05_custom_tool_webhook.py`](../python/examples/05_custom_tool_webhook.py) |
+| Custom tool (webhook) | HMAC-signed webhook + idempotency dedup | [`python/examples/05_custom_tool_webhook.py`](../python/examples/05_custom_tool_webhook.py) |
 | Multi-model with fallback | Per-call model override + cascade resolution | [`python/examples/06_multi_model_fallback.py`](../python/examples/06_multi_model_fallback.py) |
-| Bundle export / import | `.nova-bundle.zip` across instances | [`python/examples/07_bundle_export_import.py`](../python/examples/07_bundle_export_import.py) |
+| Bundle export / import | `.libraos-bundle.zip` across instances | [`python/examples/07_bundle_export_import.py`](../python/examples/07_bundle_export_import.py) |
 | Async long-running job | Job submit + polling | [`python/examples/08_async_job_long_running.py`](../python/examples/08_async_job_long_running.py) |
 | Streaming chat | SSE event parsing | [`python/examples/09_streaming_messages.py`](../python/examples/09_streaming_messages.py) |
 | Idempotency | `Idempotency-Key` retry-safe POSTs | [`python/examples/10_idempotency.py`](../python/examples/10_idempotency.py) |

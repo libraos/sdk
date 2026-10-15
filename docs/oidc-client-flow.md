@@ -24,7 +24,7 @@ field (`GET /v1/managed/deployment`) advertises it and whether OIDC is enabled.
 | `/.well-known/openid-configuration` | GET | Discovery document, including the issuer, supported scopes, RS256, and `jwks_uri`. |
 | `/.well-known/jwks.json` | GET | Public RS256 keys used to verify ID tokens. |
 | `/oauth/authorize` | GET | Embedded login screen (no third-party redirects). Renders the login form; on success issues a one-time authorization `code` to the registered `redirect_uri`. |
-| `/oauth/login` | POST | Form post from the login screen: bcrypt-verifies credentials, sets the short-lived `nova_oidc_session` cookie (HttpOnly + Secure + SameSite=Lax, ~10 min). |
+| `/oauth/login` | POST | Form post from the login screen: bcrypt-verifies credentials, sets the short-lived `libraos_oidc_session` cookie (HttpOnly + Secure + SameSite=Lax, ~10 min). |
 | `/oauth/token` | POST | Exchanges a one-time `code` (5 min TTL, single-use) for an `id_token` + `access_token`. PKCE `code_verifier` required when the auth request used `code_challenge`. Also serves the `refresh_token` grant. |
 | `/oauth/userinfo` | GET | Returns `sub` / `email` / `name` / `role` for the bearer token. |
 | `/oauth/revoke` | POST | Revokes a refresh token; unknown/already-invalid tokens also return 200. |
@@ -48,8 +48,8 @@ the kits target:
 
 | `client_id` | `redirect_uri` | PKCE | Notes |
 |---|---|---|---|
-| `nova-os-ios` | `novaos://oauth/callback` | **required** (S256) | Native iOS deep-link. Opened via `ASWebAuthenticationSession`; the callback custom scheme returns control to the app. |
-| `nova-os-ui` | `<web-origin>/oauth/callback` | **required** (S256) | First-party web client (employee-ui / school-ui). Exact origin is operator-configured. |
+| `libraos-ios` | `libraos://oauth/callback` | **required** (S256) | Native iOS deep-link. Opened via `ASWebAuthenticationSession`; the callback custom scheme returns control to the app. Older servers register it as `nova-os-ios` with `novaos://oauth/callback`. |
+| `libraos-ui` | `<web-origin>/oauth/callback` | **required** (S256) | First-party web client (employee-ui / school-ui). Exact origin is operator-configured. Older servers register it as `nova-os-ui`. |
 
 Public clients (browser SPA, mobile app) have **no client secret** — PKCE is the proof-of-possession
 that replaces it. Additional clients are operator-configured (`LIBRA_OS_OIDC_CLIENTS` env or
@@ -69,8 +69,8 @@ Client                         LibraOS /oauth                       Token store
   │ 2. open authorize URL ──────────▶│                                   │
   │    GET /oauth/authorize?                                            │
   │      response_type=code                                            │
-  │      &client_id=nova-os-ios                                        │
-  │      &redirect_uri=novaos://oauth/callback                         │
+  │      &client_id=libraos-ios                                        │
+  │      &redirect_uri=libraos://oauth/callback                        │
   │      &scope=openid%20profile%20email                               │
   │      &state=<state>&nonce=<nonce>                                  │
   │      &code_challenge=<challenge>&code_challenge_method=S256        │
@@ -83,8 +83,8 @@ Client                         LibraOS /oauth                       Token store
   │ 4. POST /oauth/token ───────────▶│                                   │
   │    grant_type=authorization_code                                  │
   │    &code=<code>                                                    │
-  │    &redirect_uri=novaos://oauth/callback                          │
-  │    &client_id=nova-os-ios                                          │
+  │    &redirect_uri=libraos://oauth/callback                         │
+  │    &client_id=libraos-ios                                          │
   │    &code_verifier=<verifier>                                       │
   │                                  │                                   │
   │ 5. ◀──── { id_token, access_token, token_type:"Bearer",           │
@@ -121,7 +121,7 @@ When a `refresh_token` is present, the client refreshes silently:
 POST /oauth/token
   grant_type=refresh_token
   &refresh_token=<refresh_token>
-  &client_id=nova-os-ios
+  &client_id=libraos-ios
 
 → { access_token, id_token, token_type:"Bearer", expires_in, refresh_token }
 ```
@@ -147,8 +147,8 @@ platform protects secrets, not in plaintext app state.**
 
 | Platform | Recommended store | Avoid |
 |---|---|---|
-| iOS (`nova-os-ios`) | Keychain (`kSecAttrAccessibleAfterFirstUnlock`) | `UserDefaults`, plist |
-| Web SPA (`nova-os-ui`) | In-memory + refresh-token in an HttpOnly cookie when a BFF is present; else `sessionStorage` over `localStorage` | `localStorage` for long-lived refresh tokens (XSS-exfiltratable) |
+| iOS (`libraos-ios`) | Keychain (`kSecAttrAccessibleAfterFirstUnlock`) | `UserDefaults`, plist |
+| Web SPA (`libraos-ui`) | In-memory + refresh-token in an HttpOnly cookie when a BFF is present; else `sessionStorage` over `localStorage` | `localStorage` for long-lived refresh tokens (XSS-exfiltratable) |
 | Node / server-side | Process memory or the host secret manager | env files committed to VCS |
 | React Native | `expo-secure-store` / Keychain-backed module | `AsyncStorage` plaintext |
 

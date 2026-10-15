@@ -15,12 +15,14 @@ import (
 )
 
 func TestTestCallback_PostsSignedPayload(t *testing.T) {
-	var capturedSig, capturedIdem string
+	var capturedSig, capturedIdem, legacySig, legacyIdem string
 	var capturedBody []byte
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		capturedSig = r.Header.Get("X-Nova-Signature")
-		capturedIdem = r.Header.Get("X-Nova-Idempotency-Key")
+		capturedSig = r.Header.Get("X-LibraOS-Signature")
+		capturedIdem = r.Header.Get("X-LibraOS-Idempotency-Key")
+		legacySig = r.Header.Get("X-Nova-Signature")
+		legacyIdem = r.Header.Get("X-Nova-Idempotency-Key")
 		capturedBody, _ = io.ReadAll(r.Body)
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte(`{"output":"ok","is_error":false}`))
@@ -49,10 +51,17 @@ func TestTestCallback_PostsSignedPayload(t *testing.T) {
 
 	// Headers landed
 	if capturedSig == "" {
-		t.Fatal("X-Nova-Signature header empty")
+		t.Fatal("X-LibraOS-Signature header empty")
 	}
 	if capturedIdem != "toolu_test_42" {
-		t.Fatalf("X-Nova-Idempotency-Key = %q, want toolu_test_42", capturedIdem)
+		t.Fatalf("X-LibraOS-Idempotency-Key = %q, want toolu_test_42", capturedIdem)
+	}
+	// The legacy names carry the same values, for receivers on the old name.
+	if legacySig != capturedSig {
+		t.Fatalf("X-Nova-Signature = %q, want %q", legacySig, capturedSig)
+	}
+	if legacyIdem != capturedIdem {
+		t.Fatalf("X-Nova-Idempotency-Key = %q, want %q", legacyIdem, capturedIdem)
 	}
 
 	// Body shape

@@ -16,7 +16,8 @@ class Agents(Resource):
     """
 
     _PATH = "/v1/agents"
-    # The managed-agents beta header the server requires on /v1/agents*.
+    # The managed-agents beta header on /v1/agents*: older servers require it
+    # (426 without), current ones accept and ignore it.
     _BETA_HEADERS = {"anthropic-beta": "managed-agents-2026-04-01"}
 
     async def create(self, *, idempotency_key: str | None = None, **fields: Any) -> dict[str, Any]:

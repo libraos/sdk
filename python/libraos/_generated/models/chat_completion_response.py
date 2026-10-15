@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
+from ..models.chat_completion_response_libraos_grounding import ChatCompletionResponseLibraosGrounding
 from ..models.chat_completion_response_nova_grounding import ChatCompletionResponseNovaGrounding
 from ..types import UNSET, Unset
 
@@ -30,10 +31,14 @@ class ChatCompletionResponse:
         model (str | Unset):
         choices (list[ChatCompletionChoice] | Unset):
         usage (ChatCompletionUsage | Unset): Per-response token usage.
-        nova_grounding (ChatCompletionResponseNovaGrounding | Unset): LibraOS extension — per-turn grounded-vs-refusal
-            outcome. Omitted on non-retrieval turns.
+        libraos_grounding (ChatCompletionResponseLibraosGrounding | Unset): LibraOS extension — per-turn grounded-vs-
+            refusal outcome. Omitted on non-retrieval turns.
+        nova_grounding (ChatCompletionResponseNovaGrounding | Unset): Former name of `libraos_grounding` (same value),
+            still sent during the transition.
         persisted_state (ChatCompletionResponsePersistedState | Unset): Merged persisted field state, present only for
             agents that declare a persist-fields schema.
+        libraos_usage (UsageBlock | Unset): Aggregated token usage across all of the turn's model sub-calls, with a per-
+            stage breakdown. Omitted on non-model/zero-usage turns. Excludes embedding calls.
         nova_usage (UsageBlock | Unset): Aggregated token usage across all of the turn's model sub-calls, with a per-
             stage breakdown. Omitted on non-model/zero-usage turns. Excludes embedding calls.
     """
@@ -44,8 +49,10 @@ class ChatCompletionResponse:
     model: str | Unset = UNSET
     choices: list[ChatCompletionChoice] | Unset = UNSET
     usage: ChatCompletionUsage | Unset = UNSET
+    libraos_grounding: ChatCompletionResponseLibraosGrounding | Unset = UNSET
     nova_grounding: ChatCompletionResponseNovaGrounding | Unset = UNSET
     persisted_state: ChatCompletionResponsePersistedState | Unset = UNSET
+    libraos_usage: UsageBlock | Unset = UNSET
     nova_usage: UsageBlock | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
@@ -69,6 +76,10 @@ class ChatCompletionResponse:
         if not isinstance(self.usage, Unset):
             usage = self.usage.to_dict()
 
+        libraos_grounding: str | Unset = UNSET
+        if not isinstance(self.libraos_grounding, Unset):
+            libraos_grounding = self.libraos_grounding.value
+
         nova_grounding: str | Unset = UNSET
         if not isinstance(self.nova_grounding, Unset):
             nova_grounding = self.nova_grounding.value
@@ -76,6 +87,10 @@ class ChatCompletionResponse:
         persisted_state: dict[str, Any] | Unset = UNSET
         if not isinstance(self.persisted_state, Unset):
             persisted_state = self.persisted_state.to_dict()
+
+        libraos_usage: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.libraos_usage, Unset):
+            libraos_usage = self.libraos_usage.to_dict()
 
         nova_usage: dict[str, Any] | Unset = UNSET
         if not isinstance(self.nova_usage, Unset):
@@ -96,10 +111,14 @@ class ChatCompletionResponse:
             field_dict["choices"] = choices
         if usage is not UNSET:
             field_dict["usage"] = usage
+        if libraos_grounding is not UNSET:
+            field_dict["libraos_grounding"] = libraos_grounding
         if nova_grounding is not UNSET:
             field_dict["nova_grounding"] = nova_grounding
         if persisted_state is not UNSET:
             field_dict["persisted_state"] = persisted_state
+        if libraos_usage is not UNSET:
+            field_dict["libraos_usage"] = libraos_usage
         if nova_usage is not UNSET:
             field_dict["nova_usage"] = nova_usage
 
@@ -137,6 +156,13 @@ class ChatCompletionResponse:
         else:
             usage = ChatCompletionUsage.from_dict(_usage)
 
+        _libraos_grounding = d.pop("libraos_grounding", UNSET)
+        libraos_grounding: ChatCompletionResponseLibraosGrounding | Unset
+        if isinstance(_libraos_grounding, Unset):
+            libraos_grounding = UNSET
+        else:
+            libraos_grounding = ChatCompletionResponseLibraosGrounding(_libraos_grounding)
+
         _nova_grounding = d.pop("nova_grounding", UNSET)
         nova_grounding: ChatCompletionResponseNovaGrounding | Unset
         if isinstance(_nova_grounding, Unset):
@@ -150,6 +176,13 @@ class ChatCompletionResponse:
             persisted_state = UNSET
         else:
             persisted_state = ChatCompletionResponsePersistedState.from_dict(_persisted_state)
+
+        _libraos_usage = d.pop("libraos_usage", UNSET)
+        libraos_usage: UsageBlock | Unset
+        if isinstance(_libraos_usage, Unset):
+            libraos_usage = UNSET
+        else:
+            libraos_usage = UsageBlock.from_dict(_libraos_usage)
 
         _nova_usage = d.pop("nova_usage", UNSET)
         nova_usage: UsageBlock | Unset
@@ -165,8 +198,10 @@ class ChatCompletionResponse:
             model=model,
             choices=choices,
             usage=usage,
+            libraos_grounding=libraos_grounding,
             nova_grounding=nova_grounding,
             persisted_state=persisted_state,
+            libraos_usage=libraos_usage,
             nova_usage=nova_usage,
         )
 

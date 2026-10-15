@@ -1,129 +1,14 @@
 # Custom Tools
 
-LibraOS supports two transport modes for partner-implemented tools: **Mode A (SSE inline)** and **Mode B (webhook)**. Same tool definition, same agent loop — different transport. Pick whichever matches your service shape.
+Partner-implemented tools run over **webhooks** ("Mode B"): LibraOS POSTs an HMAC-SHA256-signed JSON payload to a partner endpoint per tool call, and the partner returns the result in the HTTP response. Calls are idempotent via `tool_use_id` dedup. Declare tools per agent in `custom_tools[]`, each with a `callback`.
 
-## TL;DR
+> Answering tool calls over the open message stream ("Mode A", `submit_tool_result`) is not supported and has been removed from the SDK. Use webhooks.
 
-- **Mode A — SSE inline.** Partner holds an open streaming connection while the agent runs. Tool calls flow back as `custom_tool_use` events; partner submits results via `submit_tool_result(...)` on the same socket.
-- **Mode B — Webhook.** LibraOS POSTs an HMAC-SHA256-signed JSON payload to a partner endpoint per tool call. Partner returns the result in the HTTP response. Idempotent via `tool_use_id` dedup.
-- **Both modes are first-class** — declare them per-agent in `custom_tools[]`. Same input schema, same output contract.
-
-## Mode comparison
-
-| Concern | Mode A (inline) | Mode B (webhook) |
-|---|---|---|
-| **Transport** | SSE on `/v1/messages` (or `/v1/agents/.../chat`) | HTTP POST to partner-registered URL |
-| **Partner shape** | Service holding a streaming connection | HTTP server (FastAPI / Flask / Lambda) |
-| **Long tool runs** | Bad — connection held while tool runs | Good — connection released, async fan-out |
-| **Auth** | Caller's bearer token | HMAC-SHA256 with shared secret |
-| **Idempotency** | N/A (single-shot per stream) | Dedup by `tool_use_id` |
-| **Best for** | Backend services with persistent processes; quick-result tools | Serverless; fire-and-forget; long-running tool work |
-
-The two modes aren't mutually exclusive. A partner can register some tools as Mode A and others as Mode B on the same agent.
-
-## Mode A — SSE inline
-
-LibraOS pauses the agent mid-run when it wants to call a custom tool, emits a `custom_tool_use` event over the open SSE stream, and waits for the partner's `submit_tool_result(...)` over the same socket before continuing.
-
-### When to pick Mode A
-
-- The partner process is naturally long-lived (backend service, daemon)
-- The tool is fast (sub-second to few-second) — connection time isn't a concern
-- You don't want to expose a public webhook endpoint
-- You want the simplest possible implementation
-
-### Worked example
-
-```python
-import os
-from typing import Any
-from libraos import Client
-
-
-async def fetch_invoice(input: dict[str, Any]) -> str:
-    invoice_id = input.get("invoice_id", "UNKNOWN")
-    return f"Invoice {invoice_id}: status=paid, amount=$1,250.00"
-
-
-TOOL_HANDLERS = {"fetch_invoice": fetch_invoice}
-
-
-async def main():
-    async with Client(base_url=..., api_key=...) as c:
-        async with c.messages.stream(
-            agent_id="invoice-bot",
-            messages=[{"role": "user", "content": "Show me invoice INV-2026-042"}],
-        ) as s:
-            async for event in s:
-                kind = event.get("type")
-
-                if kind == "text_delta":
-                    print(event.get("content", ""), end="", flush=True)
-
-                elif kind == "custom_tool_use":
-                    handler = TOOL_HANDLERS.get(event["name"])
-                    if handler is None:
-                        await s.submit_tool_result(
-                            tool_use_id=event["id"],
-                            content="tool not implemented",
-                            is_error=True,
-                        )
-                        continue
-                    result = await handler(event["input"])
-                    await s.submit_tool_result(
-                        tool_use_id=event["id"],
-                        content=result,
-                        is_error=False,
-                    )
-
-                elif kind == "message_stop":
-                    break
-```
-
-Full example: [`python/examples/04_custom_tool_inline.py`](../python/examples/04_custom_tool_inline.py).
-
-### Event sequence
-
-```
-client → server : POST /v1/messages (stream:true)
-server → client : event: message_start
-server → client : event: content_block_start (text)
-server → client : event: text_delta
-   ...                (model decides to call tool)
-server → client : event: custom_tool_use
-                  data: {"id": "tool_abc", "name": "fetch_invoice", "input": {...}}
-client → server : POST /v1/messages/<msg_id>/tool_result
-                  body: {"tool_use_id": "tool_abc", "content": "...", "is_error": false}
-server → client : event: tool_result_received
-server → client : event: text_delta (model continues)
-   ...
-server → client : event: message_stop
-```
-
-The SDK's `MessageStream.submit_tool_result(...)` wraps the POST round-trip and re-attaches to the original stream — your code sees one continuous event flow.
-
-### Error handling
-
-Set `is_error=True` to signal failure. The agent treats this as a recoverable error and may retry, try a different approach, or surface the failure to the user:
-
-```python
-await s.submit_tool_result(
-    tool_use_id=event["id"],
-    content="rate limited",
-    is_error=True,
-)
-```
-
-## Mode B — Webhook
+## Webhooks
 
 LibraOS POSTs a signed JSON payload to a partner-registered URL whenever the agent calls a custom tool. Partner runs the tool and returns the result in the HTTP response.
 
-### When to pick Mode B
-
-- Partner is HTTP-server-shaped (FastAPI / Flask / Lambda / Cloudflare Workers)
-- Tool runs are long enough that holding an SSE connection is impractical
-- You want fire-and-forget for some tools (run async, ack the webhook fast)
-- You want each tool's URL to live in a different service / process
+Webhooks suit any HTTP-server-shaped partner (FastAPI / Flask / Lambda / Cloudflare Workers), long-running tools (no connection is held while the tool runs), fire-and-forget tools (run async, ack the webhook fast), and tools that live in different services (each callback URL can point at its own service).
 
 ### Webhook payload
 
@@ -132,8 +17,8 @@ POST https://partner.example.com/libraos/cb/tools/fetch_invoice
 
 Headers:
   Content-Type: application/json
-  X-Nova-Signature: t=1714867200,v1=<hex(hmac_sha256(secret, ts + "." + tool_use_id + "." + body))>
-  X-Nova-Idempotency-Key: toolu_abc123
+  X-LibraOS-Signature: t=1714867200,v1=<hex(hmac_sha256(secret, ts + "." + tool_use_id + "." + body))>
+  X-LibraOS-Idempotency-Key: toolu_abc123
 
 Body:
 {
@@ -146,6 +31,8 @@ Body:
   "ts": 1714867200
 }
 ```
+
+**Header names during the transition.** Receivers get both the new headers above and the older `X-Nova-Signature` / `X-Nova-Idempotency-Key`, with the same values; older servers send only the `X-Nova-*` ones. Read the `X-LibraOS-*` header and fall back to the `X-Nova-*` one. `WebhookRouter` does this for you, and `libraos-cli test-callback` sends both.
 
 ### Expected response
 
@@ -227,7 +114,8 @@ Or manually (DIY router):
 ```python
 seen_ids = set()
 async def handle(req):
-    tool_use_id = req.headers["X-Nova-Idempotency-Key"]  # the tool_use_id
+    # the tool_use_id; older servers send only X-Nova-Idempotency-Key
+    tool_use_id = req.headers.get("X-LibraOS-Idempotency-Key") or req.headers["X-Nova-Idempotency-Key"]
     if tool_use_id in seen_ids:
         return {"output": cached_result_for(tool_use_id), "is_error": False}
     seen_ids.add(tool_use_id)
@@ -252,7 +140,7 @@ Test idempotency dedup with `--repeat 3 --tool-use-id toolu_dedupe_test` — you
 
 ## Tool definition (server-side)
 
-Both modes use the same agent-level tool definition:
+A custom tool is declared on the agent with its `callback`:
 
 ```python
 await c.agents.create(
@@ -269,8 +157,7 @@ await c.agents.create(
                 },
                 "required": ["invoice_id"],
             },
-            # Mode B: register a callback URL.
-            # Omit `callback` to use Mode A (SSE inline).
+            # The webhook LibraOS calls for this tool.
             "callback": {
                 "url": "https://partner.example.com/libraos/cb/tools/fetch_invoice",
                 "auth": {"type": "hmac_sha256", "secret_ref": "partner_webhook_secret"},
@@ -281,8 +168,6 @@ await c.agents.create(
     ],
 )
 ```
-
-Without `callback`, the tool runs in Mode A (SSE inline). With `callback`, Mode B (webhook).
 
 ### Input schema gotcha (Vertex AI)
 
@@ -301,19 +186,7 @@ If you declare `type: array` in the schema **without** `items`, LibraOS validati
 
 The CLI's `libraos-cli validate ./data/` runs this rule offline, before deploy.
 
-## Picking between Mode A and Mode B
-
-| Your situation | Pick |
-|---|---|
-| Backend service that already holds long-lived connections | Mode A |
-| Serverless (Lambda / Cloudflare Workers) | Mode B |
-| Tool runs in <1s, partner is HTTP-server-shaped | Either — Mode A is slightly simpler |
-| Tool runs in 30s+ | Mode B (don't hold SSE for 30s) |
-| Tool runs are fire-and-forget (e.g., kick off a job) | Mode B with `is_error: false` returned immediately |
-| Multi-tenant SaaS where tools live in different services | Mode B (each callback URL can point at a different service) |
-| Want to test before exposing a public endpoint | Mode A (no public URL needed) |
-
-## Mode B retries + dispatch
+## Retries + dispatch
 
 When LibraOS POSTs to a partner endpoint and gets a non-2xx response or timeout:
 
@@ -341,6 +214,5 @@ Configure per-tool via the `retry` block on the callback:
 ## See also
 
 - [`getting-started.md`](getting-started.md) — front-door + scenario matrix
-- [`python/examples/04_custom_tool_inline.py`](../python/examples/04_custom_tool_inline.py) — Mode A worked example
-- [`python/examples/05_custom_tool_webhook.py`](../python/examples/05_custom_tool_webhook.py) — Mode B worked example
+- [`python/examples/05_custom_tool_webhook.py`](../python/examples/05_custom_tool_webhook.py) — webhook worked example
 - [`cli/README.md` → test-callback](../cli/README.md#test-callback-mode-b-webhook-smoke) — webhook smoke-test flow

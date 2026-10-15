@@ -1,8 +1,8 @@
 """Bundle export / import — tenant onboarding round-trip.
 
-LibraOS employee bundles (``*.nova-bundle.zip``) let you snapshot a fully
-configured employee (model config, owned agents, custom tools, persona
-prompt) from one LibraOS instance and import it into another. This is the
+LibraOS employee bundles (``*.libraos-bundle.zip``; import accepts any file
+name) let you snapshot a fully configured employee (model config, owned
+agents, custom tools, persona prompt) from one LibraOS instance and import it into another. This is the
 primary tenant onboarding mechanism for multi-tenant deployments.
 
 The export endpoint returns raw ZIP bytes. The import endpoint accepts the
@@ -53,7 +53,7 @@ async def main() -> None:
         print(f"Exported bundle: {len(bundle_bytes):,} bytes from {employee_id}@{src_url}")
 
     # Optionally persist the bundle to disk for audit / version control.
-    with tempfile.NamedTemporaryFile(suffix=".nova-bundle.zip", delete=False) as tmp:
+    with tempfile.NamedTemporaryFile(suffix=".libraos-bundle.zip", delete=False) as tmp:
         tmp.write(bundle_bytes)
         bundle_path = Path(tmp.name)
     print(f"Saved to: {bundle_path}")

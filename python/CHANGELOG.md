@@ -16,6 +16,11 @@ before upgrading.
   `01b_claude_agent_sdk_drop_in.py` example and the compat tests are gone, and `01_basic_chat.py`
   now uses `libraos.Client`.
 - **The `anthropic` package** is no longer in the `dev` extra.
+- **Mode A custom tools: `MessageStream.submit_tool_result()`** and the `message_id=` argument of
+  `c.messages.stream(...)`, which existed only for it. Answering a tool call over the open stream
+  never worked end to end on the server. Run custom tools over webhooks ("Mode B": declare the tool
+  with a `callback` and serve it with `WebhookRouter`); see `docs/custom-tools.md`. The
+  `04_custom_tool_inline.py` example is gone.
 
 ### Changed
 
@@ -27,8 +32,12 @@ before upgrading.
   agent until it provisions the new one.
 - **`WebhookRouter.flask_blueprint()`** names its blueprint `libraos_callbacks` by default (was
   `nova_callbacks`). Pass `name=` to keep the old name.
-- Wire names the server defines (`X-Nova-Signature`, `X-Nova-Idempotency-Key`, `:nova-heartbeat`,
-  `nova_*` response fields, `.nova-bundle.zip`, …) are unchanged.
+- **LibraOS wire names.** The client sends `X-LibraOS-SDK-Version` and `X-LibraOS-OpenAPI-Hash`
+  (was `X-Nova-SDK-Version` / `X-Nova-OpenAPI-Hash`). `WebhookRouter` and its FastAPI, Flask and
+  Lambda mounts verify `X-LibraOS-Signature` / `X-LibraOS-Idempotency-Key`, falling back to
+  `X-Nova-Signature` / `X-Nova-Idempotency-Key` when the new headers are absent, so receivers work
+  against both new and older servers. Bundles are named `.libraos-bundle.zip` in the docs and
+  examples; import accepts any file name.
 
 ### Upgrade note
 
@@ -39,6 +48,7 @@ before upgrading.
 | `NOVA_OS_URL` | `LIBRA_OS_URL` |
 | `NOVA_OS_API_KEY` | `LIBRA_OS_API_KEY` |
 | `pip install "libraos-sdk[dev]"` installs `anthropic` | no longer installed; install it yourself if you use it directly |
+| `stream.submit_tool_result(...)` (Mode A) | a webhook per tool: `callback` on the tool + `WebhookRouter` |
 
 ## [1.2.0] — 2026-10-12
 

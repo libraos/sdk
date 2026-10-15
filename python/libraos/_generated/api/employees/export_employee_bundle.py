@@ -65,7 +65,7 @@ def sync_detailed(
     client: AuthenticatedClient | Client,
     include_knowledge: bool | Unset = True,
 ) -> Response[Error]:
-    """Download a portable .nova-bundle.zip
+    """Download a portable .libraos-bundle.zip
 
     Args:
         employee_id (str):
@@ -97,7 +97,7 @@ def sync(
     client: AuthenticatedClient | Client,
     include_knowledge: bool | Unset = True,
 ) -> Error | None:
-    """Download a portable .nova-bundle.zip
+    """Download a portable .libraos-bundle.zip
 
     Args:
         employee_id (str):
@@ -124,7 +124,7 @@ async def asyncio_detailed(
     client: AuthenticatedClient | Client,
     include_knowledge: bool | Unset = True,
 ) -> Response[Error]:
-    """Download a portable .nova-bundle.zip
+    """Download a portable .libraos-bundle.zip
 
     Args:
         employee_id (str):
@@ -154,7 +154,7 @@ async def asyncio(
     client: AuthenticatedClient | Client,
     include_knowledge: bool | Unset = True,
 ) -> Error | None:
-    """Download a portable .nova-bundle.zip
+    """Download a portable .libraos-bundle.zip
 
     Args:
         employee_id (str):

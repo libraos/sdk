@@ -119,8 +119,8 @@ export interface StateSnapshot {
 
 /**
  * Escape hatch for LibraOS-specific extensions without a standard AG-UI type.
- * `name` is a `nova.<x>` namespaced inner event (e.g. "nova.route_hint";
- * `nova.` is the server's wire namespace).
+ * `name` is a `libraos.<x>` namespaced inner event (e.g. "libraos.route_hint").
+ * `parseAgUiStream` normalizes the older `nova.<x>` wire names to `libraos.<x>`.
  * Canonical discriminator "CUSTOM" (NOT "CUSTOM_EVENT").
  */
 export interface CustomEvent {

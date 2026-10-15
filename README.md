@@ -89,7 +89,7 @@ If you only need to call a hosted LibraOS that someone else operates, skip this 
 
 ## Python SDK
 
-The native client (`from libraos import Client`) covers the whole partner surface: chat over `/v1/messages`, the multi-model `model_config` cascade at employee and agent level, structured-output `output_type` validation, custom-tool callbacks (Mode A inline / Mode B webhook), portable employee bundles and async jobs. See [`python/examples/00_quickstart.py`](python/examples/00_quickstart.py).
+The native client (`from libraos import Client`) covers the whole partner surface: chat over `/v1/messages`, the multi-model `model_config` cascade at employee and agent level, structured-output `output_type` validation, custom-tool webhooks, portable employee bundles and async jobs. See [`python/examples/00_quickstart.py`](python/examples/00_quickstart.py).
 
 Python SDK 2.0 removes the Anthropic-compatibility client; see [`python/CHANGELOG.md`](python/CHANGELOG.md).
 

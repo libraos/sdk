@@ -72,3 +72,31 @@ def test_fastapi_mount_rejects_bad_signature() -> None:
         },
     )
     assert resp.status_code in (401, 403)
+
+
+@pytest.mark.parametrize(
+    "sig_name,idem_name",
+    [
+        ("X-LibraOS-Signature", "X-LibraOS-Idempotency-Key"),
+        ("X-Nova-Signature", "X-Nova-Idempotency-Key"),
+    ],
+)
+def test_fastapi_mount_accepts_new_and_old_header_names(sig_name: str, idem_name: str) -> None:
+    router = WebhookRouter(secret="s-names")
+
+    @router.tool("t")
+    async def t(input, ctx):
+        return "ok"
+
+    app = FastAPI()
+    app.include_router(router.fastapi_router(), prefix="/libraos")
+    body = b'{"tool_use_id":"tu","name":"t","input":{}}'
+    sig, _ = _sign("s-names", "tu", body)
+    resp = TestClient(app).post(
+        "/libraos/",
+        content=body,
+        headers={sig_name: sig, idem_name: "tu", "Content-Type": "application/json"},
+    )
+    assert resp.status_code == 200, resp.text
+    assert resp.json()["output"] == "ok"
+

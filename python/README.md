@@ -28,7 +28,7 @@ async with Client(base_url="https://libraos.partner.com", api_key="...") as c:
     )
     print(msg.text)
 
-# Mode B custom-tool webhook router (FastAPI mount shown; Flask/Lambda also supported)
+# Custom-tool webhook router (FastAPI mount shown; Flask/Lambda also supported)
 router = WebhookRouter(secret="...")
 @router.tool("fetch_invoice")
 async def fetch_invoice(input, ctx): ...
@@ -164,7 +164,7 @@ Anthropic-provided server-side tools (`web_search_20250305`, `code_execution_202
 **Visible:** the model's text response references the search; `MessageResponse.content[]` (non-streaming) contains `server_tool_use` blocks.
 **Not visible:** discrete tool-invocation events on the streaming path. Affects observability hooks that watch the SSE stream for `tool_use` events.
 
-This is a pre-existing constraint of the underlying Anthropic API; LibraOS forwards what it receives. Partner-defined custom tools (Mode B via `WebhookRouter`) emit `custom_tool_use` events normally.
+This is a pre-existing constraint of the underlying Anthropic API; LibraOS forwards what it receives. Partner-defined custom tools (webhooks via `WebhookRouter`) emit `custom_tool_use` events normally.
 
 **Workaround for partners on v1.0.0:** inspect `MessageResponse.content` after the stream completes for `server_tool_use` blocks; OR use the non-streaming `messages.create` path when discrete tool observability matters.
 
@@ -260,23 +260,11 @@ async with c.messages.stream(
             print()  # newline at end
 ```
 
-**Mode A — custom-tool inline** (intercept the LLM tool call, compute result, resume):
+Custom tools are not answered over the stream. Serve them from a webhook with `WebhookRouter` (below).
 
-```python
-async with c.messages.stream(
-    agent_id="invoice-bot",
-    messages=[{"role": "user", "content": "Fetch invoice INV-9912"}],
-    message_id="my-request-id",  # required for submit_tool_result before done
-) as stream:
-    async for event in stream:
-        if event["event"] == "custom_tool_use":
-            result = await my_invoice_lookup(event["data"]["input"]["invoice_id"])
-            await stream.submit_tool_result(event["data"]["id"], result)
-```
+## Webhook router (custom tools)
 
-## Webhook router (Mode B)
-
-`WebhookRouter` receives LibraOS custom-tool dispatches on your HTTP endpoint, verifies the HMAC-SHA256 signature, dedupes by idempotency key, and dispatches to registered handlers:
+`WebhookRouter` receives LibraOS custom-tool dispatches on your HTTP endpoint, verifies the HMAC-SHA256 signature (`X-LibraOS-Signature`), dedupes by idempotency key (`X-LibraOS-Idempotency-Key`), and dispatches to registered handlers (see [`docs/custom-tools.md`](../docs/custom-tools.md) for the wire contract):
 
 ```python
 from libraos import WebhookRouter

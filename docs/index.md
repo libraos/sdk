@@ -21,9 +21,9 @@ Partner integration docs for [LibraOS](https://github.com/libraos/sdk) — the a
 | [Multi-Model Routing](multi-model.md) | Three slots (answer / planner / skill), five-level cascade, fallback semantics |
 | [Web Search Backends](web-search.md) | Five pluggable backends, cost-quality table, fallback chains, reformulator, recency intent |
 | [Comparing Search Backends](comparing-search-backends.md) | Side-by-side pricing / latency / features for each backend |
-| [Custom Tools](custom-tools.md) | Mode A (SSE inline) + Mode B (webhook) end-to-end, HMAC signing, idempotency |
+| [Custom Tools](custom-tools.md) | Custom tools over webhooks end-to-end, HMAC signing, idempotency |
 | [Deployment](deployment.md) | Self-hosted vs cloud, three deploy shapes, reverse-proxy templates, observability |
-| [Scenarios](scenarios.md) | 10 lifecycle workflows traced end-to-end with wire-level detail |
+| [Scenarios](scenarios.md) | 9 lifecycle workflows traced end-to-end with wire-level detail |
 
 ## SDK reference
 

@@ -65,7 +65,7 @@ import { LibraOSClient, OidcClient, MemoryTokenStore } from "@libraos/client";
 
 const oidc = new OidcClient({
   issuer: dep.auth!.issuer!,        // from getDeployment()
-  clientId: "nova-os-ui",           // the server's built-in UI client id (wire name)
+  clientId: "libraos-ui",           // the server's built-in UI client id ("nova-os-ui" on older servers)
   redirectUri: `${location.origin}/oauth/callback`,
   tokenStore: new MemoryTokenStore(), // inject Keychain / secure-store in production
 });

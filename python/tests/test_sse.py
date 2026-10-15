@@ -29,7 +29,7 @@ async def test_parse_basic_event() -> None:
 @pytest.mark.asyncio
 async def test_skips_heartbeat_comments() -> None:
     src = _lines(
-        ":nova-heartbeat elapsed_ms=10000",
+        ":libraos-heartbeat elapsed_ms=10000",
         ":nova-heartbeat elapsed_ms=20000",
         "event: text",
         'data: {"type":"text","content":"hi"}',

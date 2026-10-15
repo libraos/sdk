@@ -78,7 +78,7 @@ def sync_detailed(
 
      Server-Sent Events stream. Replays stored events first (honoring `Last-Event-ID`), then delivers
     live events until the job reaches a terminal state. Each frame carries `id` (sequence), `event`
-    (type) and a JSON `data` payload; `: nova-heartbeat` comments are sent every 10s.
+    (type) and a JSON `data` payload; `: libraos-heartbeat` comments are sent every 10s.
 
     Args:
         api_key (str):
@@ -117,7 +117,7 @@ def sync(
 
      Server-Sent Events stream. Replays stored events first (honoring `Last-Event-ID`), then delivers
     live events until the job reaches a terminal state. Each frame carries `id` (sequence), `event`
-    (type) and a JSON `data` payload; `: nova-heartbeat` comments are sent every 10s.
+    (type) and a JSON `data` payload; `: libraos-heartbeat` comments are sent every 10s.
 
     Args:
         api_key (str):
@@ -151,7 +151,7 @@ async def asyncio_detailed(
 
      Server-Sent Events stream. Replays stored events first (honoring `Last-Event-ID`), then delivers
     live events until the job reaches a terminal state. Each frame carries `id` (sequence), `event`
-    (type) and a JSON `data` payload; `: nova-heartbeat` comments are sent every 10s.
+    (type) and a JSON `data` payload; `: libraos-heartbeat` comments are sent every 10s.
 
     Args:
         api_key (str):
@@ -188,7 +188,7 @@ async def asyncio(
 
      Server-Sent Events stream. Replays stored events first (honoring `Last-Event-ID`), then delivers
     live events until the job reaches a terminal state. Each frame carries `id` (sequence), `event`
-    (type) and a JSON `data` payload; `: nova-heartbeat` comments are sent every 10s.
+    (type) and a JSON `data` payload; `: libraos-heartbeat` comments are sent every 10s.
 
     Args:
         api_key (str):

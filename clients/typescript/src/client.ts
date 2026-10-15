@@ -688,7 +688,8 @@ export class LibraOSClient {
   }
 
   // ── Agents ─────────────────────────────────────────────────────────────
-  // /v1/agents* calls carry the managed-agents beta header the server requires.
+  // /v1/agents* calls carry the managed-agents beta header: older servers
+  // require it (426 without), current ones accept and ignore it.
 
   /** List agents. */
   async listAgents(): Promise<Agent[]> {
@@ -755,8 +756,12 @@ export class LibraOSClient {
     // is authoritative in the LibraOS observability headers. Fold those headers
     // into the typed extensions so browser clients do not mistake an agent id
     // such as `support-assistant` for the model used by the test.
-    const modelUsed = res.response.headers.get("x-nova-model-used")?.trim();
-    const fallback = res.response.headers.get("x-nova-model-fallback-triggered")?.trim();
+    // New header names first; older servers send only the `x-nova-*` ones.
+    const h = res.response.headers;
+    const modelUsed = (h.get("x-libraos-model-used") ?? h.get("x-nova-model-used"))?.trim();
+    const fallback = (
+      h.get("x-libraos-model-fallback-triggered") ?? h.get("x-nova-model-fallback-triggered")
+    )?.trim();
     return {
       ...message,
       ...(modelUsed ? { model_used: modelUsed } : {}),
@@ -766,7 +771,9 @@ export class LibraOSClient {
 
   /**
    * Send a streaming message and iterate AG-UI events. Sets `X-Protocol: ag-ui`
-   * so the server emits the AG-UI dialect. Yields typed
+   * so the server emits the AG-UI dialect, and `X-LibraOS-Event-Names: libraos`
+   * so CUSTOM events arrive as `libraos.<name>` (older servers ignore it and
+   * send `nova.<name>`; both are normalized to `libraos.<name>`). Yields typed
    * {@link AgUiStreamEvent}s and rejects non-2xx responses before parsing.
    */
   async *streamMessage(
@@ -777,6 +784,7 @@ export class LibraOSClient {
       "content-type": "application/json",
       accept: "text/event-stream",
       "x-protocol": "ag-ui",
+      "x-libraos-event-names": "libraos",
     };
     if (opts?.lastEventId) headers["last-event-id"] = opts.lastEventId;
     const res = await this.rawFetch("/v1/messages", {

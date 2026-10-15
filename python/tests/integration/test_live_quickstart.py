@@ -68,7 +68,6 @@ async def test_messages_stream_roundtrip() -> None:
         async with c.messages.stream(
             _AGENT,
             messages=[{"role": "user", "content": "Count to three."}],
-            message_id=str(uuid.uuid4()),
         ) as s:
             async for event in s:
                 if getattr(event, "type", None) in {"text", "delta", "content_block_delta"}:

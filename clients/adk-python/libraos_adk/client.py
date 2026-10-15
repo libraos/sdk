@@ -16,7 +16,8 @@ import httpx
 
 from .agent import Agent
 
-# Value of the beta header the server requires on /v1/agents.
+# Value of the managed-agents beta header sent on /v1/agents (older servers
+# require it; current ones accept and ignore it).
 MANAGED_AGENTS_BETA = "managed-agents-2026-04-01"
 
 RunEvent = dict[str, Any]
@@ -45,7 +46,8 @@ class LibraAdk:
         return {"authorization": f"Bearer {self.api_key}", "content-type": "application/json"}
 
     def _agent_headers(self) -> dict[str, str]:
-        # The /v1/agents routes require the managed-agents beta header (426 without it).
+        # Older servers require the managed-agents beta header on /v1/agents (426
+        # without it); current ones accept and ignore it.
         return {**self._headers(), "anthropic-beta": MANAGED_AGENTS_BETA}
 
     def deploy(self, agent: Agent) -> dict[str, Any]:

@@ -117,3 +117,59 @@ async def test_router_dedupes_by_idempotency_key() -> None:
     r2 = await router.handle(body=body, headers=headers)
     assert r1["output"] == r2["output"] == "call #1"
     assert call_count == 1
+
+
+def _router() -> WebhookRouter:
+    router = WebhookRouter(secret="dual-secret")
+
+    @router.tool("echo")
+    async def echo(input: dict[str, Any], ctx: dict[str, Any]) -> str:
+        return f"{ctx['idempotency_key']}:{input['v']}"
+
+    return router
+
+
+@pytest.mark.asyncio
+async def test_router_accepts_libraos_header_names() -> None:
+    body = json.dumps({"tool_use_id": "tu_new", "name": "echo", "input": {"v": 1}}).encode()
+    sig, _ = _sign("dual-secret", "tu_new", body)
+    result = await _router().handle(
+        body=body,
+        headers={"x-libraos-signature": sig, "x-libraos-idempotency-key": "tu_new"},
+    )
+    assert result == {"output": "tu_new:1", "is_error": False}
+
+
+@pytest.mark.asyncio
+async def test_router_prefers_libraos_headers_over_nova_ones() -> None:
+    body = json.dumps({"tool_use_id": "tu_new", "name": "echo", "input": {"v": 2}}).encode()
+    sig, _ = _sign("dual-secret", "tu_new", body)
+    bad, _ = _sign("WRONG", "tu_old", body)
+    result = await _router().handle(
+        body=body,
+        headers={
+            "X-LibraOS-Signature": sig,
+            "X-LibraOS-Idempotency-Key": "tu_new",
+            "X-Nova-Signature": bad,
+            "X-Nova-Idempotency-Key": "tu_old",
+        },
+    )
+    assert result == {"output": "tu_new:2", "is_error": False}
+
+
+@pytest.mark.asyncio
+async def test_router_falls_back_to_nova_headers() -> None:
+    body = json.dumps({"tool_use_id": "tu_old", "name": "echo", "input": {"v": 3}}).encode()
+    sig, _ = _sign("dual-secret", "tu_old", body)
+    result = await _router().handle(
+        body=body,
+        headers={"x-nova-signature": sig, "x-nova-idempotency-key": "tu_old"},
+    )
+    assert result == {"output": "tu_old:3", "is_error": False}
+
+
+@pytest.mark.asyncio
+async def test_router_rejects_missing_headers() -> None:
+    with pytest.raises(PermissionError):
+        await _router().handle(body=b"{}", headers={})
+

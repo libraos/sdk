@@ -5,8 +5,8 @@ callbacks. Just open the stream, iterate events, print text deltas as they
 arrive — useful for chat UIs and any partner that wants tokens-on-the-wire
 latency rather than waiting for the full reply.
 
-For Mode A custom-tool dispatch over the same context manager, see
-``04_custom_tool_inline.py``.
+Custom tools are not answered over the stream: serve them from a webhook
+(``05_custom_tool_webhook.py``).
 
 Prerequisites::
 

@@ -703,6 +703,42 @@ func (e ChatCompletionRequestReasoningEffort) Valid() bool {
 	}
 }
 
+// Defines values for ChatCompletionResponseLibraosGrounding.
+const (
+	ChatCompletionResponseLibraosGroundingDegraded           ChatCompletionResponseLibraosGrounding = "degraded"
+	ChatCompletionResponseLibraosGroundingDegradedRetrieval  ChatCompletionResponseLibraosGrounding = "degraded_retrieval"
+	ChatCompletionResponseLibraosGroundingGrounded           ChatCompletionResponseLibraosGrounding = "grounded"
+	ChatCompletionResponseLibraosGroundingUngroundedNoChunks ChatCompletionResponseLibraosGrounding = "ungrounded_no_chunks"
+	ChatCompletionResponseLibraosGroundingUngroundedRefusal  ChatCompletionResponseLibraosGrounding = "ungrounded_refusal"
+	ChatCompletionResponseLibraosGroundingUnopenedSources    ChatCompletionResponseLibraosGrounding = "unopened_sources"
+	ChatCompletionResponseLibraosGroundingUnsupportedClaim   ChatCompletionResponseLibraosGrounding = "unsupported_claim"
+	ChatCompletionResponseLibraosGroundingUnsupportedFigures ChatCompletionResponseLibraosGrounding = "unsupported_figures"
+)
+
+// Valid indicates whether the value is a known member of the ChatCompletionResponseLibraosGrounding enum.
+func (e ChatCompletionResponseLibraosGrounding) Valid() bool {
+	switch e {
+	case ChatCompletionResponseLibraosGroundingDegraded:
+		return true
+	case ChatCompletionResponseLibraosGroundingDegradedRetrieval:
+		return true
+	case ChatCompletionResponseLibraosGroundingGrounded:
+		return true
+	case ChatCompletionResponseLibraosGroundingUngroundedNoChunks:
+		return true
+	case ChatCompletionResponseLibraosGroundingUngroundedRefusal:
+		return true
+	case ChatCompletionResponseLibraosGroundingUnopenedSources:
+		return true
+	case ChatCompletionResponseLibraosGroundingUnsupportedClaim:
+		return true
+	case ChatCompletionResponseLibraosGroundingUnsupportedFigures:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for ChatCompletionResponseNovaGrounding.
 const (
 	ChatCompletionResponseNovaGroundingDegraded           ChatCompletionResponseNovaGrounding = "degraded"
@@ -3923,12 +3959,20 @@ type ChatCompletionResponse struct {
 	// Created Unix timestamp (seconds).
 	Created *int    `json:"created,omitempty"`
 	Id      *string `json:"id,omitempty"`
-	Model   *string `json:"model,omitempty"`
 
-	// NovaGrounding LibraOS extension — per-turn grounded-vs-refusal outcome. Omitted on non-retrieval turns.
+	// LibraosGrounding LibraOS extension — per-turn grounded-vs-refusal outcome. Omitted on non-retrieval turns.
+	LibraosGrounding *ChatCompletionResponseLibraosGrounding `json:"libraos_grounding,omitempty"`
+
+	// LibraosUsage Aggregated token usage across all of the turn's model sub-calls, with a per-stage breakdown. Omitted on non-model/zero-usage turns. Excludes embedding calls.
+	LibraosUsage *UsageBlock `json:"libraos_usage,omitempty"`
+	Model        *string     `json:"model,omitempty"`
+
+	// NovaGrounding Former name of `libraos_grounding` (same value), still sent during the transition.
+	// Deprecated: this property has been marked as deprecated upstream, but no `x-deprecated-reason` was set
 	NovaGrounding *ChatCompletionResponseNovaGrounding `json:"nova_grounding,omitempty"`
 
-	// NovaUsage Aggregated token usage across all of the turn's model sub-calls, with a per-stage breakdown. Omitted on non-model/zero-usage turns. Excludes embedding calls.
+	// NovaUsage Former name of `libraos_usage` (same value), still sent during the transition.
+	// Deprecated: this property has been marked as deprecated upstream, but no `x-deprecated-reason` was set
 	NovaUsage *UsageBlock `json:"nova_usage,omitempty"`
 
 	// Object Always `chat.completion`.
@@ -3941,7 +3985,10 @@ type ChatCompletionResponse struct {
 	Usage *ChatCompletionUsage `json:"usage,omitempty"`
 }
 
-// ChatCompletionResponseNovaGrounding LibraOS extension — per-turn grounded-vs-refusal outcome. Omitted on non-retrieval turns.
+// ChatCompletionResponseLibraosGrounding LibraOS extension — per-turn grounded-vs-refusal outcome. Omitted on non-retrieval turns.
+type ChatCompletionResponseLibraosGrounding string
+
+// ChatCompletionResponseNovaGrounding Former name of `libraos_grounding` (same value), still sent during the transition.
 type ChatCompletionResponseNovaGrounding string
 
 // ChatCompletionResponseFormat OpenAI-style response format. Must be an object with a non-empty `type` (otherwise 400); the value of `type` is not checked. Forwarded verbatim to OpenAI-compatible providers on the passthrough path; ignored on the agent path, where the agent's `output_type` decides the reply shape.
@@ -4247,13 +4294,6 @@ type CustomToolCallbackAuthType string
 
 // CustomToolCallbackRetryBackoff defines model for CustomToolCallback.Retry.Backoff.
 type CustomToolCallbackRetryBackoff string
-
-// CustomToolResultRequest defines model for CustomToolResultRequest.
-type CustomToolResultRequest struct {
-	IsError   *bool  `json:"is_error,omitempty"`
-	Output    string `json:"output"`
-	ToolUseId string `json:"tool_use_id"`
-}
 
 // DecisionActivateRequest defines model for DecisionActivateRequest.
 type DecisionActivateRequest struct {
@@ -7679,9 +7719,6 @@ type RejectActionJSONRequestBody = ActionDecisionRequest
 // CreateJobJSONRequestBody defines body for CreateJob for application/json ContentType.
 type CreateJobJSONRequestBody = JobCreate
 
-// SubmitCustomToolResultJSONRequestBody defines body for SubmitCustomToolResult for application/json ContentType.
-type SubmitCustomToolResultJSONRequestBody = CustomToolResultRequest
-
 // IssueExecutionCapabilityJSONRequestBody defines body for IssueExecutionCapability for application/json ContentType.
 type IssueExecutionCapabilityJSONRequestBody = ExecutionCapabilityIssueRequest
 
@@ -9937,11 +9974,6 @@ type ClientInterface interface {
 	// StreamJob request
 	StreamJob(ctx context.Context, jobId string, params *StreamJobParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// SubmitCustomToolResultWithBody request with any body
-	SubmitCustomToolResultWithBody(ctx context.Context, messageId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	SubmitCustomToolResult(ctx context.Context, messageId string, body SubmitCustomToolResultJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
 	// IssueExecutionCapabilityWithBody request with any body
 	IssueExecutionCapabilityWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -11954,30 +11986,6 @@ func (c *Client) GetJob(ctx context.Context, jobId string, reqEditors ...Request
 
 func (c *Client) StreamJob(ctx context.Context, jobId string, params *StreamJobParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewStreamJobRequest(c.Server, jobId, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) SubmitCustomToolResultWithBody(ctx context.Context, messageId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewSubmitCustomToolResultRequestWithBody(c.Server, messageId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) SubmitCustomToolResult(ctx context.Context, messageId string, body SubmitCustomToolResultJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewSubmitCustomToolResultRequest(c.Server, messageId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -16728,7 +16736,7 @@ func NewDeleteAttachmentRequest(server string, cid string, aid string) (*http.Re
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/v1/conversations/%s/attachments/%s/download", pathParam0, pathParam1)
+	operationPath := fmt.Sprintf("/v1/conversations/%s/attachments/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -17890,53 +17898,6 @@ func NewStreamJobRequest(server string, jobId string, params *StreamJobParams) (
 		}
 
 	}
-
-	return req, nil
-}
-
-// NewSubmitCustomToolResultRequest calls the generic SubmitCustomToolResult builder with application/json body
-func NewSubmitCustomToolResultRequest(server string, messageId string, body SubmitCustomToolResultJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewSubmitCustomToolResultRequestWithBody(server, messageId, "application/json", bodyReader)
-}
-
-// NewSubmitCustomToolResultRequestWithBody generates requests for SubmitCustomToolResult with any type of body
-func NewSubmitCustomToolResultRequestWithBody(server string, messageId string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "message_id", messageId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/v1/managed/agents/messages/%s/custom_tool_results", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("POST", queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -23051,11 +23012,6 @@ type ClientWithResponsesInterface interface {
 	// StreamJobWithResponse request
 	StreamJobWithResponse(ctx context.Context, jobId string, params *StreamJobParams, reqEditors ...RequestEditorFn) (*StreamJobResponse, error)
 
-	// SubmitCustomToolResultWithBodyWithResponse request with any body
-	SubmitCustomToolResultWithBodyWithResponse(ctx context.Context, messageId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*SubmitCustomToolResultResponse, error)
-
-	SubmitCustomToolResultWithResponse(ctx context.Context, messageId string, body SubmitCustomToolResultJSONRequestBody, reqEditors ...RequestEditorFn) (*SubmitCustomToolResultResponse, error)
-
 	// IssueExecutionCapabilityWithBodyWithResponse request with any body
 	IssueExecutionCapabilityWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*IssueExecutionCapabilityResponse, error)
 
@@ -25883,30 +25839,6 @@ func (r StreamJobResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r StreamJobResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type SubmitCustomToolResultResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON400      *BadRequest
-	JSON401      *Unauthorized
-	JSON404      *NotFound
-}
-
-// Status returns HTTPResponse.Status
-func (r SubmitCustomToolResultResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r SubmitCustomToolResultResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -29798,23 +29730,6 @@ func (c *ClientWithResponses) StreamJobWithResponse(ctx context.Context, jobId s
 		return nil, err
 	}
 	return ParseStreamJobResponse(rsp)
-}
-
-// SubmitCustomToolResultWithBodyWithResponse request with arbitrary body returning *SubmitCustomToolResultResponse
-func (c *ClientWithResponses) SubmitCustomToolResultWithBodyWithResponse(ctx context.Context, messageId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*SubmitCustomToolResultResponse, error) {
-	rsp, err := c.SubmitCustomToolResultWithBody(ctx, messageId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseSubmitCustomToolResultResponse(rsp)
-}
-
-func (c *ClientWithResponses) SubmitCustomToolResultWithResponse(ctx context.Context, messageId string, body SubmitCustomToolResultJSONRequestBody, reqEditors ...RequestEditorFn) (*SubmitCustomToolResultResponse, error) {
-	rsp, err := c.SubmitCustomToolResult(ctx, messageId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseSubmitCustomToolResultResponse(rsp)
 }
 
 // IssueExecutionCapabilityWithBodyWithResponse request with arbitrary body returning *IssueExecutionCapabilityResponse
@@ -35393,46 +35308,6 @@ func ParseStreamJobResponse(rsp *http.Response) (*StreamJobResponse, error) {
 	}
 
 	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
-		var dest Unauthorized
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON401 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest NotFound
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON404 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseSubmitCustomToolResultResponse parses an HTTP response from a SubmitCustomToolResultWithResponse call
-func ParseSubmitCustomToolResultResponse(rsp *http.Response) (*SubmitCustomToolResultResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &SubmitCustomToolResultResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
-		var dest BadRequest
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON400 = &dest
-
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
 		var dest Unauthorized
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {

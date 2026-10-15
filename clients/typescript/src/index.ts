@@ -20,6 +20,7 @@ export {
   type MessageResponse,
   type JobCreate,
   type Job,
+  type JobStreamEvent,
   type Document,
   type Session,
   type SessionCreate,

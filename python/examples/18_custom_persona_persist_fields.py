@@ -30,8 +30,8 @@ then::
 Prerequisites::
 
     pip install libraos-sdk
-    export LIBRAOS_BASE_URL=https://libraos.your-company.example
-    export LIBRAOS_API_KEY=msk_live_...
+    export LIBRA_OS_URL=https://libraos.your-company.example
+    export LIBRA_OS_API_KEY=msk_live_...
     # The directory must match what LibraOS scans server-side.
     # Defaults to data/agents/_runtime/ inside the container.
     export LIBRA_OS_AGENTS_RUNTIME_DIR=/srv/libraos/data/agents/_runtime
@@ -97,8 +97,8 @@ output_type:
 
 
 async def main() -> None:
-    base_url = os.environ.get("LIBRAOS_BASE_URL", "https://libraos.your-company.example")
-    api_key = os.environ["LIBRAOS_API_KEY"]
+    base_url = os.environ.get("LIBRA_OS_URL", "https://libraos.your-company.example")
+    api_key = os.environ["LIBRA_OS_API_KEY"]
     runtime_dir = os.environ.get(
         "LIBRA_OS_AGENTS_RUNTIME_DIR",
         "/srv/libraos/data/agents/_runtime",

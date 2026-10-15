@@ -20,9 +20,8 @@ before upgrading.
 ### Changed
 
 - **`NovaOSError` is now `LibraOSError`.** Every SDK error still subclasses it.
-- **Example and test environment variables** use the `LIBRAOS_` prefix (`LIBRAOS_BASE_URL`,
-  `LIBRAOS_API_KEY`, `LIBRAOS_AGENT_ID`, …). Server settings quoted in examples use the server's
-  `LIBRA_OS_` prefix.
+- **Example and test environment variables** use the `LIBRA_OS_` prefix, the same as the
+  server's settings (`LIBRA_OS_URL`, `LIBRA_OS_API_KEY`, `LIBRA_OS_AGENT_ID`, …).
 - **The simulator's harness agent id** is `libraos-simulator-harness` (was
   `nova-os-simulator-harness`). A deployment that provisioned the old id falls back to a transient
   agent until it provisions the new one.
@@ -37,8 +36,8 @@ before upgrading.
 |---|---|
 | `from libraos import AnthropicCompatClient` | `from libraos import Client` — `await c.messages.create(agent_id, messages, ...)` |
 | `NovaOSError` | `LibraOSError` |
-| `NOVA_OS_URL` | `LIBRAOS_BASE_URL` |
-| `NOVA_OS_API_KEY` | `LIBRAOS_API_KEY` |
+| `NOVA_OS_URL` | `LIBRA_OS_URL` |
+| `NOVA_OS_API_KEY` | `LIBRA_OS_API_KEY` |
 | `pip install "libraos-sdk[dev]"` installs `anthropic` | no longer installed; install it yourself if you use it directly |
 
 ## [1.2.0] — 2026-10-12

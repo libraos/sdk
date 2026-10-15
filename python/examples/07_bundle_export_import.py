@@ -13,9 +13,9 @@ bundle endpoints directly.
 Prerequisites::
 
     pip install libraos-sdk
-    export LIBRAOS_SRC_URL=https://libraos-source.partner.com
-    export LIBRAOS_DST_URL=https://libraos-dest.partner.com
-    export LIBRAOS_API_KEY=msk_live_...
+    export LIBRA_OS_SRC_URL=https://libraos-source.partner.com
+    export LIBRA_OS_DST_URL=https://libraos-dest.partner.com
+    export LIBRA_OS_API_KEY=msk_live_...
 
 Run::
 
@@ -33,10 +33,10 @@ from libraos import Client
 
 
 async def main() -> None:
-    api_key = os.environ["LIBRAOS_API_KEY"]
-    src_url = os.environ.get("LIBRAOS_SRC_URL", os.environ.get("LIBRAOS_BASE_URL", "https://libraos.partner.com"))
-    dst_url = os.environ.get("LIBRAOS_DST_URL", os.environ.get("LIBRAOS_BASE_URL", "https://libraos.partner.com"))
-    employee_id = os.environ.get("LIBRAOS_EMPLOYEE_ID", "frontdesk")
+    api_key = os.environ["LIBRA_OS_API_KEY"]
+    src_url = os.environ.get("LIBRA_OS_SRC_URL", os.environ.get("LIBRA_OS_URL", "https://libraos.partner.com"))
+    dst_url = os.environ.get("LIBRA_OS_DST_URL", os.environ.get("LIBRA_OS_URL", "https://libraos.partner.com"))
+    employee_id = os.environ.get("LIBRA_OS_EMPLOYEE_ID", "frontdesk")
 
     # --- Export ---
     async with Client(base_url=src_url, api_key=api_key) as src:

@@ -43,8 +43,8 @@ export default defineAgent({
 ## Deploy + run
 
 ```bash
-export LIBRAOS_BASE_URL=https://your-libraos.example.com
-export LIBRAOS_API_KEY=…
+export LIBRA_OS_URL=https://your-libraos.example.com
+export LIBRA_OS_API_KEY=…
 
 adk deploy                                  # upserts the agent on /v1/agents (idempotent)
 adk run refund-copilot "refund order 8842"  # runs on the stack, streaming events
@@ -59,7 +59,7 @@ TypeScript agent files load under a loader: `npx tsx node_modules/.bin/adk deplo
 import { LibraAdk } from "@libraos/adk";
 import agent from "./agent.js";
 
-const adk = new LibraAdk(); // reads LIBRAOS_BASE_URL / LIBRAOS_API_KEY
+const adk = new LibraAdk(); // reads LIBRA_OS_URL / LIBRA_OS_API_KEY
 await adk.deploy(agent);
 await adk.run("refund-copilot", "refund order 8842", {
   onEvent: (e) => console.log(e.type, e),

@@ -29,12 +29,12 @@ def _env(*keys: str) -> Optional[str]:
 
 class LibraAdk:
     def __init__(self, base_url: Optional[str] = None, api_key: Optional[str] = None) -> None:
-        base_url = base_url or _env("LIBRAOS_BASE_URL")
-        api_key = api_key or _env("LIBRAOS_API_KEY")
+        base_url = base_url or _env("LIBRA_OS_URL")
+        api_key = api_key or _env("LIBRA_OS_API_KEY")
         if not base_url:
-            raise ValueError("LibraAdk: base_url (or $LIBRAOS_BASE_URL) is required")
+            raise ValueError("LibraAdk: base_url (or $LIBRA_OS_URL) is required")
         if not api_key:
-            raise ValueError("LibraAdk: api_key (or $LIBRAOS_API_KEY) is required")
+            raise ValueError("LibraAdk: api_key (or $LIBRA_OS_API_KEY) is required")
         self.base_url = base_url.rstrip("/")
         self.api_key = api_key
 

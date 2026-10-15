@@ -169,7 +169,7 @@ import os
 from fastapi import FastAPI
 from libraos.callbacks import WebhookRouter
 
-router = WebhookRouter(secret=os.environ["LIBRAOS_CB_SECRET"])
+router = WebhookRouter(secret=os.environ["LIBRA_OS_CB_SECRET"])
 
 
 @router.tool("fetch_invoice")
@@ -241,7 +241,7 @@ In production, use Redis / your DB / a TTL cache — in-process sets don't survi
 Forge a LibraOS-shaped signed POST to your handler before exposing it to live traffic:
 
 ```bash
-export LIBRAOS_CB_SECRET=your-shared-hmac-secret
+export LIBRA_OS_CB_SECRET=your-shared-hmac-secret
 libraos-cli test-callback \
   --target https://partner.example.com/libraos/cb \
   --tool fetch_invoice \

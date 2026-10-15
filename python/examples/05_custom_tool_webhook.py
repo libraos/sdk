@@ -10,13 +10,13 @@ also provides idempotency dedup (skips duplicate deliveries by event ID).
 Setup:
   1. Run this server: ``uvicorn 05_custom_tool_webhook:app --port 8080``
   2. Register the agent + tool with LibraOS:
-       ``LIBRAOS_CB_URL=https://partner.example.com/libraos/cb python 02_create_employee_and_agent.py``
+       ``LIBRA_OS_CB_URL=https://partner.example.com/libraos/cb python 02_create_employee_and_agent.py``
   3. LibraOS will POST to ``/libraos/cb/tools/fetch_invoice`` on each tool call.
 
 Prerequisites::
 
     pip install libraos-sdk fastapi uvicorn
-    export LIBRAOS_CB_SECRET=<your-webhook-secret-from-the-LibraOS-dashboard>
+    export LIBRA_OS_CB_SECRET=<your-webhook-secret-from-the-LibraOS-dashboard>
 
 Run::
 
@@ -52,7 +52,7 @@ except ImportError:
             return APIRouter()
 
 
-router = WebhookRouter(secret=os.environ.get("LIBRAOS_CB_SECRET", "changeme"))
+router = WebhookRouter(secret=os.environ.get("LIBRA_OS_CB_SECRET", "changeme"))
 
 
 @router.tool("fetch_invoice")

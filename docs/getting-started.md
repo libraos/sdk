@@ -74,9 +74,9 @@ asyncio.run(main())
 **CLI:**
 
 ```bash
-libraos-cli config set local --url http://localhost:8900 --api-key-env LIBRAOS_API_KEY
+libraos-cli config set local --url http://localhost:8900 --api-key-env LIBRA_OS_API_KEY
 libraos-cli config default local
-export LIBRAOS_API_KEY=msk_...
+export LIBRA_OS_API_KEY=msk_...
 
 libraos-cli messages send legal-assistant "What is contract clause 7.3 about?"
 ```
@@ -112,8 +112,8 @@ End-to-end paths for the most common partner tasks. Each row points at a worked 
 For every CLI command and SDK call, credentials resolve in this order:
 
 1. Explicit constructor args (`Client(base_url=..., api_key=...)`) or CLI flags (`--url`, `--api-key`)
-2. Environment variables (`LIBRAOS_BASE_URL`, `LIBRAOS_API_KEY`)
-3. Profile in `~/.libraos/config.yaml` selected by `--profile` / `LIBRAOS_PROFILE`, falling back to `default:`
+2. Environment variables (`LIBRA_OS_URL`, `LIBRA_OS_API_KEY`)
+3. Profile in `~/.libraos/config.yaml` selected by `--profile` / `LIBRA_OS_PROFILE`, falling back to `default:`
 
 A partner running multiple environments (dev / staging / prod) keeps one profile per environment in `config.yaml` and switches via `--profile prod`.
 

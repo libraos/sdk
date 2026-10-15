@@ -3,7 +3,7 @@
   adk deploy [file]         Deploy agent(s) from a module (default agent.py)
   adk run <agent> <input>   Run an agent on the LibraOS stack, streaming events
 
-Env: LIBRAOS_BASE_URL, LIBRAOS_API_KEY.
+Env: LIBRA_OS_URL, LIBRA_OS_API_KEY.
 """
 
 from __future__ import annotations
@@ -40,7 +40,7 @@ def _usage() -> None:
         "libraos adk\n\n"
         "  adk deploy [file]         Deploy agent(s) from a module (default agent.py)\n"
         "  adk run <agent> <input>   Run an agent on the LibraOS stack, streaming events\n\n"
-        "Env: LIBRAOS_BASE_URL, LIBRAOS_API_KEY\n"
+        "Env: LIBRA_OS_URL, LIBRA_OS_API_KEY\n"
     )
 
 

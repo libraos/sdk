@@ -6,9 +6,9 @@ server (``default`` is present on a stock install).
 Prerequisites::
 
     pip install libraos-sdk
-    export LIBRAOS_BASE_URL=https://libraos.partner.com
-    export LIBRAOS_API_KEY=msk_live_...
-    export LIBRAOS_AGENT_ID=default  # optional
+    export LIBRA_OS_URL=https://libraos.partner.com
+    export LIBRA_OS_API_KEY=msk_live_...
+    export LIBRA_OS_AGENT_ID=default  # optional
 
 Run::
 
@@ -24,9 +24,9 @@ from libraos import Client
 
 
 async def main() -> None:
-    base_url = os.environ.get("LIBRAOS_BASE_URL", "https://libraos.partner.com")
-    api_key = os.environ["LIBRAOS_API_KEY"]
-    agent_id = os.environ.get("LIBRAOS_AGENT_ID", "default")
+    base_url = os.environ.get("LIBRA_OS_URL", "https://libraos.partner.com")
+    api_key = os.environ["LIBRA_OS_API_KEY"]
+    agent_id = os.environ.get("LIBRA_OS_AGENT_ID", "default")
 
     async with Client(base_url=base_url, api_key=api_key) as c:
         msg = await c.messages.create(

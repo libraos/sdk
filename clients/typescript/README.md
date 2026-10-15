@@ -38,7 +38,7 @@ npm install @libraos/client   # after a stable `latest` is published
 ```ts
 import { LibraOSClient } from "@libraos/client";
 
-const libraos = new LibraOSClient({ baseUrl: "https://libraos.example", auth: process.env.LIBRAOS_JWT! });
+const libraos = new LibraOSClient({ baseUrl: "https://libraos.example", auth: process.env.LIBRA_OS_TOKEN! });
 
 const dep = await libraos.getDeployment();       // capabilities read
 const msg = await libraos.createMessage({        // LibraOS Messages API

@@ -7,9 +7,9 @@
 import type { Agent } from "./agent.js";
 
 export interface LibraAdkOptions {
-  /** LibraOS base URL. Defaults to $LIBRAOS_BASE_URL. */
+  /** LibraOS base URL. Defaults to $LIBRA_OS_URL. */
   baseUrl?: string;
-  /** Bearer token / agent API key. Defaults to $LIBRAOS_API_KEY. */
+  /** Bearer token / agent API key. Defaults to $LIBRA_OS_API_KEY. */
   apiKey?: string;
   /** Custom fetch (tests / non-Node runtimes). */
   fetch?: typeof fetch;
@@ -40,10 +40,10 @@ export class LibraAdk {
   private readonly doFetch: typeof fetch;
 
   constructor(opts: LibraAdkOptions = {}) {
-    const baseUrl = opts.baseUrl ?? env("LIBRAOS_BASE_URL");
-    const apiKey = opts.apiKey ?? env("LIBRAOS_API_KEY");
-    if (!baseUrl) throw new Error("LibraAdk: baseUrl (or $LIBRAOS_BASE_URL) is required");
-    if (!apiKey) throw new Error("LibraAdk: apiKey (or $LIBRAOS_API_KEY) is required");
+    const baseUrl = opts.baseUrl ?? env("LIBRA_OS_URL");
+    const apiKey = opts.apiKey ?? env("LIBRA_OS_API_KEY");
+    if (!baseUrl) throw new Error("LibraAdk: baseUrl (or $LIBRA_OS_URL) is required");
+    if (!apiKey) throw new Error("LibraAdk: apiKey (or $LIBRA_OS_API_KEY) is required");
     this.baseUrl = baseUrl.replace(/\/+$/, "");
     this.apiKey = apiKey;
     this.doFetch = opts.fetch ?? fetch;

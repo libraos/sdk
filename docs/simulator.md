@@ -80,8 +80,8 @@ that loads all three reference archetypes, runs them streaming, and writes
 per-archetype JSON transcripts.
 
 ```bash
-export EVAL_LIBRAOS_BASE_URL=http://localhost:8901
-export EVAL_LIBRAOS_API_KEY=<eval-jwt>
+export EVAL_LIBRA_OS_URL=http://localhost:8901
+export EVAL_LIBRA_OS_API_KEY=<eval-jwt>
 export EVAL_TARGET_AGENT_ID=default
 python examples/simulator/run_eval.py
 ```
@@ -471,7 +471,7 @@ The eval instance isn't reachable at the configured `base_url`. Check:
 
 - Is `docker-compose -f docker-compose.eval.yaml up -d` running?
 - Does `curl http://<eval-base-url>/health` succeed?
-- Is `EVAL_LIBRAOS_API_KEY` set and valid for the eval instance (not production)?
+- Is `EVAL_LIBRA_OS_API_KEY` set and valid for the eval instance (not production)?
 
 ### `outcome="error"` with `outcome_reason="target_agent_error: HTTP 404"`
 

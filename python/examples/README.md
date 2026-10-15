@@ -1,12 +1,12 @@
 # LibraOS SDK — worked examples
 
-Each example is a runnable script. Set `LIBRAOS_BASE_URL` and `LIBRAOS_API_KEY`
+Each example is a runnable script. Set `LIBRA_OS_URL` and `LIBRA_OS_API_KEY`
 env vars first.
 
 ```bash
 pip install libraos-sdk
-export LIBRAOS_BASE_URL=https://libraos.partner.com
-export LIBRAOS_API_KEY=msk_live_...
+export LIBRA_OS_URL=https://libraos.partner.com
+export LIBRA_OS_API_KEY=msk_live_...
 
 python examples/00_quickstart.py
 ```

@@ -29,7 +29,7 @@ Mount your config + data:
 docker run --rm -it \
   -v ~/.libraos:/home/nonroot/.libraos \
   -v $PWD/data:/data \
-  -e LIBRAOS_API_KEY \
+  -e LIBRA_OS_API_KEY \
   ghcr.io/libraos/libraos-cli:latest sync /data/
 ```
 
@@ -61,10 +61,10 @@ go install github.com/libraos/sdk/cli@latest
 # One-time profile setup
 libraos-cli config set partner-prod \
   --url https://libraos.partner.com \
-  --api-key-env LIBRAOS_PROD_KEY
+  --api-key-env LIBRA_OS_PROD_KEY
 
 libraos-cli config default partner-prod
-export LIBRAOS_PROD_KEY=<your-bearer-token>
+export LIBRA_OS_PROD_KEY=<your-bearer-token>
 
 # Verify connection
 libraos-cli version
@@ -97,17 +97,17 @@ default: partner-prod
 profiles:
   partner-prod:
     url: https://libraos.partner.com
-    api_key_env: LIBRAOS_PROD_KEY
+    api_key_env: LIBRA_OS_PROD_KEY
   customer-acme:
     url: https://libraos.acme.example.com
-    api_key_env: LIBRAOS_ACME_KEY
+    api_key_env: LIBRA_OS_ACME_KEY
     callback_url: https://partner.example.com/libraos/acme
 ```
 
 Manage profiles with the `config` subcommand:
 
 ```bash
-libraos-cli config set staging --url https://staging.example.com --api-key-env LIBRAOS_STAGING_KEY
+libraos-cli config set staging --url https://staging.example.com --api-key-env LIBRA_OS_STAGING_KEY
 libraos-cli config list
 libraos-cli config get staging
 libraos-cli config default staging
@@ -119,8 +119,8 @@ libraos-cli config delete staging
 For each command, credentials are resolved in this priority order:
 
 1. `--url` / `--api-key` flags
-2. `LIBRAOS_BASE_URL` / `LIBRAOS_API_KEY` env vars
-3. Profile in `~/.libraos/config.yaml` (selected by `--profile` flag or `LIBRAOS_PROFILE` env var, falls back to `default:`)
+2. `LIBRA_OS_URL` / `LIBRA_OS_API_KEY` env vars
+3. Profile in `~/.libraos/config.yaml` (selected by `--profile` flag or `LIBRA_OS_PROFILE` env var, falls back to `default:`)
 
 ## Global flags
 
@@ -175,7 +175,7 @@ libraos-cli messages stream <agent-id> <prompt> \
     [--end-user <id>] [--metadata '<json>'] [--model <vendor/model>]
 ```
 
-`send` returns the parsed `MessageResponse` JSON; `stream` opens an SSE connection and prints one event per line (pipe through `jq` for filtering). Both honor the same `LIBRAOS_BASE_URL` / `LIBRAOS_API_KEY` / `--profile` resolution as the rest of the CLI.
+`send` returns the parsed `MessageResponse` JSON; `stream` opens an SSE connection and prints one event per line (pipe through `jq` for filtering). Both honor the same `LIBRA_OS_URL` / `LIBRA_OS_API_KEY` / `--profile` resolution as the rest of the CLI.
 
 Quick smoke test:
 
@@ -273,7 +273,7 @@ libraos-cli sync --prune ./data              # destructive — actually delete
 Forges a LibraOS-shaped signed webhook POST to your partner endpoint. Use it to smoke-test your `WebhookRouter` handler before exposing it to live traffic.
 
 ```bash
-export LIBRAOS_CB_SECRET=your-shared-hmac-secret
+export LIBRA_OS_CB_SECRET=your-shared-hmac-secret
 libraos-cli test-callback \
   --target https://partner.example.com/libraos/cb \
   --tool fetch_invoice \
@@ -294,7 +294,7 @@ The signature scheme is `t=<unix_ts>,v1=<hex(hmac_sha256(secret, ts + "." + tool
 | `--target` | (required) | Partner endpoint URL |
 | `--tool` | (required) | Tool name to send in the payload |
 | `--input` | `{}` | Tool input args as a JSON object |
-| `--secret-env` | `LIBRAOS_CB_SECRET` | Name of the env var holding the HMAC secret |
+| `--secret-env` | `LIBRA_OS_CB_SECRET` | Name of the env var holding the HMAC secret |
 | `--tool-use-id` | random | Fixed `tool_use_id` (useful for idempotency tests) |
 | `--agent-id` | `test-agent` | `agent_id` field in the payload |
 | `--employee-id` | (empty) | `employee_id` field in the payload |

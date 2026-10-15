@@ -34,9 +34,9 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringVar(&flagProfile, "profile", "", "Profile in ~/.libraos/config.yaml (overrides LIBRAOS_PROFILE)")
-	rootCmd.PersistentFlags().StringVar(&flagURL, "url", "", "LibraOS server URL (overrides profile + LIBRAOS_BASE_URL)")
-	rootCmd.PersistentFlags().StringVar(&flagAPIKey, "api-key", "", "Bearer token (overrides profile + LIBRAOS_API_KEY)")
+	rootCmd.PersistentFlags().StringVar(&flagProfile, "profile", "", "Profile in ~/.libraos/config.yaml (overrides LIBRA_OS_PROFILE)")
+	rootCmd.PersistentFlags().StringVar(&flagURL, "url", "", "LibraOS server URL (overrides profile + LIBRA_OS_URL)")
+	rootCmd.PersistentFlags().StringVar(&flagAPIKey, "api-key", "", "Bearer token (overrides profile + LIBRA_OS_API_KEY)")
 	rootCmd.PersistentFlags().BoolVar(&flagJSON, "json", false, "Emit one JSON object per record on stdout (default: human table)")
 }
 
@@ -45,17 +45,17 @@ func init() {
 func globalConfig() (url string, apiKey string, err error) {
 	url = flagURL
 	if url == "" {
-		url = os.Getenv("LIBRAOS_BASE_URL")
+		url = os.Getenv("LIBRA_OS_URL")
 	}
 	apiKey = flagAPIKey
 	if apiKey == "" {
-		apiKey = os.Getenv("LIBRAOS_API_KEY")
+		apiKey = os.Getenv("LIBRA_OS_API_KEY")
 	}
 
 	if url == "" || apiKey == "" {
 		profileName := flagProfile
 		if profileName == "" {
-			profileName = os.Getenv("LIBRAOS_PROFILE")
+			profileName = os.Getenv("LIBRA_OS_PROFILE")
 		}
 		if profile, ok := loadProfile(profileName); ok {
 			if url == "" {
@@ -68,10 +68,10 @@ func globalConfig() (url string, apiKey string, err error) {
 	}
 
 	if url == "" {
-		return "", "", fmt.Errorf("server URL not set (use --url, LIBRAOS_BASE_URL, or a profile in ~/.libraos/config.yaml)")
+		return "", "", fmt.Errorf("server URL not set (use --url, LIBRA_OS_URL, or a profile in ~/.libraos/config.yaml)")
 	}
 	if apiKey == "" {
-		return "", "", fmt.Errorf("api-key not set (use --api-key, LIBRAOS_API_KEY, or a profile pointing at an env var)")
+		return "", "", fmt.Errorf("api-key not set (use --api-key, LIBRA_OS_API_KEY, or a profile pointing at an env var)")
 	}
 	return url, apiKey, nil
 }

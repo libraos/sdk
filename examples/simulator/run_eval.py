@@ -21,7 +21,7 @@ production. Apps that need both surfaces typically keep two ``Client``
 instances side-by-side::
 
     prod_client = Client(base_url=os.environ["PROD_LIBRAOS_BASE_URL"], api_key=...)
-    eval_client = Client(base_url=os.environ["EVAL_LIBRAOS_BASE_URL"], api_key=...)
+    eval_client = Client(base_url=os.environ["EVAL_LIBRA_OS_URL"], api_key=...)
     # … but only eval_client gets passed to simulate().
     result = eval_client.simulate(target_agent_id=..., archetype=...)
 
@@ -34,9 +34,9 @@ Environment
 -----------
 Required:
 
-* ``EVAL_LIBRAOS_BASE_URL`` — base URL of the eval LibraOS, e.g.
+* ``EVAL_LIBRA_OS_URL`` — base URL of the eval LibraOS, e.g.
   ``http://localhost:8901``.
-* ``EVAL_LIBRAOS_API_KEY``  — eval-instance JWT bearer or agent api-key.
+* ``EVAL_LIBRA_OS_API_KEY``  — eval-instance JWT bearer or agent api-key.
 
 Optional:
 
@@ -60,8 +60,8 @@ Run
 ::
 
     pip install libraos-sdk
-    export EVAL_LIBRAOS_BASE_URL=http://localhost:8901
-    export EVAL_LIBRAOS_API_KEY=<your eval JWT or agent key>
+    export EVAL_LIBRA_OS_URL=http://localhost:8901
+    export EVAL_LIBRA_OS_API_KEY=<your eval JWT or agent key>
     export EVAL_TARGET_AGENT_ID=default
     python examples/simulator/run_eval.py
 """
@@ -111,10 +111,10 @@ def _drift_json(result: SimulationResult) -> dict[str, Any] | None:
 def main() -> int:
     # 1. Read configuration. We construct ONLY the eval client — see the
     #    module docstring for the two-client rationale.
-    base_url = os.environ.get("EVAL_LIBRAOS_BASE_URL", "http://localhost:8901")
-    api_key = os.environ.get("EVAL_LIBRAOS_API_KEY")
+    base_url = os.environ.get("EVAL_LIBRA_OS_URL", "http://localhost:8901")
+    api_key = os.environ.get("EVAL_LIBRA_OS_API_KEY")
     if not api_key:
-        print("error: EVAL_LIBRAOS_API_KEY is required", file=sys.stderr)
+        print("error: EVAL_LIBRA_OS_API_KEY is required", file=sys.stderr)
         return 2
 
     target = os.environ.get("EVAL_TARGET_AGENT_ID", "default")

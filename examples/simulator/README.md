@@ -39,8 +39,8 @@ eval instance.
 #    and gateway key).
 
 # 2. Set env + run.
-export EVAL_LIBRAOS_BASE_URL=http://localhost:8901
-export EVAL_LIBRAOS_API_KEY=<your eval JWT or agent key>
+export EVAL_LIBRA_OS_URL=http://localhost:8901
+export EVAL_LIBRA_OS_API_KEY=<your eval JWT or agent key>
 export EVAL_TARGET_AGENT_ID=default      # optional; defaults to "default"
 python examples/simulator/run_eval.py
 ```

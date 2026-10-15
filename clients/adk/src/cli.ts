@@ -4,7 +4,7 @@
 //   adk deploy [file]         Deploy agent(s) exported from a module (default ./agent.js)
 //   adk run <agent> <input…>  Run an agent on the LibraOS stack, streaming events
 //
-// Env: LIBRAOS_BASE_URL, LIBRAOS_API_KEY. To author agents in TypeScript, run
+// Env: LIBRA_OS_URL, LIBRA_OS_API_KEY. To author agents in TypeScript, run
 // under a loader: `npx tsx node_modules/.bin/adk deploy agent.ts` (or build to JS).
 
 import type { Agent } from "./agent.js";
@@ -76,7 +76,7 @@ function usage(): void {
     "libraos adk\n\n" +
       "  adk deploy [file]         Deploy agent(s) from a module (default ./agent.js)\n" +
       "  adk run <agent> <input>   Run an agent on the LibraOS stack, streaming events\n\n" +
-      "Env: LIBRAOS_BASE_URL, LIBRAOS_API_KEY\n",
+      "Env: LIBRA_OS_URL, LIBRA_OS_API_KEY\n",
   );
 }
 

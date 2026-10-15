@@ -105,7 +105,7 @@ Slice 3 polish (all active):
 Manual smoke test (against a local LibraOS server):
 
   # 1. Start a local instance (Docker) and mint an nk_ key, then:
-  export LIBRAOS_BASE_URL=http://localhost:8900 LIBRAOS_API_KEY=nk_...
+  export LIBRA_OS_URL=http://localhost:8900 LIBRA_OS_API_KEY=nk_...
 
   # 2. Dry-run a create — fetches the live schema, validates, prints the
   #    markdown + JSON body, writes nothing:

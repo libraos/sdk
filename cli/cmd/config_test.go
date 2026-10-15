@@ -34,7 +34,7 @@ func TestConfig_SetListDelete(t *testing.T) {
 	// Set a profile
 	out := runConfigCmd(t, "config", "set", "partner-prod",
 		"--url", "https://libraos.example.com",
-		"--api-key-env", "LIBRAOS_PROD_KEY",
+		"--api-key-env", "LIBRA_OS_PROD_KEY",
 	)
 	if !strings.Contains(out, "partner-prod") {
 		t.Fatalf("expected 'partner-prod' in set output, got: %q", out)
@@ -51,7 +51,7 @@ func TestConfig_SetListDelete(t *testing.T) {
 
 	// Get should show the single profile
 	out = runConfigCmd(t, "config", "get", "partner-prod")
-	if !strings.Contains(out, "LIBRAOS_PROD_KEY") {
+	if !strings.Contains(out, "LIBRA_OS_PROD_KEY") {
 		t.Fatalf("expected api_key_env in get output, got: %q", out)
 	}
 
@@ -74,11 +74,11 @@ func TestConfig_Default(t *testing.T) {
 	// Create two profiles
 	runConfigCmd(t, "config", "set", "staging",
 		"--url", "https://staging.example.com",
-		"--api-key-env", "LIBRAOS_STAGING_KEY",
+		"--api-key-env", "LIBRA_OS_STAGING_KEY",
 	)
 	runConfigCmd(t, "config", "set", "prod",
 		"--url", "https://prod.example.com",
-		"--api-key-env", "LIBRAOS_PROD_KEY",
+		"--api-key-env", "LIBRA_OS_PROD_KEY",
 	)
 
 	// Explicitly set default to prod

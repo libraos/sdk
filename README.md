@@ -97,7 +97,7 @@ Python SDK 2.0 removes the Anthropic-compatibility client; see [`python/CHANGELO
 
 **Python SDK: v2.0.0** — published to PyPI as [`libraos-sdk`](https://pypi.org/project/libraos-sdk/). 2.0.0 is a clean break: the Anthropic-compatibility client is gone and every Nova-era name is now LibraOS. See [`python/CHANGELOG.md`](python/CHANGELOG.md).
 
-**OpenAPI spec: v1.0.0-alpha.7** — still advancing ahead of the SDK to declare new server endpoints as they land.
+**OpenAPI spec: v1.0.0-alpha.8** — still advancing ahead of the SDK to declare new server endpoints as they land.
 
 ## License
 

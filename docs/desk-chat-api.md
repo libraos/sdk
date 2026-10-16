@@ -171,6 +171,7 @@ POST /v1/messages
 Accept: text/event-stream
 Content-Type: application/json
 X-Protocol: ag-ui
+X-LibraOS-Event-Names: libraos
 
 {
   "model": "support-assistant",
@@ -197,8 +198,8 @@ Only the newest user turn needs to be sent. LibraOS reads prior history from
 
 For a non-streaming call, set `stream:false` and omit `X-Protocol`; the response
 is a `MessageResponse`. The actual provider model is also
-reported in `X-Nova-Model-Used` (the server's wire name); do not confuse the response's persona selector
-with the model that ran.
+reported in `X-LibraOS-Model-Used` (older servers: `X-Nova-Model-Used`); do not confuse the
+response's persona selector with the model that ran.
 
 ### AG-UI events
 
@@ -223,12 +224,17 @@ LibraOS extensions use AG-UI's `CUSTOM` event:
 ```json
 {
   "type": "CUSTOM",
-  "name": "nova.citations",
+  "name": "libraos.citations",
   "value": { "citations": [] }
 }
 ```
 
-Web research sources use `name: "nova.search_sources"`. Render URLs from that
+Send `X-LibraOS-Event-Names: libraos` to get `libraos.<name>` event names.
+Without it, and on older servers, the same events are named `nova.<name>`
+(`nova.citations`, …). The TypeScript client sends the header and normalizes
+both prefixes to `libraos.<name>`.
+
+Web research sources use `name: "libraos.search_sources"`. Render URLs from that
 payload rather than treating model-written outlet names as verified links.
 Structured citations in a non-streaming response are on a text block's
 `citations` array.
@@ -257,7 +263,7 @@ for await (const event of libraos.streamMessage({
 })) {
   if (event.type === "TEXT_MESSAGE_CONTENT") {
     process.stdout.write(event.delta);
-  } else if (event.type === "CUSTOM" && event.name === "nova.citations") {
+  } else if (event.type === "CUSTOM" && event.name === "libraos.citations") {
     renderCitations(event.value);
   }
 }

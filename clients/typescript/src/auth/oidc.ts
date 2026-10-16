@@ -25,7 +25,7 @@ import {
 export interface OidcConfig {
   /** OIDC issuer / public base URL (from `Deployment.auth.issuer`). No trailing slash required. */
   issuer: string;
-  /** Registered public client id, e.g. "nova-os-ui" (the server's built-in UI client) or your own registered client. */
+  /** Registered public client id, e.g. "libraos-ui" (the server's built-in UI client; "nova-os-ui" on older servers) or your own registered client. */
   clientId: string;
   /** Registered redirect URI for this client. */
   redirectUri: string;

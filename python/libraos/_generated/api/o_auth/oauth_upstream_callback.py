@@ -81,7 +81,7 @@ def sync_detailed(
     """Upstream IdP callback
 
      Completes the upstream exchange, JIT-creates or links the local user, establishes the
-    `nova_oidc_session` cookie, and redirects to the original `continue` target. On any failure re-
+    `libraos_oidc_session` cookie, and redirects to the original `continue` target. On any failure re-
     renders the login page.
 
     Args:
@@ -123,7 +123,7 @@ def sync(
     """Upstream IdP callback
 
      Completes the upstream exchange, JIT-creates or links the local user, establishes the
-    `nova_oidc_session` cookie, and redirects to the original `continue` target. On any failure re-
+    `libraos_oidc_session` cookie, and redirects to the original `continue` target. On any failure re-
     renders the login page.
 
     Args:
@@ -160,7 +160,7 @@ async def asyncio_detailed(
     """Upstream IdP callback
 
      Completes the upstream exchange, JIT-creates or links the local user, establishes the
-    `nova_oidc_session` cookie, and redirects to the original `continue` target. On any failure re-
+    `libraos_oidc_session` cookie, and redirects to the original `continue` target. On any failure re-
     renders the login page.
 
     Args:
@@ -200,7 +200,7 @@ async def asyncio(
     """Upstream IdP callback
 
      Completes the upstream exchange, JIT-creates or links the local user, establishes the
-    `nova_oidc_session` cookie, and redirects to the original `continue` target. On any failure re-
+    `libraos_oidc_session` cookie, and redirects to the original `continue` target. On any failure re-
     renders the login page.
 
     Args:

@@ -293,7 +293,7 @@ func runAgentsEdit(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-// fetchAgentSchema does a raw GET on the beta-gated agents/schema
+// fetchAgentSchema does a raw GET on the agents/schema
 // endpoint. The raw request keeps this helper decoupled from generated
 // client churn while still enforcing the same auth headers.
 func fetchAgentSchema(ctx context.Context, baseURL, apiKey string) (map[string]any, error) {

@@ -179,8 +179,9 @@ resp = await c.messages.create(...)
 print(resp["model_used"], resp["fallback_triggered"])
 ```
 
-**2. Response headers** (planned — `X-Nova-Model-Used` / `X-Nova-Model-Fallback-Triggered`):
-Tracked on the LibraOS server. Until shipped, use the body fields. (`X-Nova-*` is the server's wire name.)
+**2. Response headers** — `X-LibraOS-Model-Used` / `X-LibraOS-Model-Fallback-Triggered`
+(older servers send `X-Nova-Model-Used` / `X-Nova-Model-Fallback-Triggered`; read the new name and
+fall back to the old one).
 
 **3. Server logs:**
 ```

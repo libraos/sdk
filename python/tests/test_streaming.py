@@ -1,4 +1,4 @@
-"""Streaming context manager — Mode A SSE consumption."""
+"""Streaming context manager — SSE consumption."""
 
 from __future__ import annotations
 
@@ -49,35 +49,8 @@ async def test_stream_yields_events() -> None:
     assert types == ["text", "text", "done"]
 
 
-@pytest.mark.asyncio
-async def test_stream_submit_tool_result() -> None:
-    """Mode A: partner intercepts custom_tool_use, submits result mid-stream."""
-    submit_calls = []
+def test_mode_a_submit_is_gone() -> None:
+    """Mode A (answering custom tools over the stream) was removed; use webhooks."""
+    from libraos.streaming import MessageStream
 
-    def handler(req: httpx.Request) -> httpx.Response:
-        if req.url.path.endswith("/custom_tool_results"):
-            submit_calls.append(req.url.path)
-            return httpx.Response(202)
-        # Streaming endpoint
-        body = _sse_body(
-            ("custom_tool_use", '{"type":"custom_tool_use","id":"toolu_1","name":"fetch","input":{}}'),
-            ("done", '{"type":"done","status":"completed","message_id":"msg_42"}'),
-        )
-        return httpx.Response(
-            200,
-            headers={"Content-Type": "text/event-stream"},
-            content=body,
-        )
-
-    transport = httpx.MockTransport(handler)
-    async with Client("https://t.local", "k", transport=transport) as c:
-        async with c.messages.stream(
-            agent_id="invoice-bot",
-            messages=[{"role": "user", "content": "fetch invoice"}],
-            message_id="msg_42",  # caller provides upfront for mid-stream submit
-        ) as s:
-            async for e in s:
-                if e["event"] == "custom_tool_use":
-                    await s.submit_tool_result(e["data"]["id"], "INV-9912 amount $42")
-
-    assert any("msg_42/custom_tool_results" in p for p in submit_calls)
+    assert not hasattr(MessageStream, "submit_tool_result")

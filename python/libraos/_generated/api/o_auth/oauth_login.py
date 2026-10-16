@@ -57,8 +57,8 @@ def sync_detailed(
 ) -> Response[Any]:
     """Submit login credentials
 
-     Verifies email + password, sets the `nova_oidc_session` cookie, and redirects to the `continue` URL
-    (typically the original `/oauth/authorize` request). On failure re-renders the login page with a
+     Verifies email + password, sets the `libraos_oidc_session` cookie, and redirects to the `continue`
+    URL (typically the original `/oauth/authorize` request). On failure re-renders the login page with a
     generic error (no account enumeration).
 
     Args:
@@ -90,8 +90,8 @@ async def asyncio_detailed(
 ) -> Response[Any]:
     """Submit login credentials
 
-     Verifies email + password, sets the `nova_oidc_session` cookie, and redirects to the `continue` URL
-    (typically the original `/oauth/authorize` request). On failure re-renders the login page with a
+     Verifies email + password, sets the `libraos_oidc_session` cookie, and redirects to the `continue`
+    URL (typically the original `/oauth/authorize` request). On failure re-renders the login page with a
     generic error (no account enumeration).
 
     Args:

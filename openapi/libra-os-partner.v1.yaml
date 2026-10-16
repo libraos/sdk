@@ -811,6 +811,11 @@ components:
           type: string
         nova_os_min_version:
           type: string
+          deprecated: true
+          description: Former name of `libraos_min_version`. Servers write both during the transition.
+        libraos_min_version:
+          type: string
+          description: Minimum LibraOS version that can import this bundle.
         created_at:
           type: string
           format: date-time
@@ -1349,18 +1354,6 @@ components:
         - $ref: '#/components/schemas/RouteHintAskClarification'
       discriminator:
         propertyName: kind
-
-    CustomToolResultRequest:
-      type: object
-      required: [tool_use_id, output]
-      properties:
-        tool_use_id:
-          type: string
-        output:
-          type: string
-        is_error:
-          type: boolean
-          default: false
 
     JobStatus:
       type: string
@@ -2367,11 +2360,18 @@ components:
           items: { $ref: '#/components/schemas/ChatCompletionChoice' }
         usage:
           $ref: '#/components/schemas/ChatCompletionUsage'
-        nova_grounding:
+        libraos_grounding:
           type: string
           description: >
             LibraOS extension — per-turn grounded-vs-refusal outcome. Omitted on
             non-retrieval turns.
+          enum: [grounded, ungrounded_refusal, ungrounded_no_chunks, degraded, unsupported_claim, degraded_retrieval, unopened_sources, unsupported_figures]
+        nova_grounding:
+          type: string
+          deprecated: true
+          description: >
+            Former name of `libraos_grounding` (same value), still sent during the
+            transition.
           enum: [grounded, ungrounded_refusal, ungrounded_no_chunks, degraded, unsupported_claim, degraded_retrieval, unopened_sources, unsupported_figures]
         persisted_state:
           type: object
@@ -2379,8 +2379,13 @@ components:
             Merged persisted field state, present only for agents that declare a
             persist-fields schema.
           additionalProperties: true
-        nova_usage:
+        libraos_usage:
           $ref: '#/components/schemas/UsageBlock'
+        nova_usage:
+          deprecated: true
+          description: Former name of `libraos_usage` (same value), still sent during the transition.
+          allOf:
+            - $ref: '#/components/schemas/UsageBlock'
 
     ModelListEntry:
       type: object
@@ -5170,11 +5175,19 @@ paths:
             X-Ag-Ui-Version:
               description: "AG-UI protocol version when `X-Protocol: ag-ui` was selected."
               schema: { type: string }
-            X-Nova-Model-Used:
+            X-LibraOS-Model-Used:
               description: Provider model that actually produced the answer.
               schema: { type: string }
-            X-Nova-Model-Fallback-Triggered:
+            X-LibraOS-Model-Fallback-Triggered:
               description: Whether model fallback was used.
+              schema: { type: string, enum: ['true', 'false', '1', '0'] }
+            X-Nova-Model-Used:
+              description: Former name of X-LibraOS-Model-Used (same value), still sent during the transition.
+              deprecated: true
+              schema: { type: string }
+            X-Nova-Model-Fallback-Triggered:
+              description: Former name of X-LibraOS-Model-Fallback-Triggered (same value), still sent during the transition.
+              deprecated: true
               schema: { type: string, enum: ['true', 'false', '1', '0'] }
           content:
             application/json:
@@ -5199,33 +5212,6 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/Error' }
         '426': { $ref: '#/components/responses/UpgradeRequired' }
-
-  /v1/managed/agents/messages/{message_id}/custom_tool_results:
-    parameters:
-      - in: path
-        name: message_id
-        required: true
-        schema: { type: string }
-    post:
-      operationId: submitCustomToolResult
-      summary: Submit a custom_tool_use result (Mode A inline)
-      description: |
-        Used when partner consumes the SSE stream directly. POST the result
-        for an emitted `custom_tool_use` event; LibraOS resumes the agent
-        loop and continues streaming on the original request connection.
-      tags: [Messages]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CustomToolResultRequest'
-      responses:
-        '202':
-          description: Result accepted; streaming resumes on the original connection.
-        '400': { $ref: '#/components/responses/BadRequest' }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '404': { $ref: '#/components/responses/NotFound' }
 
   /v1/managed/employees:
     post:
@@ -5324,7 +5310,7 @@ paths:
         schema: { type: string }
     get:
       operationId: exportEmployeeBundle
-      summary: Download a portable .nova-bundle.zip
+      summary: Download a portable .libraos-bundle.zip
       tags: [Employees]
       parameters:
         - in: query
@@ -5344,7 +5330,7 @@ paths:
   /v1/managed/employees/bundle/import:
     post:
       operationId: importEmployeeBundle
-      summary: Import a .nova-bundle.zip
+      summary: Import a .libraos-bundle.zip
       tags: [Employees]
       parameters:
         - in: query
@@ -6031,7 +6017,7 @@ paths:
                 description: >
                   Server-Sent Events. Emitted when `stream:true`. Token/text
                   deltas plus, when `metadata.stream_events:true`, `tool_use` /
-                  `tool_result` / `text` / `thinking` events, and `: nova-heartbeat`
+                  `tool_result` / `text` / `thinking` events, and `: libraos-heartbeat`
                   keep-alive comments every 10s.
         '400':
           description: >
@@ -6165,7 +6151,7 @@ paths:
         Server-Sent Events stream. Replays stored events first (honoring
         `Last-Event-ID`), then delivers live events until the job reaches a
         terminal state. Each frame carries `id` (sequence), `event` (type) and a
-        JSON `data` payload; `: nova-heartbeat` comments are sent every 10s.
+        JSON `data` payload; `: libraos-heartbeat` comments are sent every 10s.
       responses:
         '200':
           description: Event stream.
@@ -6214,7 +6200,7 @@ paths:
                 description: >
                   `data:`-framed `chat.completion.chunk` objects, a terminal
                   `finish_reason` chunk, then `data: [DONE]`. Includes
-                  `: nova-heartbeat` keep-alive comments.
+                  `: libraos-heartbeat` keep-alive comments.
         '400':
           description: >
             Invalid request body; `temperature` outside 0-2; an unknown
@@ -7385,6 +7371,26 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/Error' }
         '429': { $ref: '#/components/responses/RateLimited' }
+  /v1/conversations/{cid}/attachments/{aid}:
+    delete:
+      operationId: deleteAttachment
+      summary: Remove an attachment
+      description: Soft-delete an attachment. Idempotent.
+      tags: [Conversations]
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          schema: { type: string }
+        - name: aid
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '204':
+          description: The attachment was deleted (or was already deleted).
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
   /v1/conversations/{cid}/attachments/{aid}/download:
     get:
       operationId: downloadAttachment
@@ -7418,25 +7424,6 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Error' }
-    delete:
-      operationId: deleteAttachment
-      summary: Remove an attachment
-      description: Soft-delete an attachment. Idempotent.
-      tags: [Conversations]
-      parameters:
-        - name: cid
-          in: path
-          required: true
-          schema: { type: string }
-        - name: aid
-          in: path
-          required: true
-          schema: { type: string }
-      responses:
-        '204':
-          description: The attachment was deleted (or was already deleted).
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '404': { $ref: '#/components/responses/NotFound' }
   # ==== governance ====
   # ==== authorization lifecycle ====
   /v1/managed/authorization/intents:
@@ -8782,7 +8769,7 @@ paths:
       operationId: oauthLogin
       summary: Submit login credentials
       description: >-
-        Verifies email + password, sets the `nova_oidc_session` cookie, and
+        Verifies email + password, sets the `libraos_oidc_session` cookie, and
         redirects to the `continue` URL (typically the original
         `/oauth/authorize` request). On failure re-renders the login page with
         a generic error (no account enumeration).
@@ -8923,7 +8910,7 @@ paths:
       summary: Upstream IdP callback
       description: >-
         Completes the upstream exchange, JIT-creates or links the local user,
-        establishes the `nova_oidc_session` cookie, and redirects to the
+        establishes the `libraos_oidc_session` cookie, and redirects to the
         original `continue` target. On any failure re-renders the login page.
       tags: [OAuth]
       security: []

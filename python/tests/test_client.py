@@ -32,6 +32,25 @@ async def test_client_attaches_bearer_token() -> None:
 
 
 @pytest.mark.asyncio
+async def test_client_sends_libraos_version_headers_only() -> None:
+    from libraos import __version__
+
+    seen: dict[str, httpx.Headers] = {}
+
+    def handler(req: httpx.Request) -> httpx.Response:
+        seen["h"] = req.headers
+        return httpx.Response(200, json={"data": []})
+
+    async with Client(base_url="https://test.local", api_key="k", transport=_mock_transport(handler)) as c:
+        await c._request("GET", "/v1/managed/agents")
+
+    assert seen["h"]["x-libraos-sdk-version"] == __version__
+    assert seen["h"]["x-libraos-openapi-hash"]
+    assert "x-nova-sdk-version" not in seen["h"]
+    assert "x-nova-openapi-hash" not in seen["h"]
+
+
+@pytest.mark.asyncio
 async def test_404_raises_not_found_error() -> None:
     def handler(req: httpx.Request) -> httpx.Response:
         return httpx.Response(404, json={"type": "not_found_error", "message": "no such agent"})

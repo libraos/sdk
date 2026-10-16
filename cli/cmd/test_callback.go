@@ -100,8 +100,7 @@ with (and the secret_ref LibraOS uses to dispatch).`,
 				return fmt.Errorf("build request: %w", err)
 			}
 			req.Header.Set("Content-Type", "application/json")
-			req.Header.Set("X-Nova-Signature", sig)
-			req.Header.Set("X-Nova-Idempotency-Key", toolUseID)
+			sign.SetHeaders(req.Header, sig, toolUseID)
 
 			resp, err := client.Do(req)
 			if err != nil {

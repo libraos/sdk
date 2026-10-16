@@ -70,3 +70,30 @@ def test_flask_rejects_bad_signature() -> None:
         },
     )
     assert resp.status_code in (401, 403)
+
+
+@pytest.mark.parametrize(
+    "sig_name,idem_name",
+    [
+        ("X-LibraOS-Signature", "X-LibraOS-Idempotency-Key"),
+        ("X-Nova-Signature", "X-Nova-Idempotency-Key"),
+    ],
+)
+def test_flask_accepts_new_and_old_header_names(sig_name: str, idem_name: str) -> None:
+    router = WebhookRouter(secret="s-names")
+
+    @router.tool("t")
+    async def t(input, ctx):
+        return "ok"
+
+    app = Flask(__name__)
+    app.register_blueprint(router.flask_blueprint(), url_prefix="/libraos")
+    body = b'{"tool_use_id":"tu","name":"t","input":{}}'
+    resp = app.test_client().post(
+        "/libraos/",
+        data=body,
+        headers={sig_name: _sign("s-names", "tu", body), idem_name: "tu", "Content-Type": "application/json"},
+    )
+    assert resp.status_code == 200
+    assert resp.get_json()["output"] == "ok"
+

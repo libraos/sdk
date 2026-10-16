@@ -54,8 +54,8 @@ class Client:
             transport=transport,
             headers={
                 "Authorization": f"Bearer {api_key}",
-                "X-Nova-SDK-Version": __version__,
-                "X-Nova-OpenAPI-Hash": OPENAPI_VERSION,
+                "X-LibraOS-SDK-Version": __version__,
+                "X-LibraOS-OpenAPI-Hash": OPENAPI_VERSION,
                 "Accept": "application/json",
             },
         )

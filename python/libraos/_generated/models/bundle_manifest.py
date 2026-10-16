@@ -20,8 +20,9 @@ class BundleManifest:
     Attributes:
         schema_version (BundleManifestSchemaVersion):
         employee_id (str):
-        nova_os_min_version (str):
+        nova_os_min_version (str): Former name of `libraos_min_version`. Servers write both during the transition.
         created_at (datetime.datetime):
+        libraos_min_version (str | Unset): Minimum LibraOS version that can import this bundle.
         agents (list[str] | Unset):
         knowledge_files (int | Unset):
     """
@@ -30,6 +31,7 @@ class BundleManifest:
     employee_id: str
     nova_os_min_version: str
     created_at: datetime.datetime
+    libraos_min_version: str | Unset = UNSET
     agents: list[str] | Unset = UNSET
     knowledge_files: int | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
@@ -42,6 +44,8 @@ class BundleManifest:
         nova_os_min_version = self.nova_os_min_version
 
         created_at = self.created_at.isoformat()
+
+        libraos_min_version = self.libraos_min_version
 
         agents: list[str] | Unset = UNSET
         if not isinstance(self.agents, Unset):
@@ -59,6 +63,8 @@ class BundleManifest:
                 "created_at": created_at,
             }
         )
+        if libraos_min_version is not UNSET:
+            field_dict["libraos_min_version"] = libraos_min_version
         if agents is not UNSET:
             field_dict["agents"] = agents
         if knowledge_files is not UNSET:
@@ -77,6 +83,8 @@ class BundleManifest:
 
         created_at = isoparse(d.pop("created_at"))
 
+        libraos_min_version = d.pop("libraos_min_version", UNSET)
+
         agents = cast(list[str], d.pop("agents", UNSET))
 
         knowledge_files = d.pop("knowledge_files", UNSET)
@@ -86,6 +94,7 @@ class BundleManifest:
             employee_id=employee_id,
             nova_os_min_version=nova_os_min_version,
             created_at=created_at,
+            libraos_min_version=libraos_min_version,
             agents=agents,
             knowledge_files=knowledge_files,
         )

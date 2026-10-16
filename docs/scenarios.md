@@ -1,19 +1,18 @@
 # Scenarios
 
-Ten end-to-end partner workflows. Each scenario shows what happens from the user's perspective, what flows on the wire, and which surface (UI / shared folder / SDK / CLI) is the right entry point.
+Nine end-to-end partner workflows. Each scenario shows what happens from the user's perspective, what flows on the wire, and which surface (UI / shared folder / SDK / CLI) is the right entry point.
 
 | # | Scenario | Lifecycle phase | Primary surface |
 |---|---|---|---|
 | 1 | [Partner onboarding — create employee + agent](#1-partner-onboarding) | Setup | Shared folder + CLI sync |
 | 2 | [Knowledge upload + first retrieval](#2-knowledge-upload--first-retrieval) | Setup | SDK |
 | 3 | [End-user's first chat](#3-end-users-first-chat) | Runtime | SDK |
-| 4 | [Custom tool — Mode A (SSE inline)](#4-custom-tool--mode-a-sse-inline) | Runtime | SDK |
-| 5 | [Custom tool — Mode B (webhook)](#5-custom-tool--mode-b-webhook) | Runtime | SDK + partner HTTP server |
-| 6 | [Multi-model fallback fires under load](#6-multi-model-fallback-fires-under-load) | Runtime | (transparent) |
-| 7 | [Long-running async job](#7-long-running-async-job) | Runtime | SDK |
-| 8 | [Persona update — git → live](#8-persona-update--git--live) | Iteration | Shared folder + CLI sync |
-| 9 | [Lifecycle hook subscription](#9-lifecycle-hook-subscription) | Iteration | SDK |
-| 10 | [Bundle export → import across instances](#10-bundle-export--import-across-instances) | Migration | SDK / CLI |
+| 4 | [Custom tool (webhook)](#4-custom-tool-webhook) | Runtime | SDK + partner HTTP server |
+| 5 | [Multi-model fallback fires under load](#5-multi-model-fallback-fires-under-load) | Runtime | (transparent) |
+| 6 | [Long-running async job](#6-long-running-async-job) | Runtime | SDK |
+| 7 | [Persona update — git → live](#7-persona-update--git--live) | Iteration | Shared folder + CLI sync |
+| 8 | [Lifecycle hook subscription](#8-lifecycle-hook-subscription) | Iteration | SDK |
+| 9 | [Bundle export → import across instances](#9-bundle-export--import-across-instances) | Migration | SDK / CLI |
 
 ---
 
@@ -118,34 +117,7 @@ POST /v1/messages
 
 ---
 
-## 4. Custom tool — Mode A (SSE inline)
-
-**Goal:** Agent calls a partner-implemented function mid-run; the result flows back over the same streaming connection.
-
-**What the user sees:** Streamed text, brief pause when the agent calls `fetch_invoice`, then text continues with the invoice details inline.
-
-**What flows on the wire:**
-
-```
-client → server : POST /v1/messages (stream:true)
-server → client : event: text_delta ("Looking up invoice INV-2026-042...")
-server → client : event: custom_tool_use
-                  data: {"id": "tool_abc", "name": "fetch_invoice", "input": {"invoice_id": "INV-2026-042"}}
-                  ⇒ partner runs fetch_invoice locally
-client → server : POST /v1/messages/<msg_id>/tool_result
-                  body: {"tool_use_id": "tool_abc", "content": "Invoice ... status=paid", "is_error": false}
-server → client : event: tool_result_received
-server → client : event: text_delta ("Invoice INV-2026-042 is paid, due 2026-03-31...")
-server → client : event: message_stop
-```
-
-**Surface choice:** Mode A. Pick this when the partner is a backend service holding a long connection and the tool is fast.
-
-**Worked example:** [`04_custom_tool_inline.py`](../python/examples/04_custom_tool_inline.py). See [`custom-tools.md`](custom-tools.md) for picking between Mode A and Mode B.
-
----
-
-## 5. Custom tool — Mode B (webhook)
+## 4. Custom tool (webhook)
 
 **Goal:** Agent calls a partner-implemented function via a signed webhook; the partner returns the result in the HTTP response.
 
@@ -156,8 +128,8 @@ server → client : event: message_stop
 2. Mid-run, agent decides to call fetch_invoice. LibraOS:
 
    POST https://partner.example.com/libraos/cb/tools/fetch_invoice
-     headers: X-Nova-Signature: t=<ts>,v1=<hmac_sha256(secret, ts.tool_use_id.body)>
-              X-Nova-Idempotency-Key: toolu_abc
+     headers: X-LibraOS-Signature: t=<ts>,v1=<hmac_sha256(secret, ts.tool_use_id.body)>
+              X-LibraOS-Idempotency-Key: toolu_abc
      body: {"tool_use_id": "toolu_abc", "name": "fetch_invoice", "input": {...}, ...}
 
 3. Partner WebhookRouter:
@@ -171,13 +143,13 @@ server → client : event: message_stop
    - Returns final assembled response to the original /v1/messages caller
 ```
 
-**Surface choice:** Mode B. Pick this when the partner is HTTP-server-shaped (FastAPI / Lambda / Cloudflare Workers) or the tool runs are long enough that holding an SSE connection is impractical.
+**Surface choice:** a webhook, the supported way to run custom tools. Any HTTP-server shape works (FastAPI / Flask / Lambda / Cloudflare Workers), and no connection is held while the tool runs.
 
 **Worked example:** [`05_custom_tool_webhook.py`](../python/examples/05_custom_tool_webhook.py).
 
 ---
 
-## 6. Multi-model fallback fires under load
+## 5. Multi-model fallback fires under load
 
 **Goal:** Primary model is rate-limited; LibraOS automatically promotes the next fallback so the user's request still succeeds.
 
@@ -213,7 +185,7 @@ The end-user's chat experience is unaffected — they get a response on the same
 
 ---
 
-## 7. Long-running async job
+## 6. Long-running async job
 
 **Goal:** Partner submits a job that takes 5-20 minutes (e.g., cross-document analysis), polls for completion, retrieves the result.
 
@@ -246,7 +218,7 @@ The end-user's chat experience is unaffected — they get a response on the same
 
 ---
 
-## 8. Persona update — git → live
+## 7. Persona update — git → live
 
 **Goal:** Partner edits an agent's system prompt or `model_config` in their git repo; changes propagate to the running LibraOS instance.
 
@@ -286,7 +258,7 @@ For partners who maintain agents YAML in git, the discipline is:
 
 ---
 
-## 9. Lifecycle hook subscription
+## 8. Lifecycle hook subscription
 
 **Goal:** Partner subscribes to canonical agent-loop events (e.g., `tool_use_start`, `agent_completed`, `output_violation`) for observability or downstream automation.
 
@@ -302,7 +274,11 @@ await c.hooks.create(
 
 # Now, every time an agent run completes, LibraOS POSTs:
 POST https://partner.example/hooks/audit
-  headers: X-Nova-Signature: t=<ts>,v1=<hmac>
+  headers: X-LibraOS-Hook-Signature: sha256=<hex hmac_sha256(secret, body)>
+           X-LibraOS-Hook-Event: agent_completed
+           X-LibraOS-Hook-Delivery: <delivery id>
+           X-LibraOS-Hook-Timestamp: <unix seconds>
+           (older servers send the same values as X-Nova-Hook-*)
   body: {
     "event": "agent_completed",
     "agent_id": "legal-assistant",
@@ -330,9 +306,9 @@ POST https://partner.example/hooks/audit
 
 ---
 
-## 10. Bundle export → import across instances
+## 9. Bundle export → import across instances
 
-**Goal:** Partner exports an employee + all owned agents + knowledge collections as a single `.nova-bundle.zip`, imports on another LibraOS instance (e.g., staging → prod, or migrating between regions).
+**Goal:** Partner exports an employee + all owned agents + knowledge collections as a single `.libraos-bundle.zip`, imports on another LibraOS instance (e.g., staging → prod, or migrating between regions).
 
 **What flows on the wire:**
 
@@ -341,12 +317,12 @@ POST https://partner.example/hooks/audit
 src = Client(base_url="https://libraos-staging.example", api_key="...")
 bundle_bytes = await src.employees.export_bundle("legal-team")   # → bytes
 
-with open("legal-team.nova-bundle.zip", "wb") as f:
+with open("legal-team.libraos-bundle.zip", "wb") as f:
     f.write(bundle_bytes)
 
 # Target instance:
 tgt = Client(base_url="https://libraos-prod.example", api_key="...")
-with open("legal-team.nova-bundle.zip", "rb") as f:
+with open("legal-team.libraos-bundle.zip", "rb") as f:
     result = await tgt.employees.import_bundle(f.read())
 
 print(result)
@@ -378,5 +354,5 @@ The CLI doesn't currently wrap this; if partners want a one-liner, they can do `
 - [`getting-started.md`](getting-started.md) — front-door + scenario matrix
 - [`multi-model.md`](multi-model.md) — model resolution cascade
 - [`web-search.md`](web-search.md) — pluggable backends
-- [`custom-tools.md`](custom-tools.md) — Mode A and Mode B
+- [`custom-tools.md`](custom-tools.md) — custom tools over webhooks
 - [`deployment.md`](deployment.md) — production deploy shapes

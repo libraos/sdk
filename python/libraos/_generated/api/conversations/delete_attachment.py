@@ -17,7 +17,7 @@ def _get_kwargs(
 
     _kwargs: dict[str, Any] = {
         "method": "delete",
-        "url": "/v1/conversations/{cid}/attachments/{aid}/download".format(
+        "url": "/v1/conversations/{cid}/attachments/{aid}".format(
             cid=quote(str(cid), safe=""),
             aid=quote(str(aid), safe=""),
         ),

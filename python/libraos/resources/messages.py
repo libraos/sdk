@@ -14,9 +14,8 @@ if TYPE_CHECKING:
 class Messages(Resource):
     """Send messages to an agent.
 
-    For streaming + Mode A custom-tool inline, use the
-    ``c.messages.stream(...)`` async context manager. ``create()`` below
-    is the non-streaming variant.
+    For streaming, use the ``c.messages.stream(...)`` async context
+    manager. ``create()`` below is the non-streaming variant.
     """
 
     async def create(
@@ -77,7 +76,6 @@ class Messages(Resource):
         system: str | None = None,
         tools: list[dict[str, Any]] | None = None,
         metadata: dict[str, Any] | None = None,
-        message_id: str | None = None,
     ) -> "MessageStream":
         """Open a streaming chat — returns an async context manager.
 
@@ -85,11 +83,6 @@ class Messages(Resource):
             async with c.messages.stream(agent_id, messages=[...]) as s:
                 async for event in s:
                     ...
-
-        `message_id` is optional but required up-front if the caller wants to
-        `submit_tool_result()` before the `done` event arrives. Pass any
-        deterministic id you control (e.g. uuid4) and LibraOS will use it
-        for the response identifier.
         """
         from libraos.streaming import MessageStream
 
@@ -111,4 +104,4 @@ class Messages(Resource):
         merged_metadata = dict(metadata or {})
         merged_metadata["agent_id"] = agent_id
         body["metadata"] = merged_metadata
-        return MessageStream(self._client, agent_id, body, message_id=message_id)
+        return MessageStream(self._client, agent_id, body)

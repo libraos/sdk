@@ -5,6 +5,7 @@ import { LibraOSClient } from "../src/index.js";
 // not AG-UI. streamJob used to parse it as AG-UI and yield nothing.
 const body = [
   'id: 1\nevent: text\ndata: {"turn": 0, "type": "text", "content": "yes"}\n\n',
+  ":libraos-heartbeat elapsed_ms=10000\n\n",
   ":nova-heartbeat elapsed_ms=10000\n\n",
   'id: 2\nevent: response_complete\ndata: {"turn": 0, "type": "response_complete", "content": "yes"}\n\n',
   'id: 3\nevent: done\ndata: {"turn": 0, "type": "done", "content": "yes", "metadata": {"status": "done"}}\n\n',

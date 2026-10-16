@@ -4,6 +4,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
+	"net/http"
 	"strings"
 	"testing"
 	"time"
@@ -45,5 +46,20 @@ func TestSign_Verifiable(t *testing.T) {
 	expected := hex.EncodeToString(mac.Sum(nil))
 	if expected != v1 {
 		t.Fatalf("v1 didn't match expected — sig=%q", sig)
+	}
+}
+
+func TestSetHeaders_SendsNewAndLegacyNames(t *testing.T) {
+	h := http.Header{}
+	SetHeaders(h, "t=1,v1=ab", "toolu_1")
+	for name, want := range map[string]string{
+		"X-LibraOS-Signature":       "t=1,v1=ab",
+		"X-LibraOS-Idempotency-Key": "toolu_1",
+		"X-Nova-Signature":          "t=1,v1=ab",
+		"X-Nova-Idempotency-Key":    "toolu_1",
+	} {
+		if got := h.Get(name); got != want {
+			t.Errorf("%s = %q, want %q", name, got, want)
+		}
 	}
 }

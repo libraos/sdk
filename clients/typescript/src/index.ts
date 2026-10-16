@@ -16,6 +16,7 @@ export {
   LibraOSClient,
   type LibraOSClientOptions,
   type StreamMessageOptions,
+  type CreateMessageOptions,
   type MessageRequest,
   type MessageResponse,
   type JobCreate,

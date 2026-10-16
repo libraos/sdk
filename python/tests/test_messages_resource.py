@@ -72,3 +72,21 @@ async def test_messages_create_with_metadata_brain_flag() -> None:
     # Optional fields NOT passed should be absent from the body
     assert "temperature" not in captured["body"]
     assert "system" not in captured["body"]
+
+
+@pytest.mark.asyncio
+async def test_messages_create_sends_end_user_header_only_when_set() -> None:
+    seen: list[httpx.Headers] = []
+
+    def handler(req: httpx.Request) -> httpx.Response:
+        seen.append(req.headers)
+        return httpx.Response(200, json={"id": "m", "role": "assistant", "model": "a",
+                                         "content": [{"type": "text", "text": "ok"}]})
+
+    async with Client("https://t.local", "k", transport=_mock_transport(handler)) as c:
+        await c.messages.create("a", messages=[{"role": "user", "content": "hi"}],
+                                end_user="cust-42")
+        await c.messages.create("a", messages=[{"role": "user", "content": "hi"}])
+
+    assert seen[0]["X-End-User"] == "cust-42"
+    assert "X-End-User" not in seen[1]

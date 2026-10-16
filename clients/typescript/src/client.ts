@@ -627,6 +627,15 @@ export interface LibraOSClientOptions {
 }
 
 /** Transport controls for a streaming message request. */
+/** Per-call options for {@link LibraOSClient.createMessage}. */
+export interface CreateMessageOptions {
+  /**
+   * Your end user's id, sent as `X-End-User`. The server keeps memory per end
+   * user, so one agent serving many customers keeps each one's memory apart.
+   */
+  endUser?: string;
+}
+
 export interface StreamMessageOptions {
   /** Abort reading and close the response stream. */
   signal?: AbortSignal;
@@ -636,6 +645,11 @@ export interface StreamMessageOptions {
    * but the option keeps the client forward-compatible.
    */
   lastEventId?: string;
+  /**
+   * Your end user's id, sent as `X-End-User`. The server keeps memory per end
+   * user, so one agent serving many customers keeps each one's memory apart.
+   */
+  endUser?: string;
 }
 
 function toAuthProvider(auth: LibraOSClientOptions["auth"]): AuthProvider | undefined {
@@ -745,9 +759,10 @@ export class LibraOSClient {
   // ── Messages (LibraOS Messages API) ────────────────────────────────────
 
   /** Send a non-streaming message. Target an agent via `metadata.agent_id`. */
-  async createMessage(request: MessageRequest): Promise<MessageResponse> {
+  async createMessage(request: MessageRequest, opts?: CreateMessageOptions): Promise<MessageResponse> {
     const res = await this.rest.api.POST("/v1/messages", {
       body: { ...request, stream: false },
+      ...(opts?.endUser ? { headers: { "x-end-user": opts.endUser } } : {}),
     });
     throwIfError(res);
     const message = res.data as MessageResponse;
@@ -787,6 +802,7 @@ export class LibraOSClient {
       "x-libraos-event-names": "libraos",
     };
     if (opts?.lastEventId) headers["last-event-id"] = opts.lastEventId;
+    if (opts?.endUser) headers["x-end-user"] = opts.endUser;
     const res = await this.rawFetch("/v1/messages", {
       method: "POST",
       headers,

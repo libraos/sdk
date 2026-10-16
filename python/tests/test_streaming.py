@@ -54,3 +54,24 @@ def test_mode_a_submit_is_gone() -> None:
     from libraos.streaming import MessageStream
 
     assert not hasattr(MessageStream, "submit_tool_result")
+
+
+@pytest.mark.asyncio
+async def test_stream_sends_end_user_header_only_when_set() -> None:
+    seen: list[httpx.Headers] = []
+
+    def handler(req: httpx.Request) -> httpx.Response:
+        seen.append(req.headers)
+        return httpx.Response(200, headers={"Content-Type": "text/event-stream"},
+                              content=_sse_body(("done", '{"type":"done"}')))
+
+    async with Client("https://t.local", "k", transport=httpx.MockTransport(handler)) as c:
+        for end_user in ("cust-42", None):
+            async with c.messages.stream(
+                "a", messages=[{"role": "user", "content": "hi"}], end_user=end_user
+            ) as s:
+                async for _ in s:
+                    pass
+
+    assert seen[0]["X-End-User"] == "cust-42"
+    assert "X-End-User" not in seen[1]

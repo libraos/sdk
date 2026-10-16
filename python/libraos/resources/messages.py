@@ -11,6 +11,10 @@ if TYPE_CHECKING:
     from libraos.streaming import MessageStream
 
 
+def _end_user_headers(end_user: str | None) -> dict[str, str] | None:
+    return {"X-End-User": end_user} if end_user is not None else None
+
+
 class Messages(Resource):
     """Send messages to an agent.
 
@@ -30,12 +34,17 @@ class Messages(Resource):
         tools: list[dict[str, Any]] | None = None,
         metadata: dict[str, Any] | None = None,
         idempotency_key: str | None = None,
+        end_user: str | None = None,
     ) -> Message:
         """POST /v1/messages — non-streaming.
 
         Returns a dict-compatible :class:`~libraos.models.Message`:
         ``resp["content"][0]["text"]`` and ``resp.content[0].text`` both work,
         and ``resp.text`` joins all text blocks.
+
+        ``end_user`` is your end user's id, sent as the ``X-End-User`` header.
+        The server keeps memory per end user, so one agent serving many
+        customers keeps each one's memory apart.
         """
         # /v1/messages requires a `model` field on the wire even though
         # routing uses metadata.agent_id (the
@@ -62,6 +71,7 @@ class Messages(Resource):
             "/v1/messages",
             json_body=body,
             idempotency_key=idempotency_key,
+            extra_headers=_end_user_headers(end_user),
         )
         return parse_message(payload)
 
@@ -76,6 +86,7 @@ class Messages(Resource):
         system: str | None = None,
         tools: list[dict[str, Any]] | None = None,
         metadata: dict[str, Any] | None = None,
+        end_user: str | None = None,
     ) -> "MessageStream":
         """Open a streaming chat — returns an async context manager.
 
@@ -83,6 +94,10 @@ class Messages(Resource):
             async with c.messages.stream(agent_id, messages=[...]) as s:
                 async for event in s:
                     ...
+
+        ``end_user`` is your end user's id, sent as the ``X-End-User`` header.
+        The server keeps memory per end user, so one agent serving many
+        customers keeps each one's memory apart.
         """
         from libraos.streaming import MessageStream
 
@@ -104,4 +119,4 @@ class Messages(Resource):
         merged_metadata = dict(metadata or {})
         merged_metadata["agent_id"] = agent_id
         body["metadata"] = merged_metadata
-        return MessageStream(self._client, agent_id, body)
+        return MessageStream(self._client, agent_id, body, headers=_end_user_headers(end_user))

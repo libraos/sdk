@@ -75,3 +75,36 @@ describe("streamMessage", () => {
     expect(names).toEqual(["libraos.search_sources"]);
   });
 });
+
+describe("end user header", () => {
+  const sentHeaders = (input: unknown, init?: RequestInit) =>
+    input instanceof Request ? input.headers : new Headers(init?.headers);
+  const req = { model: "a", max_tokens: 8, messages: [{ role: "user" as const, content: "t" }] };
+
+  it("createMessage sends X-End-User only when endUser is set", async () => {
+    const seen: Headers[] = [];
+    const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => {
+      seen.push(sentHeaders(input, init));
+      return new Response(JSON.stringify({ id: "m", type: "message", role: "assistant", content: [], model: "a", stop_reason: "end_turn" }),
+        { status: 200, headers: { "content-type": "application/json" } });
+    });
+    const client = new LibraOSClient({ baseUrl: "http://x", auth, fetch: fetchMock as unknown as typeof fetch });
+    await client.createMessage({ ...req, stream: false }, { endUser: "cust-42" });
+    await client.createMessage({ ...req, stream: false });
+    expect(seen[0]!.get("x-end-user")).toBe("cust-42");
+    expect(seen[1]!.has("x-end-user")).toBe(false);
+  });
+
+  it("streamMessage sends X-End-User only when endUser is set", async () => {
+    const seen: Headers[] = [];
+    const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => {
+      seen.push(sentHeaders(input, init));
+      return new Response("", { status: 200, headers: { "content-type": "text/event-stream" } });
+    });
+    const client = new LibraOSClient({ baseUrl: "http://x", auth, fetch: fetchMock as unknown as typeof fetch });
+    for await (const _ of client.streamMessage({ ...req, stream: true }, { endUser: "cust-42" })) { /* drain */ }
+    for await (const _ of client.streamMessage({ ...req, stream: true })) { /* drain */ }
+    expect(seen[0]!.get("x-end-user")).toBe("cust-42");
+    expect(seen[1]!.has("x-end-user")).toBe(false);
+  });
+});

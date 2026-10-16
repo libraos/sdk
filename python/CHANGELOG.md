@@ -8,6 +8,12 @@ All notable changes to `libraos-sdk` (Python) will be documented in this file.
 owns one. There are no aliases or deprecation shims: update imports and environment variables
 before upgrading.
 
+### Added
+
+- **Per-end-user memory: `end_user=` on `messages.create()` and `messages.stream()`.** Pass your
+  end user's id and the SDK sends it as the `X-End-User` header, so the server keeps memory per end
+  user: one agent serving many customers keeps each one's memory apart. Omitted, no header is sent.
+
 ### Removed
 
 - **`AnthropicCompatClient`.** LibraOS no longer promises to be a drop-in for the Anthropic Python

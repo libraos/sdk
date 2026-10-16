@@ -34,10 +34,12 @@ class MessageStream:
         client: "Client",
         agent_id: str,
         body: dict[str, Any],
+        headers: dict[str, str] | None = None,
     ) -> None:
         self._client = client
         self._agent_id = agent_id
         self._body = body
+        self._headers = headers
         self._response_cm = None
         self._response = None
 
@@ -46,6 +48,7 @@ class MessageStream:
             "POST",
             "/v1/messages",
             json=self._body,
+            headers=self._headers,
         )
         self._response = await self._response_cm.__aenter__()
         if self._response.status_code >= 400:

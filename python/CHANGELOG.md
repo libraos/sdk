@@ -2,7 +2,7 @@
 
 All notable changes to `libraos-sdk` (Python) will be documented in this file.
 
-## [2.0.0] — unreleased
+## [2.0.0] — 2026-10-16
 
 **Breaking.** The SDK drops Anthropic SDK compatibility and takes the LibraOS name everywhere it
 owns one. There are no aliases or deprecation shims: update imports and environment variables
@@ -45,7 +45,26 @@ before upgrading.
   against both new and older servers. Bundles are named `.libraos-bundle.zip` in the docs and
   examples; import accepts any file name.
 
-### Upgrade note
+### Breaking changes — migrating from 1.x
+
+1. **Anthropic compatibility is removed.** Replace `AnthropicCompatClient` with `libraos.Client`
+   and call `await c.messages.create(agent_id, messages, ...)`; read the reply with `msg.text`.
+   If you use the `anthropic` package directly, install it yourself — the `dev` extra no longer
+   pulls it in.
+2. **Renamed names.** `NovaOSError` → `LibraOSError`; `NOVA_OS_*` example/test environment
+   variables → `LIBRA_OS_*`; simulator harness agent `nova-os-simulator-harness` →
+   `libraos-simulator-harness`; Flask blueprint `nova_callbacks` → `libraos_callbacks`. There are
+   no aliases.
+3. **Mode A custom tools are removed.** `MessageStream.submit_tool_result()` and
+   `messages.stream(..., message_id=...)` are gone. Declare each custom tool with a `callback` and
+   serve it with `WebhookRouter` (Mode B).
+4. **Wire names, with fallback.** The client now sends `X-LibraOS-SDK-Version` /
+   `X-LibraOS-OpenAPI-Hash`. Webhook receivers verify `X-LibraOS-Signature` /
+   `X-LibraOS-Idempotency-Key` and fall back to the `X-Nova-*` headers, so they keep working
+   against older servers — no change needed unless you verify signatures yourself, in which case
+   read the new header first and fall back to the old one.
+5. **`end_user=` is additive.** Nothing to change; pass it on `messages.create()` /
+   `messages.stream()` when one agent serves many end users and their memory must stay apart.
 
 | 1.x | 2.0.0 |
 |---|---|

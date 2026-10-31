@@ -12,6 +12,7 @@ Runnable scripts that demonstrate how to call the `libraos-sdk` surface. Pick by
 | Path | What it shows |
 |---|---|
 | [`simulator/`](simulator/) | Running the offline conversation simulator (`client.simulate(...)`) for evaluation and regression harnesses |
+| [`veil-egress-proxy/`](veil-egress-proxy/) | Masking identifiers with the open `libraos/veil-detect` weights before a request leaves, and restoring them in the answer |
 
 The numbered, per-resource snippets (`messages_create.py`, `agents_list.py`, etc.) live in [`../python/examples/`](../python/examples/).
 

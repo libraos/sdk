@@ -1459,6 +1459,24 @@ func (e LogListSource) Valid() bool {
 	}
 }
 
+// Defines values for ManagedUserSkillStatus.
+const (
+	ManagedUserSkillStatusActive      ManagedUserSkillStatus = "active"
+	ManagedUserSkillStatusUnavailable ManagedUserSkillStatus = "unavailable"
+)
+
+// Valid indicates whether the value is a known member of the ManagedUserSkillStatus enum.
+func (e ManagedUserSkillStatus) Valid() bool {
+	switch e {
+	case ManagedUserSkillStatusActive:
+		return true
+	case ManagedUserSkillStatusUnavailable:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for McpRequestJsonrpc.
 const (
 	McpRequestJsonrpcN20 McpRequestJsonrpc = "2.0"
@@ -2197,6 +2215,51 @@ func (e ScimPatchOpOperationsOp) Valid() bool {
 	}
 }
 
+// Defines values for SkillRequestCandidateCatalog.
+const (
+	SkillRequestCandidateCatalogNameTaken SkillRequestCandidateCatalog = "name_taken"
+	SkillRequestCandidateCatalogNew       SkillRequestCandidateCatalog = "new"
+	SkillRequestCandidateCatalogPublished SkillRequestCandidateCatalog = "published"
+)
+
+// Valid indicates whether the value is a known member of the SkillRequestCandidateCatalog enum.
+func (e SkillRequestCandidateCatalog) Valid() bool {
+	switch e {
+	case SkillRequestCandidateCatalogNameTaken:
+		return true
+	case SkillRequestCandidateCatalogNew:
+		return true
+	case SkillRequestCandidateCatalogPublished:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SkillRequestStatus.
+const (
+	SkillRequestStatusApproved  SkillRequestStatus = "approved"
+	SkillRequestStatusPending   SkillRequestStatus = "pending"
+	SkillRequestStatusRejected  SkillRequestStatus = "rejected"
+	SkillRequestStatusWithdrawn SkillRequestStatus = "withdrawn"
+)
+
+// Valid indicates whether the value is a known member of the SkillRequestStatus enum.
+func (e SkillRequestStatus) Valid() bool {
+	switch e {
+	case SkillRequestStatusApproved:
+		return true
+	case SkillRequestStatusPending:
+		return true
+	case SkillRequestStatusRejected:
+		return true
+	case SkillRequestStatusWithdrawn:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for StreamEventCustomToolUseType.
 const (
 	StreamEventCustomToolUseTypeCustomToolUse StreamEventCustomToolUseType = "custom_tool_use"
@@ -2557,6 +2620,24 @@ func (e UserCreateRole) Valid() bool {
 	case UserCreateRoleEmployee:
 		return true
 	case UserCreateRoleManager:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for UserSkillStatus.
+const (
+	UserSkillStatusActive      UserSkillStatus = "active"
+	UserSkillStatusUnavailable UserSkillStatus = "unavailable"
+)
+
+// Valid indicates whether the value is a known member of the UserSkillStatus enum.
+func (e UserSkillStatus) Valid() bool {
+	switch e {
+	case UserSkillStatusActive:
+		return true
+	case UserSkillStatusUnavailable:
 		return true
 	default:
 		return false
@@ -3682,6 +3763,13 @@ type AppMigrationStatus string
 type AppMigrationList struct {
 	App        string         `json:"app"`
 	Migrations []AppMigration `json:"migrations"`
+}
+
+// ApprovedUserSkill A catalog version an approval activated for the requester.
+type ApprovedUserSkill struct {
+	Name    string `json:"name"`
+	Sha256  string `json:"sha256"`
+	Version int    `json:"version"`
 }
 
 // Attachment A file attached to a conversation.
@@ -5369,6 +5457,42 @@ type LogList struct {
 // LogListSource defines model for LogList.Source.
 type LogListSource string
 
+// ManagedUserSkill defines model for ManagedUserSkill.
+type ManagedUserSkill struct {
+	ActivatedAt time.Time `json:"activated_at"`
+
+	// ActivatedBy The admin who approved it.
+	ActivatedBy *string `json:"activated_by,omitempty"`
+
+	// Description The catalog version's description; omitted when the version cannot be read.
+	Description *string `json:"description,omitempty"`
+	Name        string  `json:"name"`
+
+	// Reason Why the skill is unavailable.
+	Reason *string `json:"reason,omitempty"`
+
+	// RequestId The approved request that activated it.
+	RequestId *string `json:"request_id,omitempty"`
+	Sha256    string  `json:"sha256"`
+
+	// Source Where the version came from, e.g. `github.com/<owner>/<repo>@<commit>/<path>`; omitted when the version cannot be read.
+	Source *string `json:"source,omitempty"`
+
+	// Status `unavailable` when the version is no longer published (for example archived) or no longer has the approved content. An unavailable skill is not used on the person's turns.
+	Status  ManagedUserSkillStatus `json:"status"`
+	UserId  string                 `json:"user_id"`
+	Version int                    `json:"version"`
+}
+
+// ManagedUserSkillStatus `unavailable` when the version is no longer published (for example archived) or no longer has the approved content. An unavailable skill is not used on the person's turns.
+type ManagedUserSkillStatus string
+
+// ManagedUserSkillList defines model for ManagedUserSkillList.
+type ManagedUserSkillList struct {
+	// Data By `user_id`, then `name`.
+	Data []ManagedUserSkill `json:"data"`
+}
+
 // Manifest Boot-time persona discovery contract. Partners cache by
 // “manifest_version“ (sha256 over canonical-JSON) and use
 // “If-None-Match“ on subsequent fetches to short-circuit at 304.
@@ -6419,6 +6543,147 @@ type SettingValue struct {
 	Value interface{} `json:"value"`
 }
 
+// SkillRequest One person's request for a skill from a GitHub link.
+type SkillRequest struct {
+	// Commit Set by an approval; the commit that was imported.
+	Commit    *string    `json:"commit,omitempty"`
+	CreatedAt time.Time  `json:"created_at"`
+	DecidedAt *time.Time `json:"decided_at,omitempty"`
+
+	// DecidedBy Who approved, rejected or withdrew the request.
+	DecidedBy *string `json:"decided_by,omitempty"`
+	Id        string  `json:"id"`
+
+	// License Set by an approval; the repository licence that was recorded.
+	License *string `json:"license,omitempty"`
+	Note    *string `json:"note,omitempty"`
+
+	// Path The folder the link names; omitted for the repository root.
+	Path *string `json:"path,omitempty"`
+
+	// Reason The admin's reason for a rejection.
+	Reason *string `json:"reason,omitempty"`
+
+	// Ref The branch, tag or commit the link names; omitted for the default branch.
+	Ref *string `json:"ref,omitempty"`
+
+	// Repo `owner/repo`.
+	Repo string `json:"repo"`
+
+	// Skills Set by an approval; the versions activated for the requester.
+	Skills *[]ApprovedUserSkill `json:"skills,omitempty"`
+	Status SkillRequestStatus   `json:"status"`
+
+	// Url The link as submitted.
+	Url string `json:"url"`
+
+	// UserId The requester. An approval activates the skill for them only.
+	UserId string `json:"user_id"`
+}
+
+// SkillRequestApproval defines model for SkillRequestApproval.
+type SkillRequestApproval struct {
+	// Commit The commit the preview returned. Approval reads exactly this commit.
+	Commit string `json:"commit"`
+
+	// Skills Names of the skills to approve. Optional when the link yields one importable skill; required when it yields several.
+	Skills *[]string `json:"skills,omitempty"`
+}
+
+// SkillRequestCandidate One skill the link yields at the previewed commit, as an approval would import it. When `error` is set the skill cannot be imported and only `name` (if readable), `path` and `left_out` may be present.
+type SkillRequestCandidate struct {
+	// Body The instructions, `SKILL.md` without its frontmatter.
+	Body *string `json:"body,omitempty"`
+
+	// Catalog What approving does to the org catalog. `new`: the skill is imported and published. `published`: identical content is already published as `catalog_version` and is reused. `name_taken`: the org already uses the name (a catalog version in any status, or a `LIBRA_OS_SKILLS_DIR` folder), so approving is refused with 409.
+	Catalog *SkillRequestCandidateCatalog `json:"catalog,omitempty"`
+
+	// CatalogVersion The published version an approval would reuse, when `catalog` is `published`.
+	CatalogVersion *int    `json:"catalog_version,omitempty"`
+	Description    *string `json:"description,omitempty"`
+	Error          *string `json:"error,omitempty"`
+
+	// Files Reference files an approval imports besides `SKILL.md`.
+	Files *[]string `json:"files,omitempty"`
+
+	// LeftOut Files an approval leaves out: scripts (anything under `scripts/`, source and executable files, files starting with `#!`) and binary files. LibraOS never runs a skill's scripts.
+	LeftOut *[]SkillRequestLeftOut `json:"left_out,omitempty"`
+	Name    *string                `json:"name,omitempty"`
+
+	// Path The skill's folder in the repository.
+	Path string `json:"path"`
+
+	// Sha256 Digest over the files an approval imports, computed as for a catalog version.
+	Sha256 *string `json:"sha256,omitempty"`
+}
+
+// SkillRequestCandidateCatalog What approving does to the org catalog. `new`: the skill is imported and published. `published`: identical content is already published as `catalog_version` and is reused. `name_taken`: the org already uses the name (a catalog version in any status, or a `LIBRA_OS_SKILLS_DIR` folder), so approving is refused with 409.
+type SkillRequestCandidateCatalog string
+
+// SkillRequestCreate defines model for SkillRequestCreate.
+type SkillRequestCreate struct {
+	// Note For the reviewing admin. At most 1000 characters.
+	Note *string `json:"note,omitempty"`
+
+	// Url HTTPS link to a GitHub repository, a `tree`/`blob` folder or file in one, or a `raw.githubusercontent.com` file: any form `POST /v1/skills/import` accepts. A link to a `SKILL.md` means its folder. At most 2048 characters.
+	Url string `json:"url"`
+}
+
+// SkillRequestEnvelope defines model for SkillRequestEnvelope.
+type SkillRequestEnvelope struct {
+	// Request One person's request for a skill from a GitHub link.
+	Request SkillRequest `json:"request"`
+}
+
+// SkillRequestLeftOut A file of the linked skill that an approval does not import.
+type SkillRequestLeftOut struct {
+	Path string `json:"path"`
+
+	// Reason `script: LibraOS never runs scripts` or `not a text file`.
+	Reason string `json:"reason"`
+}
+
+// SkillRequestList defines model for SkillRequestList.
+type SkillRequestList struct {
+	// Data Newest first.
+	Data []SkillRequest `json:"data"`
+}
+
+// SkillRequestPreview defines model for SkillRequestPreview.
+type SkillRequestPreview struct {
+	// Commit The 40-character commit the ref resolved to. Approve with this value.
+	Commit string `json:"commit"`
+
+	// License The repository's root licence, e.g. `MIT`, or `LicenseRef-see-LICENSE`.
+	License string `json:"license"`
+
+	// Ref The ref the link names; empty for the default branch.
+	Ref  string `json:"ref"`
+	Repo string `json:"repo"`
+
+	// Request One person's request for a skill from a GitHub link.
+	Request SkillRequest            `json:"request"`
+	Skills  []SkillRequestCandidate `json:"skills"`
+}
+
+// SkillRequestRejection defines model for SkillRequestRejection.
+type SkillRequestRejection struct {
+	// Reason Recorded on the request, where the requester can read it. 1-1000 characters, not blank.
+	Reason string `json:"reason"`
+}
+
+// SkillRequestStatus defines model for SkillRequestStatus.
+type SkillRequestStatus string
+
+// SkillRequestWriteResult defines model for SkillRequestWriteResult.
+type SkillRequestWriteResult struct {
+	// Created False when the caller already had a pending request for the same link, which is returned instead.
+	Created bool `json:"created"`
+
+	// Request One person's request for a skill from a GitHub link.
+	Request SkillRequest `json:"request"`
+}
+
 // SkillRunResponse defines model for SkillRunResponse.
 type SkillRunResponse struct {
 	// Output Raw string returned by the tool handler.
@@ -6690,10 +6955,13 @@ type TranscriptionSegment struct {
 
 // UsageAgentSkill defines model for UsageAgentSkill.
 type UsageAgentSkill struct {
-	Sha256  *string `json:"sha256,omitempty"`
-	Skill   *string `json:"skill,omitempty"`
-	Source  *string `json:"source,omitempty"`
-	Version *int    `json:"version,omitempty"`
+	Sha256 *string `json:"sha256,omitempty"`
+	Skill  *string `json:"skill,omitempty"`
+	Source *string `json:"source,omitempty"`
+
+	// User True for one of the caller's user skills (`/v1/user-skills`) rather than one the agent declares. Omitted when false.
+	User    *bool `json:"user,omitempty"`
+	Version *int  `json:"version,omitempty"`
 }
 
 // UsageAgentSkills Agent Skills attached to and loaded by this turn.
@@ -6871,6 +7139,41 @@ type UserInfo struct {
 // UserList defines model for UserList.
 type UserList struct {
 	Data []User `json:"data"`
+}
+
+// UserSkill One of a person's active skills, pinned to a catalog version and its SHA-256. A later import or publish of the same name does not change it.
+type UserSkill struct {
+	ActivatedAt time.Time `json:"activated_at"`
+
+	// ActivatedBy The admin who approved it.
+	ActivatedBy *string `json:"activated_by,omitempty"`
+
+	// Description The catalog version's description; omitted when the version cannot be read.
+	Description *string `json:"description,omitempty"`
+	Name        string  `json:"name"`
+
+	// Reason Why the skill is unavailable.
+	Reason *string `json:"reason,omitempty"`
+
+	// RequestId The approved request that activated it.
+	RequestId *string `json:"request_id,omitempty"`
+	Sha256    string  `json:"sha256"`
+
+	// Source Where the version came from, e.g. `github.com/<owner>/<repo>@<commit>/<path>`; omitted when the version cannot be read.
+	Source *string `json:"source,omitempty"`
+
+	// Status `unavailable` when the version is no longer published (for example archived) or no longer has the approved content. An unavailable skill is not used on the person's turns.
+	Status  UserSkillStatus `json:"status"`
+	Version int             `json:"version"`
+}
+
+// UserSkillStatus `unavailable` when the version is no longer published (for example archived) or no longer has the approved content. An unavailable skill is not used on the person's turns.
+type UserSkillStatus string
+
+// UserSkillList defines model for UserSkillList.
+type UserSkillList struct {
+	// Data By name.
+	Data []UserSkill `json:"data"`
 }
 
 // WebSearchBackend Web search backend selection. `auto` uses the server's default
@@ -7553,6 +7856,35 @@ type PutSettingJSONBody struct {
 	Value interface{} `json:"value"`
 }
 
+// ListSkillRequestsParams defines parameters for ListSkillRequests.
+type ListSkillRequestsParams struct {
+	Status *SkillRequestStatus `form:"status,omitempty" json:"status,omitempty"`
+
+	// UserId Only this person's requests.
+	UserId *string `form:"user_id,omitempty" json:"user_id,omitempty"`
+
+	// Limit Default 50, at most 200.
+	Limit *int `form:"limit,omitempty" json:"limit,omitempty"`
+}
+
+// ListUserSkillsParams defines parameters for ListUserSkills.
+type ListUserSkillsParams struct {
+	// UserId Only this person's skills (exact match).
+	UserId *string `form:"user_id,omitempty" json:"user_id,omitempty"`
+
+	// Name Only skills of this name (exact match).
+	Name *string `form:"name,omitempty" json:"name,omitempty"`
+
+	// Limit Default 50, at most 200.
+	Limit *int `form:"limit,omitempty" json:"limit,omitempty"`
+}
+
+// RemoveUserSkillParams defines parameters for RemoveUserSkill.
+type RemoveUserSkillParams struct {
+	// UserId The person whose skill to remove.
+	UserId string `form:"user_id" json:"user_id"`
+}
+
 // CreateMessageParams defines parameters for CreateMessage.
 type CreateMessageParams struct {
 	// XProtocol Set to `ag-ui` to request canonical AG-UI SSE events.
@@ -7572,6 +7904,14 @@ type RealtimeVoiceParams struct {
 
 	// Upgrade Must be `websocket` for the WebSocket handshake.
 	Upgrade string `json:"Upgrade"`
+}
+
+// ListMySkillRequestsParams defines parameters for ListMySkillRequests.
+type ListMySkillRequestsParams struct {
+	Status *SkillRequestStatus `form:"status,omitempty" json:"status,omitempty"`
+
+	// Limit Default 50, at most 200.
+	Limit *int `form:"limit,omitempty" json:"limit,omitempty"`
 }
 
 // CreateAgentSkillMultipartBody defines parameters for CreateAgentSkill.
@@ -7818,6 +8158,12 @@ type CreateManagedSessionJSONRequestBody = SessionCreate
 // PutSettingJSONRequestBody defines body for PutSetting for application/json ContentType.
 type PutSettingJSONRequestBody PutSettingJSONBody
 
+// ApproveSkillRequestJSONRequestBody defines body for ApproveSkillRequest for application/json ContentType.
+type ApproveSkillRequestJSONRequestBody = SkillRequestApproval
+
+// RejectSkillRequestJSONRequestBody defines body for RejectSkillRequest for application/json ContentType.
+type RejectSkillRequestJSONRequestBody = SkillRequestRejection
+
 // CreateUserJSONRequestBody defines body for CreateUser for application/json ContentType.
 type CreateUserJSONRequestBody = UserCreate
 
@@ -7829,6 +8175,9 @@ type CountTokensJSONRequestBody = CountTokensRequest
 
 // SearchJSONRequestBody defines body for Search for application/json ContentType.
 type SearchJSONRequestBody = WebSearchRequest
+
+// CreateSkillRequestJSONRequestBody defines body for CreateSkillRequest for application/json ContentType.
+type CreateSkillRequestJSONRequestBody = SkillRequestCreate
 
 // CreateAgentSkillJSONRequestBody defines body for CreateAgentSkill for application/json ContentType.
 type CreateAgentSkillJSONRequestBody = AgentSkillFiles
@@ -10292,6 +10641,28 @@ type ClientInterface interface {
 
 	PutSetting(ctx context.Context, key string, body PutSettingJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// ListSkillRequests request
+	ListSkillRequests(ctx context.Context, params *ListSkillRequestsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ApproveSkillRequestWithBody request with any body
+	ApproveSkillRequestWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	ApproveSkillRequest(ctx context.Context, id string, body ApproveSkillRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// PreviewSkillRequest request
+	PreviewSkillRequest(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// RejectSkillRequestWithBody request with any body
+	RejectSkillRequestWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	RejectSkillRequest(ctx context.Context, id string, body RejectSkillRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListUserSkills request
+	ListUserSkills(ctx context.Context, params *ListUserSkillsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// RemoveUserSkill request
+	RemoveUserSkill(ctx context.Context, name string, params *RemoveUserSkillParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// ListUsers request
 	ListUsers(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -10326,6 +10697,20 @@ type ClientInterface interface {
 	SearchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	Search(ctx context.Context, body SearchJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListMySkillRequests request
+	ListMySkillRequests(ctx context.Context, params *ListMySkillRequestsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateSkillRequestWithBody request with any body
+	CreateSkillRequestWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateSkillRequest(ctx context.Context, body CreateSkillRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// WithdrawSkillRequest request
+	WithdrawSkillRequest(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetMySkillRequest request
+	GetMySkillRequest(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ListAgentSkills request
 	ListAgentSkills(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -10362,6 +10747,12 @@ type ClientInterface interface {
 
 	// PublishAgentSkillVersion request
 	PublishAgentSkillVersion(ctx context.Context, name string, version int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListMyUserSkills request
+	ListMyUserSkills(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// RemoveMyUserSkill request
+	RemoveMyUserSkill(ctx context.Context, name string, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 func (c *Client) OauthDiscovery(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -13388,6 +13779,102 @@ func (c *Client) PutSetting(ctx context.Context, key string, body PutSettingJSON
 	return c.Client.Do(req)
 }
 
+func (c *Client) ListSkillRequests(ctx context.Context, params *ListSkillRequestsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListSkillRequestsRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ApproveSkillRequestWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewApproveSkillRequestRequestWithBody(c.Server, id, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ApproveSkillRequest(ctx context.Context, id string, body ApproveSkillRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewApproveSkillRequestRequest(c.Server, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) PreviewSkillRequest(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPreviewSkillRequestRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) RejectSkillRequestWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRejectSkillRequestRequestWithBody(c.Server, id, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) RejectSkillRequest(ctx context.Context, id string, body RejectSkillRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRejectSkillRequestRequest(c.Server, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListUserSkills(ctx context.Context, params *ListUserSkillsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListUserSkillsRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) RemoveUserSkill(ctx context.Context, name string, params *RemoveUserSkillParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRemoveUserSkillRequest(c.Server, name, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) ListUsers(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewListUsersRequest(c.Server)
 	if err != nil {
@@ -13544,6 +14031,66 @@ func (c *Client) Search(ctx context.Context, body SearchJSONRequestBody, reqEdit
 	return c.Client.Do(req)
 }
 
+func (c *Client) ListMySkillRequests(ctx context.Context, params *ListMySkillRequestsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListMySkillRequestsRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateSkillRequestWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateSkillRequestRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateSkillRequest(ctx context.Context, body CreateSkillRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateSkillRequestRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) WithdrawSkillRequest(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewWithdrawSkillRequestRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetMySkillRequest(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetMySkillRequestRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) ListAgentSkills(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewListAgentSkillsRequest(c.Server)
 	if err != nil {
@@ -13690,6 +14237,30 @@ func (c *Client) ArchiveAgentSkillVersion(ctx context.Context, name string, vers
 
 func (c *Client) PublishAgentSkillVersion(ctx context.Context, name string, version int, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewPublishAgentSkillVersionRequest(c.Server, name, version)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListMyUserSkills(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListMyUserSkillsRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) RemoveMyUserSkill(ctx context.Context, name string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRemoveMyUserSkillRequest(c.Server, name)
 	if err != nil {
 		return nil, err
 	}
@@ -21804,6 +22375,348 @@ func NewPutSettingRequestWithBody(server string, key string, contentType string,
 	return req, nil
 }
 
+// NewListSkillRequestsRequest generates requests for ListSkillRequests
+func NewListSkillRequestsRequest(server string, params *ListSkillRequestsParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/managed/skill-requests")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.Status != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "status", *params.Status, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.UserId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "user_id", *params.UserId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.Limit != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "limit", *params.Limit, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewApproveSkillRequestRequest calls the generic ApproveSkillRequest builder with application/json body
+func NewApproveSkillRequestRequest(server string, id string, body ApproveSkillRequestJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewApproveSkillRequestRequestWithBody(server, id, "application/json", bodyReader)
+}
+
+// NewApproveSkillRequestRequestWithBody generates requests for ApproveSkillRequest with any type of body
+func NewApproveSkillRequestRequestWithBody(server string, id string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/managed/skill-requests/%s/approve", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewPreviewSkillRequestRequest generates requests for PreviewSkillRequest
+func NewPreviewSkillRequestRequest(server string, id string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/managed/skill-requests/%s/preview", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewRejectSkillRequestRequest calls the generic RejectSkillRequest builder with application/json body
+func NewRejectSkillRequestRequest(server string, id string, body RejectSkillRequestJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewRejectSkillRequestRequestWithBody(server, id, "application/json", bodyReader)
+}
+
+// NewRejectSkillRequestRequestWithBody generates requests for RejectSkillRequest with any type of body
+func NewRejectSkillRequestRequestWithBody(server string, id string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/managed/skill-requests/%s/reject", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewListUserSkillsRequest generates requests for ListUserSkills
+func NewListUserSkillsRequest(server string, params *ListUserSkillsParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/managed/user-skills")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.UserId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "user_id", *params.UserId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.Name != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "name", *params.Name, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.Limit != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "limit", *params.Limit, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewRemoveUserSkillRequest generates requests for RemoveUserSkill
+func NewRemoveUserSkillRequest(server string, name string, params *RemoveUserSkillParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "name", name, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/managed/user-skills/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "user_id", params.UserId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewListUsersRequest generates requests for ListUsers
 func NewListUsersRequest(server string) (*http.Request, error) {
 	var err error
@@ -22168,6 +23081,179 @@ func NewSearchRequestWithBody(server string, contentType string, body io.Reader)
 	}
 
 	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewListMySkillRequestsRequest generates requests for ListMySkillRequests
+func NewListMySkillRequestsRequest(server string, params *ListMySkillRequestsParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/skill-requests")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.Status != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "status", *params.Status, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.Limit != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "limit", *params.Limit, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateSkillRequestRequest calls the generic CreateSkillRequest builder with application/json body
+func NewCreateSkillRequestRequest(server string, body CreateSkillRequestJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateSkillRequestRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewCreateSkillRequestRequestWithBody generates requests for CreateSkillRequest with any type of body
+func NewCreateSkillRequestRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/skill-requests")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewWithdrawSkillRequestRequest generates requests for WithdrawSkillRequest
+func NewWithdrawSkillRequestRequest(server string, id string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/skill-requests/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetMySkillRequestRequest generates requests for GetMySkillRequest
+func NewGetMySkillRequestRequest(server string, id string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/skill-requests/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
 
 	return req, nil
 }
@@ -22592,6 +23678,67 @@ func NewPublishAgentSkillVersionRequest(server string, name string, version int)
 	}
 
 	req, err := http.NewRequest("POST", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListMyUserSkillsRequest generates requests for ListMyUserSkills
+func NewListMyUserSkillsRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/user-skills")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewRemoveMyUserSkillRequest generates requests for RemoveMyUserSkill
+func NewRemoveMyUserSkillRequest(server string, name string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "name", name, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/user-skills/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -23330,6 +24477,28 @@ type ClientWithResponsesInterface interface {
 
 	PutSettingWithResponse(ctx context.Context, key string, body PutSettingJSONRequestBody, reqEditors ...RequestEditorFn) (*PutSettingResponse, error)
 
+	// ListSkillRequestsWithResponse request
+	ListSkillRequestsWithResponse(ctx context.Context, params *ListSkillRequestsParams, reqEditors ...RequestEditorFn) (*ListSkillRequestsResponse, error)
+
+	// ApproveSkillRequestWithBodyWithResponse request with any body
+	ApproveSkillRequestWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ApproveSkillRequestResponse, error)
+
+	ApproveSkillRequestWithResponse(ctx context.Context, id string, body ApproveSkillRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*ApproveSkillRequestResponse, error)
+
+	// PreviewSkillRequestWithResponse request
+	PreviewSkillRequestWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*PreviewSkillRequestResponse, error)
+
+	// RejectSkillRequestWithBodyWithResponse request with any body
+	RejectSkillRequestWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*RejectSkillRequestResponse, error)
+
+	RejectSkillRequestWithResponse(ctx context.Context, id string, body RejectSkillRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*RejectSkillRequestResponse, error)
+
+	// ListUserSkillsWithResponse request
+	ListUserSkillsWithResponse(ctx context.Context, params *ListUserSkillsParams, reqEditors ...RequestEditorFn) (*ListUserSkillsResponse, error)
+
+	// RemoveUserSkillWithResponse request
+	RemoveUserSkillWithResponse(ctx context.Context, name string, params *RemoveUserSkillParams, reqEditors ...RequestEditorFn) (*RemoveUserSkillResponse, error)
+
 	// ListUsersWithResponse request
 	ListUsersWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListUsersResponse, error)
 
@@ -23364,6 +24533,20 @@ type ClientWithResponsesInterface interface {
 	SearchWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*SearchResponse, error)
 
 	SearchWithResponse(ctx context.Context, body SearchJSONRequestBody, reqEditors ...RequestEditorFn) (*SearchResponse, error)
+
+	// ListMySkillRequestsWithResponse request
+	ListMySkillRequestsWithResponse(ctx context.Context, params *ListMySkillRequestsParams, reqEditors ...RequestEditorFn) (*ListMySkillRequestsResponse, error)
+
+	// CreateSkillRequestWithBodyWithResponse request with any body
+	CreateSkillRequestWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateSkillRequestResponse, error)
+
+	CreateSkillRequestWithResponse(ctx context.Context, body CreateSkillRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateSkillRequestResponse, error)
+
+	// WithdrawSkillRequestWithResponse request
+	WithdrawSkillRequestWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*WithdrawSkillRequestResponse, error)
+
+	// GetMySkillRequestWithResponse request
+	GetMySkillRequestWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*GetMySkillRequestResponse, error)
 
 	// ListAgentSkillsWithResponse request
 	ListAgentSkillsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListAgentSkillsResponse, error)
@@ -23400,6 +24583,12 @@ type ClientWithResponsesInterface interface {
 
 	// PublishAgentSkillVersionWithResponse request
 	PublishAgentSkillVersionWithResponse(ctx context.Context, name string, version int, reqEditors ...RequestEditorFn) (*PublishAgentSkillVersionResponse, error)
+
+	// ListMyUserSkillsWithResponse request
+	ListMyUserSkillsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListMyUserSkillsResponse, error)
+
+	// RemoveMyUserSkillWithResponse request
+	RemoveMyUserSkillWithResponse(ctx context.Context, name string, reqEditors ...RequestEditorFn) (*RemoveMyUserSkillResponse, error)
 }
 
 type OauthDiscoveryResponse struct {
@@ -28063,6 +29252,165 @@ func (r PutSettingResponse) StatusCode() int {
 	return 0
 }
 
+type ListSkillRequestsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SkillRequestList
+	JSON400      *FieldError
+	JSON401      *Unauthorized
+	JSON403      *FlatError
+}
+
+// Status returns HTTPResponse.Status
+func (r ListSkillRequestsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListSkillRequestsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ApproveSkillRequestResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SkillRequestEnvelope
+	JSON400      *FieldError
+	JSON401      *Unauthorized
+	JSON403      *FlatError
+	JSON404      *FieldError
+	JSON409      *FieldError
+	JSON422      *FieldError
+	JSON502      *FieldError
+}
+
+// Status returns HTTPResponse.Status
+func (r ApproveSkillRequestResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ApproveSkillRequestResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type PreviewSkillRequestResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SkillRequestPreview
+	JSON401      *Unauthorized
+	JSON403      *FlatError
+	JSON404      *FieldError
+	JSON409      *FieldError
+	JSON422      *FieldError
+	JSON502      *FieldError
+}
+
+// Status returns HTTPResponse.Status
+func (r PreviewSkillRequestResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r PreviewSkillRequestResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type RejectSkillRequestResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SkillRequestEnvelope
+	JSON400      *FieldError
+	JSON401      *Unauthorized
+	JSON403      *FlatError
+	JSON404      *FieldError
+	JSON409      *FieldError
+}
+
+// Status returns HTTPResponse.Status
+func (r RejectSkillRequestResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r RejectSkillRequestResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListUserSkillsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *ManagedUserSkillList
+	JSON400      *FieldError
+	JSON401      *Unauthorized
+	JSON403      *FlatError
+}
+
+// Status returns HTTPResponse.Status
+func (r ListUserSkillsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListUserSkillsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type RemoveUserSkillResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON400      *FieldError
+	JSON401      *Unauthorized
+	JSON403      *FlatError
+	JSON404      *FieldError
+}
+
+// Status returns HTTPResponse.Status
+func (r RemoveUserSkillResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r RemoveUserSkillResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type ListUsersResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -28278,6 +29626,109 @@ func (r SearchResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r SearchResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListMySkillRequestsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SkillRequestList
+	JSON400      *FieldError
+	JSON401      *Unauthorized
+	JSON403      *FieldError
+}
+
+// Status returns HTTPResponse.Status
+func (r ListMySkillRequestsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListMySkillRequestsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateSkillRequestResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SkillRequestWriteResult
+	JSON201      *SkillRequestWriteResult
+	JSON400      *FieldError
+	JSON401      *Unauthorized
+	JSON403      *FieldError
+	JSON409      *FieldError
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateSkillRequestResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateSkillRequestResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type WithdrawSkillRequestResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SkillRequestEnvelope
+	JSON401      *Unauthorized
+	JSON403      *FieldError
+	JSON404      *FieldError
+	JSON409      *FieldError
+}
+
+// Status returns HTTPResponse.Status
+func (r WithdrawSkillRequestResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r WithdrawSkillRequestResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetMySkillRequestResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SkillRequestEnvelope
+	JSON401      *Unauthorized
+	JSON403      *FieldError
+	JSON404      *FieldError
+}
+
+// Status returns HTTPResponse.Status
+func (r GetMySkillRequestResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetMySkillRequestResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -28540,6 +29991,54 @@ func (r PublishAgentSkillVersionResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r PublishAgentSkillVersionResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListMyUserSkillsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *UserSkillList
+	JSON401      *Unauthorized
+	JSON403      *FieldError
+}
+
+// Status returns HTTPResponse.Status
+func (r ListMyUserSkillsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListMyUserSkillsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type RemoveMyUserSkillResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON401      *Unauthorized
+	JSON403      *FieldError
+	JSON404      *FieldError
+}
+
+// Status returns HTTPResponse.Status
+func (r RemoveMyUserSkillResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r RemoveMyUserSkillResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -30746,6 +32245,76 @@ func (c *ClientWithResponses) PutSettingWithResponse(ctx context.Context, key st
 	return ParsePutSettingResponse(rsp)
 }
 
+// ListSkillRequestsWithResponse request returning *ListSkillRequestsResponse
+func (c *ClientWithResponses) ListSkillRequestsWithResponse(ctx context.Context, params *ListSkillRequestsParams, reqEditors ...RequestEditorFn) (*ListSkillRequestsResponse, error) {
+	rsp, err := c.ListSkillRequests(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListSkillRequestsResponse(rsp)
+}
+
+// ApproveSkillRequestWithBodyWithResponse request with arbitrary body returning *ApproveSkillRequestResponse
+func (c *ClientWithResponses) ApproveSkillRequestWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ApproveSkillRequestResponse, error) {
+	rsp, err := c.ApproveSkillRequestWithBody(ctx, id, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseApproveSkillRequestResponse(rsp)
+}
+
+func (c *ClientWithResponses) ApproveSkillRequestWithResponse(ctx context.Context, id string, body ApproveSkillRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*ApproveSkillRequestResponse, error) {
+	rsp, err := c.ApproveSkillRequest(ctx, id, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseApproveSkillRequestResponse(rsp)
+}
+
+// PreviewSkillRequestWithResponse request returning *PreviewSkillRequestResponse
+func (c *ClientWithResponses) PreviewSkillRequestWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*PreviewSkillRequestResponse, error) {
+	rsp, err := c.PreviewSkillRequest(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePreviewSkillRequestResponse(rsp)
+}
+
+// RejectSkillRequestWithBodyWithResponse request with arbitrary body returning *RejectSkillRequestResponse
+func (c *ClientWithResponses) RejectSkillRequestWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*RejectSkillRequestResponse, error) {
+	rsp, err := c.RejectSkillRequestWithBody(ctx, id, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseRejectSkillRequestResponse(rsp)
+}
+
+func (c *ClientWithResponses) RejectSkillRequestWithResponse(ctx context.Context, id string, body RejectSkillRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*RejectSkillRequestResponse, error) {
+	rsp, err := c.RejectSkillRequest(ctx, id, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseRejectSkillRequestResponse(rsp)
+}
+
+// ListUserSkillsWithResponse request returning *ListUserSkillsResponse
+func (c *ClientWithResponses) ListUserSkillsWithResponse(ctx context.Context, params *ListUserSkillsParams, reqEditors ...RequestEditorFn) (*ListUserSkillsResponse, error) {
+	rsp, err := c.ListUserSkills(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListUserSkillsResponse(rsp)
+}
+
+// RemoveUserSkillWithResponse request returning *RemoveUserSkillResponse
+func (c *ClientWithResponses) RemoveUserSkillWithResponse(ctx context.Context, name string, params *RemoveUserSkillParams, reqEditors ...RequestEditorFn) (*RemoveUserSkillResponse, error) {
+	rsp, err := c.RemoveUserSkill(ctx, name, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseRemoveUserSkillResponse(rsp)
+}
+
 // ListUsersWithResponse request returning *ListUsersResponse
 func (c *ClientWithResponses) ListUsersWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListUsersResponse, error) {
 	rsp, err := c.ListUsers(ctx, reqEditors...)
@@ -30857,6 +32426,50 @@ func (c *ClientWithResponses) SearchWithResponse(ctx context.Context, body Searc
 		return nil, err
 	}
 	return ParseSearchResponse(rsp)
+}
+
+// ListMySkillRequestsWithResponse request returning *ListMySkillRequestsResponse
+func (c *ClientWithResponses) ListMySkillRequestsWithResponse(ctx context.Context, params *ListMySkillRequestsParams, reqEditors ...RequestEditorFn) (*ListMySkillRequestsResponse, error) {
+	rsp, err := c.ListMySkillRequests(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListMySkillRequestsResponse(rsp)
+}
+
+// CreateSkillRequestWithBodyWithResponse request with arbitrary body returning *CreateSkillRequestResponse
+func (c *ClientWithResponses) CreateSkillRequestWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateSkillRequestResponse, error) {
+	rsp, err := c.CreateSkillRequestWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateSkillRequestResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateSkillRequestWithResponse(ctx context.Context, body CreateSkillRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateSkillRequestResponse, error) {
+	rsp, err := c.CreateSkillRequest(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateSkillRequestResponse(rsp)
+}
+
+// WithdrawSkillRequestWithResponse request returning *WithdrawSkillRequestResponse
+func (c *ClientWithResponses) WithdrawSkillRequestWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*WithdrawSkillRequestResponse, error) {
+	rsp, err := c.WithdrawSkillRequest(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseWithdrawSkillRequestResponse(rsp)
+}
+
+// GetMySkillRequestWithResponse request returning *GetMySkillRequestResponse
+func (c *ClientWithResponses) GetMySkillRequestWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*GetMySkillRequestResponse, error) {
+	rsp, err := c.GetMySkillRequest(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetMySkillRequestResponse(rsp)
 }
 
 // ListAgentSkillsWithResponse request returning *ListAgentSkillsResponse
@@ -30971,6 +32584,24 @@ func (c *ClientWithResponses) PublishAgentSkillVersionWithResponse(ctx context.C
 		return nil, err
 	}
 	return ParsePublishAgentSkillVersionResponse(rsp)
+}
+
+// ListMyUserSkillsWithResponse request returning *ListMyUserSkillsResponse
+func (c *ClientWithResponses) ListMyUserSkillsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListMyUserSkillsResponse, error) {
+	rsp, err := c.ListMyUserSkills(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListMyUserSkillsResponse(rsp)
+}
+
+// RemoveMyUserSkillWithResponse request returning *RemoveMyUserSkillResponse
+func (c *ClientWithResponses) RemoveMyUserSkillWithResponse(ctx context.Context, name string, reqEditors ...RequestEditorFn) (*RemoveMyUserSkillResponse, error) {
+	rsp, err := c.RemoveMyUserSkill(ctx, name, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseRemoveMyUserSkillResponse(rsp)
 }
 
 // ParseOauthDiscoveryResponse parses an HTTP response from a OauthDiscoveryWithResponse call
@@ -39517,6 +41148,351 @@ func ParsePutSettingResponse(rsp *http.Response) (*PutSettingResponse, error) {
 	return response, nil
 }
 
+// ParseListSkillRequestsResponse parses an HTTP response from a ListSkillRequestsWithResponse call
+func ParseListSkillRequestsResponse(rsp *http.Response) (*ListSkillRequestsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListSkillRequestsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SkillRequestList
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseApproveSkillRequestResponse parses an HTTP response from a ApproveSkillRequestWithResponse call
+func ParseApproveSkillRequestResponse(rsp *http.Response) (*ApproveSkillRequestResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ApproveSkillRequestResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SkillRequestEnvelope
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 502:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON502 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParsePreviewSkillRequestResponse parses an HTTP response from a PreviewSkillRequestWithResponse call
+func ParsePreviewSkillRequestResponse(rsp *http.Response) (*PreviewSkillRequestResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &PreviewSkillRequestResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SkillRequestPreview
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 502:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON502 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseRejectSkillRequestResponse parses an HTTP response from a RejectSkillRequestWithResponse call
+func ParseRejectSkillRequestResponse(rsp *http.Response) (*RejectSkillRequestResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &RejectSkillRequestResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SkillRequestEnvelope
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListUserSkillsResponse parses an HTTP response from a ListUserSkillsWithResponse call
+func ParseListUserSkillsResponse(rsp *http.Response) (*ListUserSkillsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListUserSkillsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ManagedUserSkillList
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseRemoveUserSkillResponse parses an HTTP response from a RemoveUserSkillWithResponse call
+func ParseRemoveUserSkillResponse(rsp *http.Response) (*RemoveUserSkillResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &RemoveUserSkillResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest FlatError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseListUsersResponse parses an HTTP response from a ListUsersWithResponse call
 func ParseListUsersResponse(rsp *http.Response) (*ListUsersResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -39909,6 +41885,215 @@ func ParseSearchResponse(rsp *http.Response) (*SearchResponse, error) {
 			return nil, err
 		}
 		response.JSON503 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListMySkillRequestsResponse parses an HTTP response from a ListMySkillRequestsWithResponse call
+func ParseListMySkillRequestsResponse(rsp *http.Response) (*ListMySkillRequestsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListMySkillRequestsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SkillRequestList
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateSkillRequestResponse parses an HTTP response from a CreateSkillRequestWithResponse call
+func ParseCreateSkillRequestResponse(rsp *http.Response) (*CreateSkillRequestResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateSkillRequestResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SkillRequestWriteResult
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest SkillRequestWriteResult
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseWithdrawSkillRequestResponse parses an HTTP response from a WithdrawSkillRequestWithResponse call
+func ParseWithdrawSkillRequestResponse(rsp *http.Response) (*WithdrawSkillRequestResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &WithdrawSkillRequestResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SkillRequestEnvelope
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetMySkillRequestResponse parses an HTTP response from a GetMySkillRequestWithResponse call
+func ParseGetMySkillRequestResponse(rsp *http.Response) (*GetMySkillRequestResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetMySkillRequestResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SkillRequestEnvelope
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
 
 	}
 
@@ -40451,6 +42636,86 @@ func ParsePublishAgentSkillVersionResponse(rsp *http.Response) (*PublishAgentSki
 			return nil, err
 		}
 		response.JSON409 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListMyUserSkillsResponse parses an HTTP response from a ListMyUserSkillsWithResponse call
+func ParseListMyUserSkillsResponse(rsp *http.Response) (*ListMyUserSkillsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListMyUserSkillsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest UserSkillList
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseRemoveMyUserSkillResponse parses an HTTP response from a RemoveMyUserSkillWithResponse call
+func ParseRemoveMyUserSkillResponse(rsp *http.Response) (*RemoveMyUserSkillResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &RemoveMyUserSkillResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest FieldError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
 
 	}
 

@@ -19,12 +19,15 @@ class UsageAgentSkill:
         version (int | Unset):
         sha256 (str | Unset):
         source (str | Unset):
+        user (bool | Unset): True for one of the caller's user skills (`/v1/user-skills`) rather than one the agent
+            declares. Omitted when false.
     """
 
     skill: str | Unset = UNSET
     version: int | Unset = UNSET
     sha256: str | Unset = UNSET
     source: str | Unset = UNSET
+    user: bool | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -35,6 +38,8 @@ class UsageAgentSkill:
         sha256 = self.sha256
 
         source = self.source
+
+        user = self.user
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
@@ -47,6 +52,8 @@ class UsageAgentSkill:
             field_dict["sha256"] = sha256
         if source is not UNSET:
             field_dict["source"] = source
+        if user is not UNSET:
+            field_dict["user"] = user
 
         return field_dict
 
@@ -61,11 +68,14 @@ class UsageAgentSkill:
 
         source = d.pop("source", UNSET)
 
+        user = d.pop("user", UNSET)
+
         usage_agent_skill = cls(
             skill=skill,
             version=version,
             sha256=sha256,
             source=source,
+            user=user,
         )
 
         usage_agent_skill.additional_properties = d

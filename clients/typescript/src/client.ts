@@ -552,6 +552,120 @@ export interface McpServer {
   governanceEnforcement: string;
 }
 
+/** Where a {@link SkillRequest} stands. */
+export type SkillRequestStatus = "pending" | "approved" | "rejected" | "withdrawn";
+
+/** A catalog version an approval activated for the requester. */
+export interface ApprovedUserSkill {
+  name: string;
+  version: number;
+  sha256: string;
+}
+
+/**
+ * One person's request for an Agent Skill from a GitHub link, for their own
+ * copilot. An admin of their org approves or rejects it; an approval
+ * activates the skill for the requester only.
+ */
+export interface SkillRequest {
+  id: string;
+  /** The requester. */
+  userId: string;
+  url: string;
+  /** `owner/repo`. */
+  repo: string;
+  /** Absent for the default branch. */
+  ref?: string;
+  /** Absent for the repository root. */
+  path?: string;
+  note?: string;
+  status: SkillRequestStatus;
+  createdAt: string;
+  /** Who approved, rejected or withdrew it. */
+  decidedBy?: string;
+  decidedAt?: string;
+  /** The admin's reason for a rejection. */
+  reason?: string;
+  /** Set by an approval: the commit imported and the licence recorded. */
+  commit?: string;
+  license?: string;
+  /** Set by an approval: the versions activated. Empty otherwise. */
+  skills: ApprovedUserSkill[];
+}
+
+/** A file of a previewed skill that an approval leaves out, and why. */
+export interface SkillLeftOut {
+  path: string;
+  reason: string;
+}
+
+/**
+ * One skill a request's link yields, as an approval would import it. When
+ * `error` is set it cannot be imported, and `catalog` is absent.
+ */
+export interface SkillRequestCandidate {
+  name?: string;
+  /** The skill's folder in the repository. */
+  path: string;
+  description?: string;
+  /** The instructions: `SKILL.md` without its frontmatter. */
+  body?: string;
+  sha256?: string;
+  /** Reference files imported besides `SKILL.md`. */
+  files: string[];
+  /** Scripts and binary files left out: LibraOS never runs a skill's scripts. */
+  leftOut: SkillLeftOut[];
+  error?: string;
+  /**
+   * What approving does to the org catalog: `new` imports and publishes,
+   * `published` reuses identical published content (`catalogVersion`), and
+   * `name_taken` means the approval is refused (409).
+   */
+  catalog?: "new" | "published" | "name_taken";
+  catalogVersion?: number;
+}
+
+/** What a request's link holds at the commit its ref resolved to. */
+export interface SkillRequestPreview {
+  request: SkillRequest;
+  repo: string;
+  /** Empty for the default branch. */
+  ref: string;
+  /** Approve with exactly this commit. */
+  commit: string;
+  license: string;
+  skills: SkillRequestCandidate[];
+}
+
+/**
+ * One of a person's user skills, pinned to a catalog version and its
+ * SHA-256: a later import or publish of the name does not change it.
+ */
+export interface UserSkill {
+  name: string;
+  version: number;
+  sha256: string;
+  /** The approved request that activated it. */
+  requestId?: string;
+  /** The admin who approved it. */
+  activatedBy?: string;
+  activatedAt: string;
+  /**
+   * `unavailable` when the version was archived or no longer has the
+   * approved content; `reason` says which. An unavailable skill is not used.
+   */
+  status: "active" | "unavailable";
+  reason?: string;
+  description?: string;
+  /** e.g. `github.com/<owner>/<repo>@<commit>/<path>`. */
+  source?: string;
+}
+
+/** A user skill as an org admin lists it, with the person it belongs to. */
+export interface ManagedUserSkill extends UserSkill {
+  userId: string;
+}
+
 /**
  * A tenant's entitlement flags (employee-assistant #80). Flags gate premium
  * capabilities; a tenant with no stored row reads the "free floor" (every
@@ -2197,6 +2311,163 @@ export class LibraOSClient {
     return toUsageSummary((await res.json()) as RawUsageSummary);
   }
 
+  // ── User skills ────────────────────────────────────────────────────────
+  //
+  // A signed-in person asks for an Agent Skill from a GitHub link for their
+  // own copilot; an admin of their org previews it at a pinned commit and
+  // approves or rejects it. Approved skills apply only to that person's own
+  // chat turns.
+  //
+  // The "my" methods (and createSkillRequest, withdrawSkillRequest) need a
+  // signed-in person's token: service clients and API keys get 403. None of
+  // them takes a user id, because the server reads the person from the token.
+  // The other methods are admin-only and stay within the admin's org.
+  //
+  // Errors are {error: {type, message, field?}} in LibraOSApiError.body, so
+  // branch on body.error.type: unsupported_link, pending_limit, not_pending,
+  // name_taken, active_limit, invalid_selection, import_refused, fetch_failed.
+  // The exception is a non-admin calling an admin method: the server's route
+  // gate answers 403 {error: "admin_required"}, a plain string.
+  // A kernel without user skills, or without PostgreSQL, answers 404.
+
+  /**
+   * Ask for a skill from a GitHub link: a repository, folder or `SKILL.md`
+   * URL. Nothing is fetched until an admin previews it. If you already have a
+   * pending request for the same link, that one comes back with
+   * `created: false`.
+   */
+  async createSkillRequest(url: string, opts?: { note?: string }): Promise<{ request: SkillRequest; created: boolean }> {
+    const res = await this.rawFetch("/v1/skill-requests", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ url, note: opts?.note }),
+    });
+    if (!res.ok) throw await this.toApiError(res);
+    const j = (await res.json()) as { request: RawSkillRequest; created: boolean };
+    return { request: toSkillRequest(j.request), created: j.created };
+  }
+
+  /** Your own skill requests, newest first. */
+  async listMySkillRequests(opts?: { status?: SkillRequestStatus; limit?: number; signal?: AbortSignal }): Promise<SkillRequest[]> {
+    const qs = new URLSearchParams();
+    if (opts?.status) qs.set("status", opts.status);
+    if (opts?.limit != null) qs.set("limit", String(opts.limit));
+    const q = qs.toString();
+    const res = await this.rawFetch(`/v1/skill-requests${q ? `?${q}` : ""}`, { method: "GET", signal: opts?.signal });
+    if (!res.ok) throw await this.toApiError(res);
+    const j = (await res.json()) as { data?: RawSkillRequest[] };
+    return (j.data ?? []).map(toSkillRequest);
+  }
+
+  /** One of your skill requests. Someone else's answers 404. */
+  async getMySkillRequest(id: string): Promise<SkillRequest> {
+    const res = await this.rawFetch(`/v1/skill-requests/${encodeURIComponent(id)}`, { method: "GET" });
+    if (!res.ok) throw await this.toApiError(res);
+    const j = (await res.json()) as { request: RawSkillRequest };
+    return toSkillRequest(j.request);
+  }
+
+  /** Withdraw one of your pending requests. 409 (not_pending) once it is decided. */
+  async withdrawSkillRequest(id: string): Promise<SkillRequest> {
+    const res = await this.rawFetch(`/v1/skill-requests/${encodeURIComponent(id)}`, { method: "DELETE" });
+    if (!res.ok) throw await this.toApiError(res);
+    const j = (await res.json()) as { request: RawSkillRequest };
+    return toSkillRequest(j.request);
+  }
+
+  /** Your user skills, by name, including any that became unavailable. */
+  async listMyUserSkills(opts?: { signal?: AbortSignal }): Promise<UserSkill[]> {
+    const res = await this.rawFetch("/v1/user-skills", { method: "GET", signal: opts?.signal });
+    if (!res.ok) throw await this.toApiError(res);
+    const j = (await res.json()) as { data?: RawUserSkill[] };
+    return (j.data ?? []).map(toUserSkill);
+  }
+
+  /** Stop using one of your user skills. The catalog version is unchanged. */
+  async removeMyUserSkill(name: string): Promise<void> {
+    const res = await this.rawFetch(`/v1/user-skills/${encodeURIComponent(name)}`, { method: "DELETE" });
+    if (!res.ok) throw await this.toApiError(res);
+  }
+
+  /** The org's skill requests, newest first (admin). */
+  async listSkillRequests(opts?: { status?: SkillRequestStatus; userId?: string; limit?: number; signal?: AbortSignal }): Promise<SkillRequest[]> {
+    const qs = new URLSearchParams();
+    if (opts?.status) qs.set("status", opts.status);
+    if (opts?.userId) qs.set("user_id", opts.userId);
+    if (opts?.limit != null) qs.set("limit", String(opts.limit));
+    const q = qs.toString();
+    const res = await this.rawFetch(`/v1/managed/skill-requests${q ? `?${q}` : ""}`, { method: "GET", signal: opts?.signal });
+    if (!res.ok) throw await this.toApiError(res);
+    const j = (await res.json()) as { data?: RawSkillRequest[] };
+    return (j.data ?? []).map(toSkillRequest);
+  }
+
+  /**
+   * Fetch a pending request's link from GitHub and show what an approval
+   * would import, at the commit its ref resolves to (admin). Writes nothing.
+   */
+  async previewSkillRequest(id: string): Promise<SkillRequestPreview> {
+    const res = await this.rawFetch(`/v1/managed/skill-requests/${encodeURIComponent(id)}/preview`, { method: "POST" });
+    if (!res.ok) throw await this.toApiError(res);
+    const j = (await res.json()) as RawSkillRequestPreview;
+    return {
+      request: toSkillRequest(j.request), repo: j.repo, ref: j.ref ?? "", commit: j.commit,
+      license: j.license, skills: (j.skills ?? []).map(toSkillRequestCandidate),
+    };
+  }
+
+  /**
+   * Approve exactly `commit`, the one {@link previewSkillRequest} returned
+   * (admin). The skills are imported into the org catalog, published and
+   * activated for the requester only. `skills` is required when the link
+   * yields several.
+   */
+  async approveSkillRequest(id: string, commit: string, opts?: { skills?: string[] }): Promise<SkillRequest> {
+    const res = await this.rawFetch(`/v1/managed/skill-requests/${encodeURIComponent(id)}/approve`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ commit, skills: opts?.skills }),
+    });
+    if (!res.ok) throw await this.toApiError(res);
+    const j = (await res.json()) as { request: RawSkillRequest };
+    return toSkillRequest(j.request);
+  }
+
+  /** Reject a pending request (admin). The requester can read the reason. */
+  async rejectSkillRequest(id: string, reason: string): Promise<SkillRequest> {
+    const res = await this.rawFetch(`/v1/managed/skill-requests/${encodeURIComponent(id)}/reject`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ reason }),
+    });
+    if (!res.ok) throw await this.toApiError(res);
+    const j = (await res.json()) as { request: RawSkillRequest };
+    return toSkillRequest(j.request);
+  }
+
+  /**
+   * The user skills of everyone in the org, by person and then name (admin).
+   * `userId` and `name` are exact-match filters; `limit` defaults to 50, at most 200.
+   */
+  async listUserSkills(opts?: { userId?: string; name?: string; limit?: number; signal?: AbortSignal }): Promise<ManagedUserSkill[]> {
+    const qs = new URLSearchParams();
+    if (opts?.userId) qs.set("user_id", opts.userId);
+    if (opts?.name) qs.set("name", opts.name);
+    if (opts?.limit != null) qs.set("limit", String(opts.limit));
+    const q = qs.toString();
+    const res = await this.rawFetch(`/v1/managed/user-skills${q ? `?${q}` : ""}`, { method: "GET", signal: opts?.signal });
+    if (!res.ok) throw await this.toApiError(res);
+    const j = (await res.json()) as { data?: RawUserSkill[] };
+    return (j.data ?? []).map((s) => ({ ...toUserSkill(s), userId: s.user_id ?? "" }));
+  }
+
+  /** Remove one person's user skill (admin). The catalog version is unchanged. */
+  async removeUserSkill(userId: string, name: string): Promise<void> {
+    const q = new URLSearchParams({ user_id: userId }).toString();
+    const res = await this.rawFetch(`/v1/managed/user-skills/${encodeURIComponent(name)}?${q}`, { method: "DELETE" });
+    if (!res.ok) throw await this.toApiError(res);
+  }
+
   // ── internals ──────────────────────────────────────────────────────────
 
   /** Bearer-injected, refresh-on-401 raw fetch for SSE/multipart surfaces. */
@@ -2557,5 +2828,57 @@ function toUsageSummary(raw: RawUsageSummary): UsageSummary {
     byUser: (raw.by_user ?? []).map(toUsageBreakdown),
     byApiKey: (raw.by_api_key ?? []).map(toUsageBreakdown),
     byApplication: (raw.by_application ?? []).map(toUsageBreakdown),
+  };
+}
+
+// ── user-skills wire shapes (snake_case → camelCase) ──────────────────────
+
+interface RawSkillRequest {
+  id: string; user_id: string; url: string; repo: string; ref?: string; path?: string; note?: string;
+  status: SkillRequestStatus; created_at: string; decided_by?: string; decided_at?: string; reason?: string;
+  commit?: string; license?: string; skills?: ApprovedUserSkill[] | null;
+}
+
+interface RawSkillRequestCandidate {
+  name?: string; path: string; description?: string; body?: string; sha256?: string;
+  files?: string[] | null; left_out?: SkillLeftOut[] | null; error?: string;
+  catalog?: "new" | "published" | "name_taken"; catalog_version?: number;
+}
+
+interface RawSkillRequestPreview {
+  request: RawSkillRequest; repo: string; ref?: string; commit: string; license: string;
+  skills?: RawSkillRequestCandidate[] | null;
+}
+
+interface RawUserSkill {
+  name: string; version: number; sha256: string; request_id?: string; activated_by?: string; activated_at: string;
+  status?: string; reason?: string; description?: string; source?: string; user_id?: string;
+}
+
+function toSkillRequest(r: RawSkillRequest): SkillRequest {
+  return {
+    id: r.id, userId: r.user_id, url: r.url, repo: r.repo, ref: r.ref, path: r.path, note: r.note,
+    status: r.status, createdAt: r.created_at, decidedBy: r.decided_by, decidedAt: r.decided_at,
+    reason: r.reason, commit: r.commit, license: r.license,
+    skills: (r.skills ?? []).map((s) => ({ name: s.name, version: s.version, sha256: s.sha256 })),
+  };
+}
+
+function toSkillRequestCandidate(c: RawSkillRequestCandidate): SkillRequestCandidate {
+  return {
+    name: c.name, path: c.path, description: c.description, body: c.body, sha256: c.sha256,
+    files: c.files ?? [], leftOut: (c.left_out ?? []).map((l) => ({ path: l.path, reason: l.reason })),
+    error: c.error, catalog: c.catalog, catalogVersion: c.catalog_version,
+  };
+}
+
+function toUserSkill(s: RawUserSkill): UserSkill {
+  return {
+    name: s.name, version: s.version, sha256: s.sha256, requestId: s.request_id, activatedBy: s.activated_by,
+    activatedAt: s.activated_at,
+    // Only an explicit "active" reads as active. A status this client does not
+    // know must not render as a skill that is in use.
+    status: s.status === "active" ? "active" : "unavailable",
+    reason: s.reason, description: s.description, source: s.source,
   };
 }

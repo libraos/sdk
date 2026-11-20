@@ -92,6 +92,10 @@ tags:
     description: Feature status, infra health, and logs.
   - name: AgentSkills
     description: Versioned Agent Skills catalog that agents attach through `agent_skills`.
+  - name: UserSkills
+    description: >-
+      Agent Skills a signed-in person requests from a GitHub link for their own
+      copilot; an org admin approves or rejects each request.
   - name: Schedules
     description: Per-user scheduled agent runs delivered to a conversation.
   - name: Decision
@@ -2022,6 +2026,11 @@ components:
         version: { type: integer }
         sha256: { type: string }
         source: { type: string }
+        user:
+          type: boolean
+          description: >-
+            True for one of the caller's user skills (`/v1/user-skills`) rather
+            than one the agent declares. Omitted when false.
 
     UsageAgentSkills:
       type: object
@@ -4612,6 +4621,266 @@ components:
         removed_upstream:
           type: boolean
           description: True when the skill's path no longer exists upstream.
+
+    # ── User skills (/v1/skill-requests, /v1/user-skills) ────────────
+    SkillRequestStatus:
+      type: string
+      enum: [pending, approved, rejected, withdrawn]
+
+    SkillRequestCreate:
+      type: object
+      required: [url]
+      properties:
+        url:
+          type: string
+          description: >
+            HTTPS link to a GitHub repository, a `tree`/`blob` folder or file
+            in one, or a `raw.githubusercontent.com` file: any form
+            `POST /v1/skills/import` accepts. A link to a `SKILL.md` means its
+            folder. At most 2048 characters.
+        note:
+          type: string
+          maxLength: 1000
+          description: For the reviewing admin. At most 1000 characters.
+
+    ApprovedUserSkill:
+      type: object
+      description: A catalog version an approval activated for the requester.
+      required: [name, version, sha256]
+      properties:
+        name: { type: string }
+        version: { type: integer }
+        sha256: { type: string }
+
+    SkillRequest:
+      type: object
+      description: One person's request for a skill from a GitHub link.
+      required: [id, user_id, url, repo, status, created_at]
+      properties:
+        id: { type: string }
+        user_id:
+          type: string
+          description: The requester. An approval activates the skill for them only.
+        url:
+          type: string
+          description: The link as submitted.
+        repo:
+          type: string
+          description: '`owner/repo`.'
+        ref:
+          type: string
+          description: The branch, tag or commit the link names; omitted for the default branch.
+        path:
+          type: string
+          description: The folder the link names; omitted for the repository root.
+        note: { type: string }
+        status: { $ref: '#/components/schemas/SkillRequestStatus' }
+        created_at: { type: string, format: date-time }
+        decided_by:
+          type: string
+          description: Who approved, rejected or withdrew the request.
+        decided_at: { type: string, format: date-time }
+        reason:
+          type: string
+          description: The admin's reason for a rejection.
+        commit:
+          type: string
+          description: Set by an approval; the commit that was imported.
+        license:
+          type: string
+          description: Set by an approval; the repository licence that was recorded.
+        skills:
+          type: array
+          description: Set by an approval; the versions activated for the requester.
+          items: { $ref: '#/components/schemas/ApprovedUserSkill' }
+
+    SkillRequestEnvelope:
+      type: object
+      required: [request]
+      properties:
+        request: { $ref: '#/components/schemas/SkillRequest' }
+
+    SkillRequestWriteResult:
+      type: object
+      required: [request, created]
+      properties:
+        request: { $ref: '#/components/schemas/SkillRequest' }
+        created:
+          type: boolean
+          description: >-
+            False when the caller already had a pending request for the same
+            link, which is returned instead.
+
+    SkillRequestList:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: array
+          description: Newest first.
+          items: { $ref: '#/components/schemas/SkillRequest' }
+
+    SkillRequestLeftOut:
+      type: object
+      description: A file of the linked skill that an approval does not import.
+      required: [path, reason]
+      properties:
+        path: { type: string }
+        reason:
+          type: string
+          description: '`script: LibraOS never runs scripts` or `not a text file`.'
+
+    SkillRequestCandidate:
+      type: object
+      description: >
+        One skill the link yields at the previewed commit, as an approval
+        would import it. When `error` is set the skill cannot be imported and
+        only `name` (if readable), `path` and `left_out` may be present.
+      required: [path]
+      properties:
+        name: { type: string }
+        path:
+          type: string
+          description: The skill's folder in the repository.
+        description: { type: string }
+        body:
+          type: string
+          description: The instructions, `SKILL.md` without its frontmatter.
+        sha256:
+          type: string
+          description: Digest over the files an approval imports, computed as for a catalog version.
+        files:
+          type: array
+          items: { type: string }
+          description: Reference files an approval imports besides `SKILL.md`.
+        left_out:
+          type: array
+          description: >
+            Files an approval leaves out: scripts (anything under `scripts/`,
+            source and executable files, files starting with `#!`) and binary
+            files. LibraOS never runs a skill's scripts.
+          items: { $ref: '#/components/schemas/SkillRequestLeftOut' }
+        error: { type: string }
+        catalog:
+          type: string
+          enum: [new, published, name_taken]
+          description: >
+            What approving does to the org catalog. `new`: the skill is
+            imported and published. `published`: identical content is already
+            published as `catalog_version` and is reused. `name_taken`: the
+            org already uses the name (a catalog version in any status, or a
+            `LIBRA_OS_SKILLS_DIR` folder), so approving is refused with 409.
+        catalog_version:
+          type: integer
+          description: The published version an approval would reuse, when `catalog` is `published`.
+
+    SkillRequestPreview:
+      type: object
+      required: [request, repo, ref, commit, license, skills]
+      properties:
+        request: { $ref: '#/components/schemas/SkillRequest' }
+        repo: { type: string }
+        ref:
+          type: string
+          description: The ref the link names; empty for the default branch.
+        commit:
+          type: string
+          description: The 40-character commit the ref resolved to. Approve with this value.
+        license:
+          type: string
+          description: The repository's root licence, e.g. `MIT`, or `LicenseRef-see-LICENSE`.
+        skills:
+          type: array
+          items: { $ref: '#/components/schemas/SkillRequestCandidate' }
+
+    SkillRequestApproval:
+      type: object
+      required: [commit]
+      properties:
+        commit:
+          type: string
+          pattern: '^[0-9a-f]{40}$'
+          description: The commit the preview returned. Approval reads exactly this commit.
+        skills:
+          type: array
+          items: { type: string }
+          description: >
+            Names of the skills to approve. Optional when the link yields one
+            importable skill; required when it yields several.
+
+    SkillRequestRejection:
+      type: object
+      required: [reason]
+      properties:
+        reason:
+          type: string
+          minLength: 1
+          maxLength: 1000
+          description: Recorded on the request, where the requester can read it. 1-1000 characters, not blank.
+
+    UserSkill:
+      type: object
+      description: >
+        One of a person's active skills, pinned to a catalog version and its
+        SHA-256. A later import or publish of the same name does not change it.
+      required: [name, version, sha256, activated_at, status]
+      properties:
+        name: { type: string }
+        version: { type: integer }
+        sha256: { type: string }
+        request_id:
+          type: string
+          description: The approved request that activated it.
+        activated_by:
+          type: string
+          description: The admin who approved it.
+        activated_at: { type: string, format: date-time }
+        status:
+          type: string
+          enum: [active, unavailable]
+          description: >
+            `unavailable` when the version is no longer published (for
+            example archived) or no longer has the approved content. An
+            unavailable skill is not used on the person's turns.
+        reason:
+          type: string
+          description: Why the skill is unavailable.
+        description:
+          type: string
+          description: The catalog version's description; omitted when the version cannot be read.
+        source:
+          type: string
+          description: >
+            Where the version came from, e.g.
+            `github.com/<owner>/<repo>@<commit>/<path>`; omitted when the
+            version cannot be read.
+
+    UserSkillList:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: array
+          description: By name.
+          items: { $ref: '#/components/schemas/UserSkill' }
+
+    ManagedUserSkill:
+      description: A user skill as an admin sees it, with the person it belongs to.
+      allOf:
+        - $ref: '#/components/schemas/UserSkill'
+        - type: object
+          required: [user_id]
+          properties:
+            user_id: { type: string }
+
+    ManagedUserSkillList:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: array
+          description: By `user_id`, then `name`.
+          items: { $ref: '#/components/schemas/ManagedUserSkill' }
 
     # ── Scheduled runs (/v1/managed/schedules) ───────────────────────
     ScheduleDelivery:
@@ -10570,6 +10839,503 @@ paths:
               schema: { $ref: '#/components/schemas/FieldError' }
         '502':
           description: GitHub could not be read (`fetch_failed`).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+  /v1/skill-requests:
+    post:
+      operationId: createSkillRequest
+      summary: Request a skill for your own copilot
+      description: >-
+        Asks an admin of the caller's org for an Agent Skill from a GitHub
+        link, for the caller's own copilot. Nothing is fetched here: only an
+        admin's preview or approval reads the link. If the caller already has
+        a pending request for the same link, in any accepted form, it is
+        returned with 200 and `created: false`. At most 10 pending requests
+        per person. Once approved, the skill applies only to the caller's own
+        interactive chat turns in this org, on `/v1/messages` and
+        `/agents/v1/{api_key}/chat` (with its `/v1/apps/{app}/agents/{id}/chat`
+        alias). It never applies on `/v1/chat/completions`, to service
+        clients or API keys, or in async jobs and schedules, and an agent's
+        own skill of the same name wins. Requires a signed-in person: service
+        clients and API keys get 403. Registered only on deployments with
+        PostgreSQL; otherwise every user-skills route answers 404.
+      tags: [UserSkills]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SkillRequestCreate' }
+      responses:
+        '200':
+          description: The caller's pending request for the same link; `created` is false.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SkillRequestWriteResult' }
+        '201':
+          description: Request created, pending review.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SkillRequestWriteResult' }
+        '400':
+          description: >-
+            `unsupported_link` (`field: url`): not a GitHub repository, folder
+            or `SKILL.md` link. `invalid_request`: invalid JSON, or a note over
+            1000 characters (`field: note`).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403':
+          description: Called by a service client or with an API key (`forbidden`).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+        '409':
+          description: The caller already has 10 pending requests (`pending_limit`).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+    get:
+      operationId: listMySkillRequests
+      summary: List your skill requests
+      description: >-
+        The caller's own requests in the caller's org, newest first. Requires
+        a signed-in person.
+      tags: [UserSkills]
+      parameters:
+        - name: status
+          in: query
+          schema: { $ref: '#/components/schemas/SkillRequestStatus' }
+        - name: limit
+          in: query
+          description: Default 50, at most 200.
+          schema: { type: integer, minimum: 1 }
+      responses:
+        '200':
+          description: The caller's requests.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SkillRequestList' }
+        '400':
+          description: '`status` or `limit` is invalid (`invalid_request`).'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403':
+          description: Called by a service client or with an API key (`forbidden`).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+  /v1/skill-requests/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string }
+    get:
+      operationId: getMySkillRequest
+      summary: Fetch one of your skill requests
+      description: >-
+        Another person's request, or one in another org, answers 404 like a
+        missing one. Requires a signed-in person.
+      tags: [UserSkills]
+      responses:
+        '200':
+          description: The request.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SkillRequestEnvelope' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403':
+          description: Called by a service client or with an API key (`forbidden`).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+        '404':
+          description: Unknown request, or not the caller's (`not_found`).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+    delete:
+      operationId: withdrawSkillRequest
+      summary: Withdraw a pending skill request
+      description: >-
+        Withdraws one of the caller's own pending requests. The request is
+        kept, with `status: withdrawn` and `decided_by` set to the caller.
+        Requires a signed-in person.
+      tags: [UserSkills]
+      responses:
+        '200':
+          description: The withdrawn request.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SkillRequestEnvelope' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403':
+          description: Called by a service client or with an API key (`forbidden`).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+        '404':
+          description: Unknown request, or not the caller's (`not_found`).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+        '409':
+          description: The request is no longer pending (`not_pending`).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+  /v1/user-skills:
+    get:
+      operationId: listMyUserSkills
+      summary: List your user skills
+      description: >-
+        The skills approved for the caller in the caller's org. Each is pinned
+        to a catalog version and its SHA-256. When that version is archived or
+        its content no longer matches, the skill is listed as `unavailable`
+        and stops applying from the caller's next turn. Requires a signed-in
+        person.
+      tags: [UserSkills]
+      responses:
+        '200':
+          description: The caller's user skills.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UserSkillList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403':
+          description: Called by a service client or with an API key (`forbidden`).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+  /v1/user-skills/{name}:
+    parameters:
+      - name: name
+        in: path
+        required: true
+        schema: { type: string }
+    delete:
+      operationId: removeMyUserSkill
+      summary: Stop using one of your user skills
+      description: >-
+        Removes the skill from the caller's own skills. The catalog version is
+        unchanged. Requires a signed-in person.
+      tags: [UserSkills]
+      responses:
+        '204':
+          description: Removed.
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403':
+          description: Called by a service client or with an API key (`forbidden`).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+        '404':
+          description: The caller has no user skill of that name (`not_found`).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+  /v1/managed/skill-requests:
+    get:
+      operationId: listSkillRequests
+      summary: List the org's skill requests
+      description: >-
+        Admin-only. The requests made in the admin's org, newest first.
+        Registered only on deployments with PostgreSQL; otherwise every
+        user-skills route answers 404.
+      tags: [UserSkills]
+      parameters:
+        - name: status
+          in: query
+          schema: { $ref: '#/components/schemas/SkillRequestStatus' }
+        - name: user_id
+          in: query
+          description: Only this person's requests.
+          schema: { type: string }
+        - name: limit
+          in: query
+          description: Default 50, at most 200.
+          schema: { type: integer, minimum: 1 }
+      responses:
+        '200':
+          description: The org's requests.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SkillRequestList' }
+        '400':
+          description: '`status` or `limit` is invalid (`invalid_request`).'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403':
+          description: Not an admin (`admin_required`).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+  /v1/managed/skill-requests/{id}/preview:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      operationId: previewSkillRequest
+      summary: Preview a pending skill request
+      description: >-
+        Admin-only. Fetches the request's link from GitHub at the ref it names
+        and returns the resolved commit and, for each skill found, what an
+        approval would import: the instructions (`body`), the reference files
+        kept, the files left out and why, the SHA-256, and what approving
+        would do to the org catalog (`catalog`). Writes nothing. A repository
+        without a licence file is refused. Another org's request answers 404.
+      tags: [UserSkills]
+      responses:
+        '200':
+          description: What the link holds at the resolved commit.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SkillRequestPreview' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403':
+          description: Not an admin (`admin_required`).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '404':
+          description: Unknown request, or another org's (`not_found`).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+        '409':
+          description: The request is no longer pending (`not_pending`).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+        '422':
+          description: >-
+            `import_refused` (`field: url`): the repository has no licence
+            file, or there is no `SKILL.md` at the link.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+        '502':
+          description: >-
+            `fetch_failed` (`field: url`): GitHub could not be read, the ref
+            did not resolve, or the link holds more than 50 skills.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+  /v1/managed/skill-requests/{id}/approve:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      operationId: approveSkillRequest
+      summary: Approve a pending skill request
+      description: >-
+        Admin-only. Reads exactly `commit`, the commit the preview returned,
+        and imports the chosen skills' instructions into the org catalog
+        through the `/v1/skills` import path: the source is pinned to that
+        commit and the licence is recorded. Scripts and binary files are left
+        out. It then publishes the versions and activates them for the
+        requester only. A link that yields several importable skills needs
+        `skills`. Approval never changes what an existing skill name means for
+        the org's agents: a name the org already uses (a catalog version in
+        any status, or a `LIBRA_OS_SKILLS_DIR` folder) is refused, unless
+        identical content is already published, in which case that version is
+        reused and nothing is written. To give someone an update to a skill
+        the org already has, publish it through `/v1/skills` first, then
+        approve. At most 10 active user skills per person.
+      tags: [UserSkills]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SkillRequestApproval' }
+      responses:
+        '200':
+          description: The approved request, with `commit`, `license` and `skills`.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SkillRequestEnvelope' }
+        '400':
+          description: >-
+            `invalid_request`: invalid JSON, or `commit` is not a 40-character
+            lowercase hex commit (`field: commit`).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403':
+          description: Not an admin (`admin_required`).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '404':
+          description: Unknown request, or another org's (`not_found`).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+        '409':
+          description: >-
+            `not_pending`: the request was already decided. `name_taken`
+            (`field: skills`): the org already uses a chosen name for other
+            content, or the catalog changed during the approval. `active_limit`:
+            the requester would have more than 10 active user skills.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+        '422':
+          description: >-
+            `import_refused` (`field: url`): no licence file, or no `SKILL.md`
+            at the link. `invalid_selection` (`field: skills`): the link yields
+            several importable skills and `skills` names none, a named skill is
+            missing, cannot be imported or is ambiguous, or nothing at the link
+            can be imported. `invalid_skill` (`field: skills`): the catalog
+            refused the content.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+        '502':
+          description: >-
+            `fetch_failed`: GitHub could not be read (`field: url`), or it
+            returned a different commit (`field: commit`).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+  /v1/managed/skill-requests/{id}/reject:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      operationId: rejectSkillRequest
+      summary: Reject a pending skill request
+      description: >-
+        Admin-only. The reason is recorded on the request, where the requester
+        can read it.
+      tags: [UserSkills]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SkillRequestRejection' }
+      responses:
+        '200':
+          description: The rejected request.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SkillRequestEnvelope' }
+        '400':
+          description: >-
+            `invalid_request`: invalid JSON, or a `reason` that is blank or
+            over 1000 characters (`field: reason`).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403':
+          description: Not an admin (`admin_required`).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '404':
+          description: Unknown request, or another org's (`not_found`).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+        '409':
+          description: The request is no longer pending (`not_pending`).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+  /v1/managed/user-skills:
+    get:
+      operationId: listUserSkills
+      summary: List the org's user skills
+      description: >-
+        Admin-only. The user skills of everyone in the admin's org, by
+        `user_id` and then `name`. Each item is what that person's
+        `GET /v1/user-skills` shows, plus `user_id`, so a skill whose version
+        was archived is listed as `unavailable` with a `reason`.
+      tags: [UserSkills]
+      parameters:
+        - name: user_id
+          in: query
+          description: Only this person's skills (exact match).
+          schema: { type: string }
+        - name: name
+          in: query
+          description: Only skills of this name (exact match).
+          schema: { type: string }
+        - name: limit
+          in: query
+          description: Default 50, at most 200.
+          schema: { type: integer, minimum: 1 }
+      responses:
+        '200':
+          description: The org's user skills.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ManagedUserSkillList' }
+        '400':
+          description: '`limit` is not a positive integer (`invalid_request`, `field: limit`).'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403':
+          description: Not an admin (`admin_required`).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+  /v1/managed/user-skills/{name}:
+    parameters:
+      - name: name
+        in: path
+        required: true
+        schema: { type: string }
+    delete:
+      operationId: removeUserSkill
+      summary: Remove a person's user skill
+      description: >-
+        Admin-only. Removes the skill from the person named by `user_id`, in
+        the admin's org, whether it is `active` or `unavailable`. It stops
+        applying from their next turn. The catalog version, the request and
+        other people's skills are unchanged. Each removal is recorded as an
+        audit event (namespace `user_skills`, event `user_skill.removed`).
+      tags: [UserSkills]
+      parameters:
+        - name: user_id
+          in: query
+          required: true
+          description: The person whose skill to remove.
+          schema: { type: string }
+      responses:
+        '204':
+          description: Removed.
+        '400':
+          description: '`user_id` is missing or blank (`invalid_request`, `field: user_id`).'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FieldError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403':
+          description: Not an admin (`admin_required`).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlatError' }
+        '404':
+          description: >-
+            That person has no user skill of that name (`not_found`), the same
+            answer as `DELETE /v1/user-skills/{name}`.
           content:
             application/json:
               schema: { $ref: '#/components/schemas/FieldError' }

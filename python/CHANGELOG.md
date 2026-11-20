@@ -2,6 +2,25 @@
 
 All notable changes to `libraos-sdk` (Python) will be documented in this file.
 
+## [Unreleased]
+
+### Added
+
+- **User skills in the partner spec** (reached through `libraos._generated.api.user_skills`, no
+  wrappers). A signed-in person asks for an Agent Skill from a GitHub link for their own copilot;
+  an admin of their org previews it at a pinned commit and approves or rejects it, and approved
+  skills apply only to that person's own chat turns. `libraos._generated` and the Go client are
+  regenerated, and the TypeScript `LibraOSClient` gains a method per route.
+  - The person's own routes, which refuse service clients and API keys (403):
+    `POST`/`GET /v1/skill-requests`, `GET`/`DELETE /v1/skill-requests/{id}` (withdraw),
+    `GET /v1/user-skills` and `DELETE /v1/user-skills/{name}`.
+  - The org admin's routes: `GET /v1/managed/skill-requests`,
+    `POST /v1/managed/skill-requests/{id}/preview`, `/approve` and `/reject`,
+    `GET /v1/managed/user-skills` and `DELETE /v1/managed/user-skills/{name}?user_id=`.
+  - `usage.agent_skills.attached[].user` is true for a skill that came from the caller's user
+    skills rather than from the agent.
+  - A server without user skills, or without PostgreSQL, answers 404 on these routes.
+
 ## [2.0.0] — 2026-10-16
 
 **Breaking.** The SDK drops Anthropic SDK compatibility and takes the LibraOS name everywhere it

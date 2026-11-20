@@ -74,6 +74,14 @@ export {
   type UsageSeriesPoint,
   type UsageBreakdown,
   type UsageSummary,
+  type SkillRequestStatus,
+  type SkillRequest,
+  type ApprovedUserSkill,
+  type SkillLeftOut,
+  type SkillRequestCandidate,
+  type SkillRequestPreview,
+  type UserSkill,
+  type ManagedUserSkill,
 } from "./client.js";
 
 // Low-level REST factory (for advanced use / custom auth).

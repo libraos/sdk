@@ -3078,6 +3078,226 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/skill-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List your skill requests
+         * @description The caller's own requests in the caller's org, newest first. Requires a signed-in person.
+         */
+        get: operations["listMySkillRequests"];
+        put?: never;
+        /**
+         * Request a skill for your own copilot
+         * @description Asks an admin of the caller's org for an Agent Skill from a GitHub link, for the caller's own copilot. Nothing is fetched here: only an admin's preview or approval reads the link. If the caller already has a pending request for the same link, in any accepted form, it is returned with 200 and `created: false`. At most 10 pending requests per person. Once approved, the skill applies only to the caller's own interactive chat turns in this org, on `/v1/messages` and `/agents/v1/{api_key}/chat` (with its `/v1/apps/{app}/agents/{id}/chat` alias). It never applies on `/v1/chat/completions`, to service clients or API keys, or in async jobs and schedules, and an agent's own skill of the same name wins. Requires a signed-in person: service clients and API keys get 403. Registered only on deployments with PostgreSQL; otherwise every user-skills route answers 404.
+         */
+        post: operations["createSkillRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/skill-requests/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        /**
+         * Fetch one of your skill requests
+         * @description Another person's request, or one in another org, answers 404 like a missing one. Requires a signed-in person.
+         */
+        get: operations["getMySkillRequest"];
+        put?: never;
+        post?: never;
+        /**
+         * Withdraw a pending skill request
+         * @description Withdraws one of the caller's own pending requests. The request is kept, with `status: withdrawn` and `decided_by` set to the caller. Requires a signed-in person.
+         */
+        delete: operations["withdrawSkillRequest"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/user-skills": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List your user skills
+         * @description The skills approved for the caller in the caller's org. Each is pinned to a catalog version and its SHA-256. When that version is archived or its content no longer matches, the skill is listed as `unavailable` and stops applying from the caller's next turn. Requires a signed-in person.
+         */
+        get: operations["listMyUserSkills"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/user-skills/{name}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                name: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Stop using one of your user skills
+         * @description Removes the skill from the caller's own skills. The catalog version is unchanged. Requires a signed-in person.
+         */
+        delete: operations["removeMyUserSkill"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/managed/skill-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List the org's skill requests
+         * @description Admin-only. The requests made in the admin's org, newest first. Registered only on deployments with PostgreSQL; otherwise every user-skills route answers 404.
+         */
+        get: operations["listSkillRequests"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/managed/skill-requests/{id}/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Preview a pending skill request
+         * @description Admin-only. Fetches the request's link from GitHub at the ref it names and returns the resolved commit and, for each skill found, what an approval would import: the instructions (`body`), the reference files kept, the files left out and why, the SHA-256, and what approving would do to the org catalog (`catalog`). Writes nothing. A repository without a licence file is refused. Another org's request answers 404.
+         */
+        post: operations["previewSkillRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/managed/skill-requests/{id}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Approve a pending skill request
+         * @description Admin-only. Reads exactly `commit`, the commit the preview returned, and imports the chosen skills' instructions into the org catalog through the `/v1/skills` import path: the source is pinned to that commit and the licence is recorded. Scripts and binary files are left out. It then publishes the versions and activates them for the requester only. A link that yields several importable skills needs `skills`. Approval never changes what an existing skill name means for the org's agents: a name the org already uses (a catalog version in any status, or a `LIBRA_OS_SKILLS_DIR` folder) is refused, unless identical content is already published, in which case that version is reused and nothing is written. To give someone an update to a skill the org already has, publish it through `/v1/skills` first, then approve. At most 10 active user skills per person.
+         */
+        post: operations["approveSkillRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/managed/skill-requests/{id}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Reject a pending skill request
+         * @description Admin-only. The reason is recorded on the request, where the requester can read it.
+         */
+        post: operations["rejectSkillRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/managed/user-skills": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List the org's user skills
+         * @description Admin-only. The user skills of everyone in the admin's org, by `user_id` and then `name`. Each item is what that person's `GET /v1/user-skills` shows, plus `user_id`, so a skill whose version was archived is listed as `unavailable` with a `reason`.
+         */
+        get: operations["listUserSkills"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/managed/user-skills/{name}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                name: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Remove a person's user skill
+         * @description Admin-only. Removes the skill from the person named by `user_id`, in the admin's org, whether it is `active` or `unavailable`. It stops applying from their next turn. The catalog version, the request and other people's skills are unchanged. Each removal is recorded as an audit event (namespace `user_skills`, event `user_skill.removed`).
+         */
+        delete: operations["removeUserSkill"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/managed/schedules": {
         parameters: {
             query?: never;
@@ -4536,6 +4756,8 @@ export interface components {
             version?: number;
             sha256?: string;
             source?: string;
+            /** @description True for one of the caller's user skills (`/v1/user-skills`) rather than one the agent declares. Omitted when false. */
+            user?: boolean;
         };
         /** @description Agent Skills attached to and loaded by this turn. */
         UsageAgentSkills: {
@@ -6430,6 +6652,147 @@ export interface components {
             license?: string;
             /** @description True when the skill's path no longer exists upstream. */
             removed_upstream?: boolean;
+        };
+        /** @enum {string} */
+        SkillRequestStatus: "pending" | "approved" | "rejected" | "withdrawn";
+        SkillRequestCreate: {
+            /** @description HTTPS link to a GitHub repository, a `tree`/`blob` folder or file in one, or a `raw.githubusercontent.com` file: any form `POST /v1/skills/import` accepts. A link to a `SKILL.md` means its folder. At most 2048 characters. */
+            url: string;
+            /** @description For the reviewing admin. At most 1000 characters. */
+            note?: string;
+        };
+        /** @description A catalog version an approval activated for the requester. */
+        ApprovedUserSkill: {
+            name: string;
+            version: number;
+            sha256: string;
+        };
+        /** @description One person's request for a skill from a GitHub link. */
+        SkillRequest: {
+            id: string;
+            /** @description The requester. An approval activates the skill for them only. */
+            user_id: string;
+            /** @description The link as submitted. */
+            url: string;
+            /** @description `owner/repo`. */
+            repo: string;
+            /** @description The branch, tag or commit the link names; omitted for the default branch. */
+            ref?: string;
+            /** @description The folder the link names; omitted for the repository root. */
+            path?: string;
+            note?: string;
+            status: components["schemas"]["SkillRequestStatus"];
+            /** Format: date-time */
+            created_at: string;
+            /** @description Who approved, rejected or withdrew the request. */
+            decided_by?: string;
+            /** Format: date-time */
+            decided_at?: string;
+            /** @description The admin's reason for a rejection. */
+            reason?: string;
+            /** @description Set by an approval; the commit that was imported. */
+            commit?: string;
+            /** @description Set by an approval; the repository licence that was recorded. */
+            license?: string;
+            /** @description Set by an approval; the versions activated for the requester. */
+            skills?: components["schemas"]["ApprovedUserSkill"][];
+        };
+        SkillRequestEnvelope: {
+            request: components["schemas"]["SkillRequest"];
+        };
+        SkillRequestWriteResult: {
+            request: components["schemas"]["SkillRequest"];
+            /** @description False when the caller already had a pending request for the same link, which is returned instead. */
+            created: boolean;
+        };
+        SkillRequestList: {
+            /** @description Newest first. */
+            data: components["schemas"]["SkillRequest"][];
+        };
+        /** @description A file of the linked skill that an approval does not import. */
+        SkillRequestLeftOut: {
+            path: string;
+            /** @description `script: LibraOS never runs scripts` or `not a text file`. */
+            reason: string;
+        };
+        /** @description One skill the link yields at the previewed commit, as an approval would import it. When `error` is set the skill cannot be imported and only `name` (if readable), `path` and `left_out` may be present. */
+        SkillRequestCandidate: {
+            name?: string;
+            /** @description The skill's folder in the repository. */
+            path: string;
+            description?: string;
+            /** @description The instructions, `SKILL.md` without its frontmatter. */
+            body?: string;
+            /** @description Digest over the files an approval imports, computed as for a catalog version. */
+            sha256?: string;
+            /** @description Reference files an approval imports besides `SKILL.md`. */
+            files?: string[];
+            /** @description Files an approval leaves out: scripts (anything under `scripts/`, source and executable files, files starting with `#!`) and binary files. LibraOS never runs a skill's scripts. */
+            left_out?: components["schemas"]["SkillRequestLeftOut"][];
+            error?: string;
+            /**
+             * @description What approving does to the org catalog. `new`: the skill is imported and published. `published`: identical content is already published as `catalog_version` and is reused. `name_taken`: the org already uses the name (a catalog version in any status, or a `LIBRA_OS_SKILLS_DIR` folder), so approving is refused with 409.
+             * @enum {string}
+             */
+            catalog?: "new" | "published" | "name_taken";
+            /** @description The published version an approval would reuse, when `catalog` is `published`. */
+            catalog_version?: number;
+        };
+        SkillRequestPreview: {
+            request: components["schemas"]["SkillRequest"];
+            repo: string;
+            /** @description The ref the link names; empty for the default branch. */
+            ref: string;
+            /** @description The 40-character commit the ref resolved to. Approve with this value. */
+            commit: string;
+            /** @description The repository's root licence, e.g. `MIT`, or `LicenseRef-see-LICENSE`. */
+            license: string;
+            skills: components["schemas"]["SkillRequestCandidate"][];
+        };
+        SkillRequestApproval: {
+            /** @description The commit the preview returned. Approval reads exactly this commit. */
+            commit: string;
+            /** @description Names of the skills to approve. Optional when the link yields one importable skill; required when it yields several. */
+            skills?: string[];
+        };
+        SkillRequestRejection: {
+            /** @description Recorded on the request, where the requester can read it. 1-1000 characters, not blank. */
+            reason: string;
+        };
+        /** @description One of a person's active skills, pinned to a catalog version and its SHA-256. A later import or publish of the same name does not change it. */
+        UserSkill: {
+            name: string;
+            version: number;
+            sha256: string;
+            /** @description The approved request that activated it. */
+            request_id?: string;
+            /** @description The admin who approved it. */
+            activated_by?: string;
+            /** Format: date-time */
+            activated_at: string;
+            /**
+             * @description `unavailable` when the version is no longer published (for example archived) or no longer has the approved content. An unavailable skill is not used on the person's turns.
+             * @enum {string}
+             */
+            status: "active" | "unavailable";
+            /** @description Why the skill is unavailable. */
+            reason?: string;
+            /** @description The catalog version's description; omitted when the version cannot be read. */
+            description?: string;
+            /** @description Where the version came from, e.g. `github.com/<owner>/<repo>@<commit>/<path>`; omitted when the version cannot be read. */
+            source?: string;
+        };
+        UserSkillList: {
+            /** @description By name. */
+            data: components["schemas"]["UserSkill"][];
+        };
+        /** @description A user skill as an admin sees it, with the person it belongs to. */
+        ManagedUserSkill: components["schemas"]["UserSkill"] & {
+            user_id: string;
+        };
+        ManagedUserSkillList: {
+            /** @description By `user_id`, then `name`. */
+            data: components["schemas"]["ManagedUserSkill"][];
         };
         /** @description Where each run's answer is appended. Exactly one of the two. */
         ScheduleDelivery: {
@@ -13486,6 +13849,624 @@ export interface operations {
             };
             /** @description GitHub could not be read (`fetch_failed`). */
             502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+        };
+    };
+    listMySkillRequests: {
+        parameters: {
+            query?: {
+                status?: components["schemas"]["SkillRequestStatus"];
+                /** @description Default 50, at most 200. */
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The caller's requests. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SkillRequestList"];
+                };
+            };
+            /** @description `status` or `limit` is invalid (`invalid_request`). */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description Called by a service client or with an API key (`forbidden`). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+        };
+    };
+    createSkillRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SkillRequestCreate"];
+            };
+        };
+        responses: {
+            /** @description The caller's pending request for the same link; `created` is false. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SkillRequestWriteResult"];
+                };
+            };
+            /** @description Request created, pending review. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SkillRequestWriteResult"];
+                };
+            };
+            /** @description `unsupported_link` (`field: url`): not a GitHub repository, folder or `SKILL.md` link. `invalid_request`: invalid JSON, or a note over 1000 characters (`field: note`). */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description Called by a service client or with an API key (`forbidden`). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+            /** @description The caller already has 10 pending requests (`pending_limit`). */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+        };
+    };
+    getMySkillRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The request. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SkillRequestEnvelope"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description Called by a service client or with an API key (`forbidden`). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+            /** @description Unknown request, or not the caller's (`not_found`). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+        };
+    };
+    withdrawSkillRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The withdrawn request. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SkillRequestEnvelope"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description Called by a service client or with an API key (`forbidden`). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+            /** @description Unknown request, or not the caller's (`not_found`). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+            /** @description The request is no longer pending (`not_pending`). */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+        };
+    };
+    listMyUserSkills: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The caller's user skills. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserSkillList"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description Called by a service client or with an API key (`forbidden`). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+        };
+    };
+    removeMyUserSkill: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                name: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Removed. */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description Called by a service client or with an API key (`forbidden`). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+            /** @description The caller has no user skill of that name (`not_found`). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+        };
+    };
+    listSkillRequests: {
+        parameters: {
+            query?: {
+                status?: components["schemas"]["SkillRequestStatus"];
+                /** @description Only this person's requests. */
+                user_id?: string;
+                /** @description Default 50, at most 200. */
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The org's requests. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SkillRequestList"];
+                };
+            };
+            /** @description `status` or `limit` is invalid (`invalid_request`). */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description Not an admin (`admin_required`). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+        };
+    };
+    previewSkillRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description What the link holds at the resolved commit. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SkillRequestPreview"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description Not an admin (`admin_required`). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            /** @description Unknown request, or another org's (`not_found`). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+            /** @description The request is no longer pending (`not_pending`). */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+            /** @description `import_refused` (`field: url`): the repository has no licence file, or there is no `SKILL.md` at the link. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+            /** @description `fetch_failed` (`field: url`): GitHub could not be read, the ref did not resolve, or the link holds more than 50 skills. */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+        };
+    };
+    approveSkillRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SkillRequestApproval"];
+            };
+        };
+        responses: {
+            /** @description The approved request, with `commit`, `license` and `skills`. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SkillRequestEnvelope"];
+                };
+            };
+            /** @description `invalid_request`: invalid JSON, or `commit` is not a 40-character lowercase hex commit (`field: commit`). */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description Not an admin (`admin_required`). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            /** @description Unknown request, or another org's (`not_found`). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+            /** @description `not_pending`: the request was already decided. `name_taken` (`field: skills`): the org already uses a chosen name for other content, or the catalog changed during the approval. `active_limit`: the requester would have more than 10 active user skills. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+            /** @description `import_refused` (`field: url`): no licence file, or no `SKILL.md` at the link. `invalid_selection` (`field: skills`): the link yields several importable skills and `skills` names none, a named skill is missing, cannot be imported or is ambiguous, or nothing at the link can be imported. `invalid_skill` (`field: skills`): the catalog refused the content. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+            /** @description `fetch_failed`: GitHub could not be read (`field: url`), or it returned a different commit (`field: commit`). */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+        };
+    };
+    rejectSkillRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SkillRequestRejection"];
+            };
+        };
+        responses: {
+            /** @description The rejected request. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SkillRequestEnvelope"];
+                };
+            };
+            /** @description `invalid_request`: invalid JSON, or a `reason` that is blank or over 1000 characters (`field: reason`). */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description Not an admin (`admin_required`). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            /** @description Unknown request, or another org's (`not_found`). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+            /** @description The request is no longer pending (`not_pending`). */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+        };
+    };
+    listUserSkills: {
+        parameters: {
+            query?: {
+                /** @description Only this person's skills (exact match). */
+                user_id?: string;
+                /** @description Only skills of this name (exact match). */
+                name?: string;
+                /** @description Default 50, at most 200. */
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The org's user skills. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManagedUserSkillList"];
+                };
+            };
+            /** @description `limit` is not a positive integer (`invalid_request`, `field: limit`). */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description Not an admin (`admin_required`). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+        };
+    };
+    removeUserSkill: {
+        parameters: {
+            query: {
+                /** @description The person whose skill to remove. */
+                user_id: string;
+            };
+            header?: never;
+            path: {
+                name: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Removed. */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description `user_id` is missing or blank (`invalid_request`, `field: user_id`). */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldError"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description Not an admin (`admin_required`). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlatError"];
+                };
+            };
+            /** @description That person has no user skill of that name (`not_found`), the same answer as `DELETE /v1/user-skills/{name}`. */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };

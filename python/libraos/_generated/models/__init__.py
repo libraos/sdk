@@ -69,6 +69,7 @@ from .app_migration import AppMigration
 from .app_migration_list import AppMigrationList
 from .app_migration_status import AppMigrationStatus
 from .approve_action_response_409 import ApproveActionResponse409
+from .approved_user_skill import ApprovedUserSkill
 from .attachment import Attachment
 from .authorization_connector_scope import AuthorizationConnectorScope
 from .authorization_connector_scope_details import AuthorizationConnectorScopeDetails
@@ -325,6 +326,8 @@ from .log_entry import LogEntry
 from .log_entry_fields import LogEntryFields
 from .log_list import LogList
 from .log_list_source import LogListSource
+from .managed_user_skill import ManagedUserSkill
+from .managed_user_skill_list import ManagedUserSkillList
 from .manifest import Manifest
 from .mark_authorization_incident_body import MarkAuthorizationIncidentBody
 from .mcp_request import McpRequest
@@ -462,6 +465,18 @@ from .session import Session
 from .session_create import SessionCreate
 from .setting_value import SettingValue
 from .skill import Skill
+from .skill_request import SkillRequest
+from .skill_request_approval import SkillRequestApproval
+from .skill_request_candidate import SkillRequestCandidate
+from .skill_request_candidate_catalog import SkillRequestCandidateCatalog
+from .skill_request_create import SkillRequestCreate
+from .skill_request_envelope import SkillRequestEnvelope
+from .skill_request_left_out import SkillRequestLeftOut
+from .skill_request_list import SkillRequestList
+from .skill_request_preview import SkillRequestPreview
+from .skill_request_rejection import SkillRequestRejection
+from .skill_request_status import SkillRequestStatus
+from .skill_request_write_result import SkillRequestWriteResult
 from .skill_run_response import SkillRunResponse
 from .speech_request import SpeechRequest
 from .start_eval_run_body import StartEvalRunBody
@@ -526,6 +541,9 @@ from .user_create_role import UserCreateRole
 from .user_info import UserInfo
 from .user_list import UserList
 from .user_role import UserRole
+from .user_skill import UserSkill
+from .user_skill_list import UserSkillList
+from .user_skill_status import UserSkillStatus
 from .web_search_backend import WebSearchBackend
 from .web_search_config import WebSearchConfig
 from .web_search_provider_answer import WebSearchProviderAnswer
@@ -610,6 +628,7 @@ __all__ = (
     "AppMigrationList",
     "AppMigrationStatus",
     "ApproveActionResponse409",
+    "ApprovedUserSkill",
     "Attachment",
     "AuthorizationConnectorScope",
     "AuthorizationConnectorScopeDetails",
@@ -864,6 +883,8 @@ __all__ = (
     "LogEntryFields",
     "LogList",
     "LogListSource",
+    "ManagedUserSkill",
+    "ManagedUserSkillList",
     "Manifest",
     "MarkAuthorizationIncidentBody",
     "McpRequest",
@@ -1001,6 +1022,18 @@ __all__ = (
     "SessionCreate",
     "SettingValue",
     "Skill",
+    "SkillRequest",
+    "SkillRequestApproval",
+    "SkillRequestCandidate",
+    "SkillRequestCandidateCatalog",
+    "SkillRequestCreate",
+    "SkillRequestEnvelope",
+    "SkillRequestLeftOut",
+    "SkillRequestList",
+    "SkillRequestPreview",
+    "SkillRequestRejection",
+    "SkillRequestStatus",
+    "SkillRequestWriteResult",
     "SkillRunResponse",
     "SpeechRequest",
     "StartEvalRunBody",
@@ -1065,6 +1098,9 @@ __all__ = (
     "UserInfo",
     "UserList",
     "UserRole",
+    "UserSkill",
+    "UserSkillList",
+    "UserSkillStatus",
     "WebSearchBackend",
     "WebSearchConfig",
     "WebSearchProviderAnswer",
